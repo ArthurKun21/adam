@@ -95,7 +95,7 @@ jobs:
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          cmdOptions: -no-snapshot-save swiftshader_indirect -noaudio -no-boot-anim -cores 4 -memory 3072 -no-window -gpu auto -grpc 8554 -camera-back none
+          emulator-options: -no-snapshot-save swiftshader_indirect -noaudio -no-boot-anim -cores 4 -memory 3072 -no-window -gpu auto -grpc 8554 -camera-back none
           disable-animations: true
           force-avd-creation: false
           api-level: ${{ matrix.api }}
