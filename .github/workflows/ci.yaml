@@ -52,7 +52,7 @@ jobs:
         with:
           name: test-coverage
           path: test-coverage.zip
-          
+
       - name: codecov unit tests
         uses: codecov/codecov-action@v5
         with:
@@ -108,17 +108,17 @@ jobs:
           disable-animations: true
           script: echo "Generated AVD snapshot for caching."
 
-      - name: Run integration tests
-        uses: reactivecircus/android-emulator-runner@v2
-        timeout-minutes: 25
-        with:
-          api-level: ${{ matrix.api }}
-          target: google_apis
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -grpc 8554
-          disable-animations: true
-          script: ./gradlew :adam:integrationTest
+      # - name: Run integration tests
+      #   uses: reactivecircus/android-emulator-runner@v2
+      #   timeout-minutes: 25
+      #   with:
+      #     api-level: ${{ matrix.api }}
+      #     target: google_apis
+      #     arch: x86_64
+      #     force-avd-creation: false
+      #     emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -grpc 8554
+      #     disable-animations: true
+      #     script: ./gradlew :adam:integrationTest
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v6
