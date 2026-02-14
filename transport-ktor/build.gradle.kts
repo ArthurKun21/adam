@@ -21,5 +21,5 @@ plugins {
 dependencies {
     implementation(project(":adam"))
     implementation(libs.ktor.network)
-    implementation(libs.logging)
+    implementation(libs.logcat)
 }

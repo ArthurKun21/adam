@@ -16,9 +16,72 @@
 
 package com.malinskiy.adam.log
 
-import io.github.oshai.kotlinlogging.KLogger
-import io.github.oshai.kotlinlogging.KotlinLogging
+import logcat.LogPriority
+import logcat.logcat
+import logcat.asLog
 
 object AdamLogging {
-    fun logger(func: () -> Unit): KLogger = KotlinLogging.logger(func)
+    fun logger(func: () -> Unit): AdamLogger = AdamLogger()
+}
+
+class AdamLogger {
+    inline fun debug(throwable: Throwable? = null, crossinline message: () -> String) {
+        logcat(LogPriority.DEBUG) {
+            buildString {
+                throwable?.let {
+                    append(it.asLog())
+                    append("\n")
+                }
+                append(message())
+            }
+        }
+    }
+
+    inline fun info(throwable: Throwable? = null, crossinline message: () -> String) {
+        logcat(LogPriority.INFO) {
+            buildString {
+                throwable?.let {
+                    append(it.asLog())
+                    append("\n")
+                }
+                append(message())
+            }
+        }
+    }
+
+    inline fun warn(throwable: Throwable? = null, crossinline message: () -> String) {
+        logcat(LogPriority.WARN) {
+            buildString {
+                throwable?.let {
+                    append(it.asLog())
+                    append("\n")
+                }
+                append(message())
+            }
+        }
+    }
+
+    inline fun error(throwable: Throwable? = null, crossinline message: () -> String) {
+        logcat(LogPriority.ERROR) {
+            buildString {
+                throwable?.let {
+                    append(it.asLog())
+                    append("\n")
+                }
+                append(message())
+            }
+        }
+    }
+
+    inline fun trace(throwable: Throwable? = null, crossinline message: () -> String) {
+        logcat(LogPriority.VERBOSE) {
+            buildString {
+                throwable?.let {
+                    append(it.asLog())
+                    append("\n")
+                }
+                append(message())
+            }
+        }
+    }
 }

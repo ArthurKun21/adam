@@ -4,7 +4,7 @@ kotlin = "2.3.10"
 coroutines = "1.10.2"
 annotations = "26.0.2"
 ktor = "3.4.0"
-logging = "7.0.14"
+logcat = "0.4"
 vertx = "5.0.7"
 apacheCommonsPool2 = "2.13.1"
 assertk = "0.28.1"
@@ -36,7 +36,7 @@ apache-commons-pool2 = { module = "org.apache.commons:commons-pool2", version.re
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-debug = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-debug", version.ref = "coroutines" }
 ktor-network = { module = "io.ktor:ktor-network-jvm", version.ref = "ktor" }
-logging = { module = "io.github.oshai:kotlin-logging", version.ref = "logging" }
+logcat = { module = "com.squareup.logcat:logcat", version.ref = "logcat" }
 vertx-core = { module = "io.vertx:vertx-core", version.ref = "vertx" }
 vertx-kotlin = { module = "io.vertx:vertx-lang-kotlin", version.ref = "vertx" }
 vertx-coroutines = { module = "io.vertx:vertx-lang-kotlin-coroutines", version.ref = "vertx" }

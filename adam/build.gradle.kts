@@ -148,7 +148,7 @@ dependencies {
     implementation(libs.annotations)
     implementation(kotlin("stdlib-jdk8"))
     implementation(libs.coroutines.core)
-    implementation(libs.logging)
+    implementation(libs.logcat)
     api(libs.protobuf.lite)
     api(libs.grpc.protobuf.lite)
     api(libs.grpc.kotlin.stub)
