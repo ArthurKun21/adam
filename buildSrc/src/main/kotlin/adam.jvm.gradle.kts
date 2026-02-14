@@ -2,6 +2,7 @@ import adam.buildlogic.ProjectConfig
 
 plugins {
     kotlin("jvm")
+    // id("adam.code.lint")
 }
 
 java {
