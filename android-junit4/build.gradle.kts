@@ -65,5 +65,5 @@ dependencies {
 }
 
 afterEvaluate {
-    Deployment.initialize(project)
+    // Deployment.initialize(project)
 }

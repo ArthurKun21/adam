@@ -29,4 +29,4 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
     }
 }
 
-Deployment.initialize(project)
+// Deployment.initialize(project)

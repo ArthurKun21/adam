@@ -19,7 +19,7 @@ plugins {
     id("jacoco")
 }
 
-Deployment.initialize(project)
+// Deployment.initialize(project)
 
 sourceSets {
     create("integrationTest") {
