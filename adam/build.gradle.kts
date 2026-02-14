@@ -138,8 +138,10 @@ tasks.jacocoTestReport {
     }
 }
 
-tasks.dokkaHtml.configure {
-    outputDirectory.set(rootProject.rootDir.resolve("docs/api"))
+dokka {
+    dokkaPublications.html {
+        outputDirectory.set(rootProject.rootDir.resolve("docs/api"))
+    }
 }
 
 dependencies {
