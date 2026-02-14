@@ -1,19 +1,8 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import java.util.*
 
-buildscript {
-    repositories {
-        mavenCentral()
-        google()
-    }
-    dependencies {
-        classpath(BuildPlugins.kotlinPlugin)
-        classpath(BuildPlugins.androidGradle)
-    }
-}
-
 plugins {
-    id("com.github.ben-manes.versions") version Versions.gradleVersionsPlugin
+    alias(libs.plugins.gradle.versions)
 }
 
 fun isNonStable(version: String): Boolean {
@@ -27,13 +16,4 @@ tasks.withType<DependencyUpdatesTask> {
     rejectVersionIf {
         isNonStable(candidate.version) && !isNonStable(currentVersion)
     }
-}
-
-subprojects {
-    repositories {
-        mavenCentral()
-        google()
-    }
-
-    group = "com.malinskiy.adam"
 }

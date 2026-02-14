@@ -15,11 +15,10 @@
  */
 
 plugins {
-    kotlin("jvm")
+    id("adam.jvm")
     id("jacoco")
 }
 
-Deployment.initialize(project)
 
 tasks.jacocoTestReport {
     reports {
@@ -27,21 +26,11 @@ tasks.jacocoTestReport {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.apiVersion = "1.5"
-    kotlinOptions.languageVersion = "1.8"
-}
 
 dependencies {
     api(project(":server:server-stub"))
-    implementation(TestLibraries.junit4)
-    implementation(Libraries.coroutines)
+    implementation(libs.junit4)
+    implementation(libs.coroutines.core)
 
-    testImplementation(TestLibraries.coroutinesDebug)
+    testImplementation(libs.coroutines.debug)
 }

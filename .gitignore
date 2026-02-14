@@ -144,3 +144,5 @@ gradle-app.setting
 .idea/$PRODUCT_WORKSPACE_FILE$
 .idea/compiler.xml
 .idea/.name
+
+.kotlin

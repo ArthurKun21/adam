@@ -15,11 +15,10 @@
  */
 
 plugins {
-    kotlin("jvm")
+    id("adam.jvm")
     id("jacoco")
 }
 
-Deployment.initialize(project)
 
 sourceSets {
     create("integrationTest") {
@@ -38,7 +37,7 @@ fun DependencyHandler.`integrationTestImplementation`(dependencyNotation: Any): 
     add("integrationTestImplementation", dependencyNotation)
 
 
-val integrationTest = task<Test>("integrationTest") {
+val integrationTest = tasks.register<Test>("integrationTest") {
     description = "Runs integration tests"
     group = "verification"
 
@@ -50,9 +49,11 @@ val integrationTest = task<Test>("integrationTest") {
         include("**")
     }
 }
-integrationTest.outputs.upToDateWhen { false }
+integrationTest.configure {
+    outputs.upToDateWhen { false }
+}
 
-val jacocoIntegrationTestReport = task<JacocoReport>("jacocoIntegrationTestReport") {
+val jacocoIntegrationTestReport = tasks.register<JacocoReport>("jacocoIntegrationTestReport") {
     description = "Generates code coverage report for integrationTest task"
     group = "verification"
     reports {
@@ -71,27 +72,17 @@ tasks.jacocoTestReport {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.apiVersion = "1.5"
-    kotlinOptions.languageVersion = "1.8"
-}
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8", version = Versions.kotlin))
-    implementation(Libraries.coroutines)
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(libs.coroutines.core)
     api(project(":adam"))
-    api(Libraries.ktorNetwork)
-    api(TestLibraries.assertk)
+    api(libs.ktor.network)
+    api(libs.assertk)
 
-    testImplementation(TestLibraries.junit4)
-    testImplementation(TestLibraries.coroutinesDebug)
+    testImplementation(libs.junit4)
+    testImplementation(libs.coroutines.debug)
 
-    integrationTestImplementation(TestLibraries.junit4)
-    integrationTestImplementation(TestLibraries.coroutinesDebug)
+    integrationTestImplementation(libs.junit4)
+    integrationTestImplementation(libs.coroutines.debug)
 }

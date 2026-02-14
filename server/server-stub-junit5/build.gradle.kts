@@ -15,11 +15,9 @@
  */
 
 plugins {
-    kotlin("jvm")
+    id("adam.jvm")
     id("jacoco")
 }
-
-Deployment.initialize(project)
 
 tasks.jacocoTestReport {
     reports {
@@ -27,23 +25,17 @@ tasks.jacocoTestReport {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.apiVersion = "1.5"
-    kotlinOptions.languageVersion = "1.8"
+tasks.test {
+    useJUnitPlatform()
 }
 
 dependencies {
     api(project(":server:server-stub"))
-    implementation(TestLibraries.junit5)
-    implementation(TestLibraries.junit5commons)
-    implementation(kotlin("reflect", version = Versions.kotlin))
-    implementation(Libraries.coroutines)
+    implementation(libs.junit5.engine)
+    implementation(libs.junit5.commons)
+    implementation(kotlin("reflect"))
+    implementation(libs.coroutines.core)
 
-    testImplementation(TestLibraries.coroutinesDebug)
+    testImplementation(libs.coroutines.debug)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

@@ -15,55 +15,18 @@
  */
 
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
+    id("adam.android.library")
     id("maven-publish")
     id("org.jetbrains.dokka")
 }
 
 android {
     namespace = "com.malinskiy.adam.junit4.android"
-
-    compileSdk = 33
-
-    defaultConfig {
-        minSdk = 14
-        targetSdk = 33
-    }
-
-    sourceSets {
-        getByName("main") {
-            java.srcDir("src/main/kotlin")
-        }
-        getByName("test") {
-            java.srcDir("src/test/kotlin")
-        }
-        getByName("androidTest") {
-            java.srcDir("src/androidTest/kotlin")
-        }
-    }
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.apiVersion = "1.5"
-    kotlinOptions.languageVersion = "1.8"
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8", version = Versions.kotlin))
     api(project(":adam"))
-    api(TestLibraries.junit4)
-    api(Libraries.coroutines)
-    api(AndroidX.testMonitor)
+    api(libs.coroutines.core)
     api(project(":android-testrunner-contract"))
 }
 
-afterEvaluate {
-    Deployment.initialize(project)
-}

@@ -18,28 +18,28 @@ import com.google.protobuf.gradle.remove
  */
 
 plugins {
-    kotlin("jvm")
+    id("adam.jvm")
     id("jacoco")
     id("org.jetbrains.dokka")
-    id("com.google.protobuf") version Versions.protobufGradle
+    alias(libs.plugins.protobuf)
     id("idea")
 }
 
-Deployment.initialize(project)
+
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:${Versions.protobuf}"
+        artifact = "com.google.protobuf:protoc:${libs.versions.protobuf.get()}"
     }
     plugins {
         id("java") {
-            artifact = "io.grpc:protoc-gen-grpc-java:${Versions.grpc}"
+            artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc.get()}"
         }
         id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:${Versions.grpc}"
+            artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc.get()}"
         }
         id("grpckt") {
-            artifact = "io.grpc:protoc-gen-grpc-kotlin:${Versions.grpcKotlin}:jdk8@jar"
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:${libs.versions.grpcKotlin.get()}:jdk8@jar"
         }
     }
     generateProtoTasks {
@@ -79,7 +79,7 @@ fun DependencyHandler.`integrationTestImplementation`(dependencyNotation: Any): 
     add("integrationTestImplementation", dependencyNotation)
 
 
-val integrationTest = task<Test>("integrationTest") {
+val integrationTest = tasks.register<Test>("integrationTest") {
     description = "Runs integration tests"
     group = "verification"
 
@@ -91,7 +91,9 @@ val integrationTest = task<Test>("integrationTest") {
         include("**")
     }
 }
-integrationTest.outputs.upToDateWhen { false }
+integrationTest.configure {
+    outputs.upToDateWhen { false }
+}
 
 // See https://github.com/jacoco/jacoco/issues/1357
 tasks.withType<Test> {
@@ -100,14 +102,14 @@ tasks.withType<Test> {
     }
 }
 
-val connectedAndroidTest = task<Test>("connectedAndroidTest") {
+val connectedAndroidTest = tasks.register<Test>("connectedAndroidTest") {
     description = "Runs integration tests"
     group = "verification"
 
     dependsOn(integrationTest)
 }
 
-val jacocoIntegrationTestReport = task<JacocoReport>("jacocoIntegrationTestReport") {
+val jacocoIntegrationTestReport = tasks.register<JacocoReport>("jacocoIntegrationTestReport") {
     description = "Generates code coverage report for integrationTest task"
     group = "verification"
     reports {
@@ -120,7 +122,7 @@ val jacocoIntegrationTestReport = task<JacocoReport>("jacocoIntegrationTestRepor
 }
 tasks.check { dependsOn(integrationTest, jacocoIntegrationTestReport) }
 
-val jacocoCombinedTestReport = task<JacocoReport>("jacocoCombinedTestReport") {
+val jacocoCombinedTestReport = tasks.register<JacocoReport>("jacocoCombinedTestReport") {
     description = "Generates code coverage report for all test tasks"
     group = "verification"
 
@@ -140,42 +142,31 @@ tasks.dokkaHtml.configure {
     outputDirectory.set(rootProject.rootDir.resolve("docs/api"))
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.apiVersion = "1.5"
-    kotlinOptions.languageVersion = "1.8"
-}
-
 dependencies {
-    implementation(Libraries.annotations)
-    implementation(kotlin("stdlib-jdk8", version = Versions.kotlin))
-    implementation(Libraries.coroutines)
-    implementation(Libraries.logging)
-    api(Libraries.protobufLite)
-    api(Libraries.grpcProtobufLite)
-    api(Libraries.grpcKotlinStub)
-    api(Libraries.grpcOkhttp)
-    api(Libraries.grpcStub)
-    implementation(Libraries.javaxAnnotations)
-    implementation(Libraries.vertxCore)
-    implementation(Libraries.vertxKotlin)
-    implementation(Libraries.vertxCoroutines)
-    implementation(Libraries.apacheCommonsPool2)
+    implementation(libs.annotations)
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(libs.coroutines.core)
+    implementation(libs.logging)
+    api(libs.protobuf.lite)
+    api(libs.grpc.protobuf.lite)
+    api(libs.grpc.kotlin.stub)
+    api(libs.grpc.okhttp)
+    api(libs.grpc.stub)
+    implementation(libs.javax.annotations)
+    implementation(libs.vertx.core)
+    implementation(libs.vertx.kotlin)
+    implementation(libs.vertx.coroutines)
+    implementation(libs.apache.commons.pool2)
 
-    testImplementation(TestLibraries.assertk)
-    testImplementation(TestLibraries.junit4)
-    testImplementation(TestLibraries.imageComparison)
-    testImplementation(kotlin("reflect", version = Versions.kotlin))
-    testImplementation(TestLibraries.coroutinesDebug)
+    testImplementation(libs.assertk)
+    testImplementation(libs.junit4)
+    testImplementation(libs.image.comparison)
+    testImplementation(kotlin("reflect"))
+    testImplementation(libs.coroutines.debug)
     testImplementation(project(":server:server-stub-junit4"))
 
-    integrationTestImplementation(TestLibraries.coroutinesDebug)
-    integrationTestImplementation(TestLibraries.assertk)
-    integrationTestImplementation(TestLibraries.junit4)
-    integrationTestImplementation(kotlin("reflect", version = Versions.kotlin))
+    integrationTestImplementation(libs.coroutines.debug)
+    integrationTestImplementation(libs.assertk)
+    integrationTestImplementation(libs.junit4)
+    integrationTestImplementation(kotlin("reflect"))
 }

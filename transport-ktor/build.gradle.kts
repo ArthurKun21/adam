@@ -15,22 +15,11 @@
  */
 
 plugins {
-    kotlin("jvm")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.apiVersion = "1.5"
-    kotlinOptions.languageVersion = "1.8"
+    id("adam.jvm")
 }
 
 dependencies {
     implementation(project(":adam"))
-    implementation(Libraries.ktorNetwork)
-    implementation(Libraries.logging)
+    implementation(libs.ktor.network)
+    implementation(libs.logging)
 }
