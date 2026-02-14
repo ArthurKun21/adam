@@ -16,13 +16,13 @@
 
 package com.malinskiy.adam.server.stub.dsl
 
-open class OkayFailSubSession(private val session: Session) {
-    suspend fun accept(): OkayFailSubSession {
+public open class OkayFailSubSession(private val session: Session) {
+    public suspend fun accept(): OkayFailSubSession {
         session.respondTransport(true)
         return this
     }
 
-    suspend fun reject(message: String): OkayFailSubSession {
+    public suspend fun reject(message: String): OkayFailSubSession {
         session.respondTransport(false, message)
         return this
     }

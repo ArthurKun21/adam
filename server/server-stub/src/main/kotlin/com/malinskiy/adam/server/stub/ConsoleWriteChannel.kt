@@ -19,8 +19,8 @@ package com.malinskiy.adam.server.stub
 import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.writeStringUtf8
 
-class ConsoleWriteChannel(private val delegate: ByteWriteChannel) : ByteWriteChannel by delegate {
-    suspend fun writeAuth() {
+public class ConsoleWriteChannel(private val delegate: ByteWriteChannel) : ByteWriteChannel by delegate {
+    public suspend fun writeAuth() {
         delegate.writeStringUtf8("Android Console: Authentication required")
         delegate.writeStringUtf8("Android Console: type 'auth <auth_token>' to authenticate")
         delegate.writeStringUtf8("Android Console: you can find your <auth_token> in")
@@ -30,5 +30,7 @@ class ConsoleWriteChannel(private val delegate: ByteWriteChannel) : ByteWriteCha
         delegate.writeStringUtf8("OK\r\n")
     }
 
-    suspend fun respond(message: String) = delegate.writeStringUtf8(message)
+    public suspend fun respond(message: String) {
+        delegate.writeStringUtf8(message)
+    }
 }

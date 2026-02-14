@@ -33,17 +33,17 @@ import kotlinx.coroutines.Job
 import java.io.File
 import kotlin.coroutines.coroutineContext
 
-class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel by delegate {
+public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel by delegate {
 
-    suspend fun readByte(): Byte = delegate.channelReadByte()
+    public suspend fun readByte(): Byte = delegate.channelReadByte()
 
-    suspend fun readIntLittleEndian(): Int = Integer.reverseBytes(delegate.channelReadInt())
+    public suspend fun readIntLittleEndian(): Int = Integer.reverseBytes(delegate.channelReadInt())
 
-    suspend fun readFully(dst: ByteArray, offset: Int, length: Int) {
+    public suspend fun readFully(dst: ByteArray, offset: Int, length: Int) {
         val tmp = delegate.readByteArray(length)
         System.arraycopy(tmp, 0, dst, offset, length)
     }
-    suspend fun receiveCommand(): String {
+    public suspend fun receiveCommand(): String {
         val bytes = ByteArray(4)
         readFully(bytes, 0, 4)
         val length = String(bytes, Const.DEFAULT_TRANSPORT_ENCODING).toInt(16)
@@ -52,13 +52,13 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
         return String(request, Const.DEFAULT_TRANSPORT_ENCODING)
     }
 
-    suspend fun receiveBytes(length: Int): ByteArray {
+    public suspend fun receiveBytes(length: Int): ByteArray {
         val bytes = ByteArray(length)
         readFully(bytes, 0, length)
         return bytes
     }
 
-    suspend fun receiveStat(): String {
+    public suspend fun receiveStat(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
         if (message != "STAT") throw RuntimeException(
@@ -70,7 +70,7 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
         return String(request, Const.DEFAULT_TRANSPORT_ENCODING)
     }
 
-    suspend fun receiveStatV2(): String {
+    public suspend fun receiveStatV2(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
         if (message != "LST2") throw RuntimeException(
@@ -82,7 +82,7 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
         return String(request, Const.DEFAULT_TRANSPORT_ENCODING)
     }
 
-    suspend fun receiveList(): String {
+    public suspend fun receiveList(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
         if (message != "LIST") throw RuntimeException(
@@ -94,7 +94,7 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
         return String(request, Const.DEFAULT_TRANSPORT_ENCODING)
     }
 
-    suspend fun receiveListV2(): String {
+    public suspend fun receiveListV2(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
         if (message != "LIS2") throw RuntimeException(
@@ -106,7 +106,7 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
         return String(request, Const.DEFAULT_TRANSPORT_ENCODING)
     }
 
-    suspend fun receiveSend(): String {
+    public suspend fun receiveSend(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
         if (message != "SEND") throw RuntimeException(
@@ -118,7 +118,7 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
         return String(request, Const.DEFAULT_TRANSPORT_ENCODING)
     }
 
-    suspend fun receiveSendV2(): Triple<String, Int, Int> {
+    public suspend fun receiveSendV2(): Triple<String, Int, Int> {
         val protocolMessage = receiveProtocolMessage()
         var message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
         if (message != "SND2") throw RuntimeException(
@@ -137,13 +137,13 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
         return Triple(String(request, Const.DEFAULT_TRANSPORT_ENCODING), mode, flags)
     }
 
-    suspend fun receiveProtocolMessage(): ByteArray {
+    public suspend fun receiveProtocolMessage(): ByteArray {
         val bytes = ByteArray(4)
         readFully(bytes, 0, 4)
         return bytes
     }
 
-    suspend fun receiveRecv(): String {
+    public suspend fun receiveRecv(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
         if (message != "RECV") throw RuntimeException(
@@ -156,7 +156,7 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
         return String(request, Const.DEFAULT_TRANSPORT_ENCODING)
     }
 
-    suspend fun receiveRecv2(): String {
+    public suspend fun receiveRecv2(): String {
         val protocolMessage = receiveProtocolMessage()
         var message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
         if (message != "RCV2") throw RuntimeException("Unexpected protocol message $message")
@@ -175,7 +175,7 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
         return String(request, Const.DEFAULT_TRANSPORT_ENCODING)
     }
 
-    suspend fun receiveFile(file: File): File {
+    public suspend fun receiveFile(file: File): File {
         val job = Job()
         val channel = file.writeChannel(coroutineContext + job)
         val headerBuffer = ByteArray(8)
@@ -208,7 +208,7 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
         }
     }
 
-    suspend fun receiveShellV2Stdin(): String {
+    public suspend fun receiveShellV2Stdin(): String {
         readByte().apply { assertThat(this).isEqualTo(MessageType.STDIN.toValue().toByte()) }
         val size = readIntLittleEndian()
         val request = ByteArray(size)
@@ -216,7 +216,7 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
         return String(request, Const.DEFAULT_TRANSPORT_ENCODING)
     }
 
-    suspend fun receiveShellV2StdinClose() {
+    public suspend fun receiveShellV2StdinClose() {
         readByte().apply { assertThat(this).isEqualTo(MessageType.CLOSE_STDIN.toValue().toByte()) }
         assertThat(readIntLittleEndian()).isEqualTo(0)
     }

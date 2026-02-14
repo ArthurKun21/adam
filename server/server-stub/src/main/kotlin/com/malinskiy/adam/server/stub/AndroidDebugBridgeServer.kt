@@ -41,26 +41,26 @@ import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
 
-class AndroidDebugBridgeServer : CoroutineScope {
+public class AndroidDebugBridgeServer : CoroutineScope {
     private val executionDispatcher by lazy {
         newFixedThreadPoolContext(4, "AndroidDebugBridgeServer")
     }
     override val coroutineContext: CoroutineContext
         get() = executionDispatcher
 
-    val client: AndroidDebugBridgeClient by lazy {
+    public val client: AndroidDebugBridgeClient by lazy {
         AndroidDebugBridgeClientFactory().apply {
             port = this@AndroidDebugBridgeServer.port
         }.build()
     }
 
     private val job = SupervisorJob()
-    var port: Int = 0
+    public var port: Int = 0
 
-    lateinit var server: ServerSocket
-    lateinit var selector: SelectorManager
+    public lateinit var server: ServerSocket
+    public lateinit var selector: SelectorManager
 
-    fun start(): AndroidDebugBridgeClient {
+    public fun start(): AndroidDebugBridgeClient {
         val address = InetSocketAddress("127.0.0.1", port)
         selector = SelectorManager(Dispatchers.IO)
         server = runBlocking { aSocket(selector).tcp().bind(address) }
@@ -69,14 +69,14 @@ class AndroidDebugBridgeServer : CoroutineScope {
         return client
     }
 
-    fun session(block: suspend Session.() -> Unit) {
+    public fun session(block: suspend Session.() -> Unit) {
         listen { input, output ->
             val session = Session(input, output)
             block(session)
         }
     }
 
-    fun multipleSessions(block: suspend Expectation.() -> Unit) {
+    public fun multipleSessions(block: suspend Expectation.() -> Unit) {
         async(context = job) {
             val expectation = Expectation()
             block(expectation)
@@ -101,7 +101,7 @@ class AndroidDebugBridgeServer : CoroutineScope {
         }
     }
 
-    fun listen(block: suspend (input: ServerReadChannel, output: ServerWriteChannel) -> Unit) {
+    public fun listen(block: suspend (input: ServerReadChannel, output: ServerWriteChannel) -> Unit) {
         async(context = job) {
             try {
                 val socket = server.accept()
@@ -122,7 +122,7 @@ class AndroidDebugBridgeServer : CoroutineScope {
         }
     }
 
-    suspend fun dispose() {
+    public suspend fun dispose() {
         if (job.isActive) {
             job.complete()
             job.children.iterator().forEach {

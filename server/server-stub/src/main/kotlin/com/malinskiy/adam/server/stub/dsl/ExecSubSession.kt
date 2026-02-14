@@ -18,23 +18,23 @@ package com.malinskiy.adam.server.stub.dsl
 
 import java.io.File
 
-class ExecSubSession(private val session: Session) {
-    suspend fun accept(): ExecSubSession {
+public class ExecSubSession(private val session: Session) {
+    public suspend fun accept(): ExecSubSession {
         session.respondOkay()
         return this
     }
 
-    suspend fun respond(stdout: String): ExecSubSession {
+    public suspend fun respond(stdout: String): ExecSubSession {
         session.respondShellV1(stdout)
         return this
     }
 
-    suspend fun receiveFile(fixture: File): ExecSubSession {
+    public suspend fun receiveFile(fixture: File): ExecSubSession {
         session.expectBytesAsFile(fixture)
         return this
     }
 
-    suspend fun reject(message: String) {
+    public suspend fun reject(message: String) {
         session.respondTransport(false, message)
     }
 }

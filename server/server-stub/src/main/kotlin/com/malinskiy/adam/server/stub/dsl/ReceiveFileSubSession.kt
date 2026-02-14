@@ -18,13 +18,13 @@ package com.malinskiy.adam.server.stub.dsl
 
 import java.io.File
 
-class ReceiveFileSubSession(private val session: Session) {
-    suspend fun respondFile(fixture: File): ReceiveFileSubSession {
+public class ReceiveFileSubSession(private val session: Session) {
+    public suspend fun respondFile(fixture: File): ReceiveFileSubSession {
         session.respondFile(fixture)
         return this
     }
 
-    suspend fun respondDoneDone() {
+    public suspend fun respondDoneDone() {
         session.output.respondDoneDone()
     }
 }

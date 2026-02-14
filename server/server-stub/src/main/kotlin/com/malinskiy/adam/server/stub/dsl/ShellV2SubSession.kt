@@ -16,28 +16,28 @@
 
 package com.malinskiy.adam.server.stub.dsl
 
-class ShellV2SubSession(private val session: Session) {
-    suspend fun accept(): ShellV2SubSession {
+public class ShellV2SubSession(private val session: Session) {
+    public suspend fun accept(): ShellV2SubSession {
         session.respondOkay()
         return this
     }
 
-    suspend fun respondStdout(stdout: String): ShellV2SubSession {
+    public suspend fun respondStdout(stdout: String): ShellV2SubSession {
         session.respondShellV2Stdout(stdout)
         return this
     }
 
-    suspend fun respondStderr(stdout: String): ShellV2SubSession {
+    public suspend fun respondStderr(stdout: String): ShellV2SubSession {
         session.respondShellV2Stderr(stdout)
         return this
     }
 
-    suspend fun respondExit(exitCode: Int): ShellV2SubSession {
+    public suspend fun respondExit(exitCode: Int): ShellV2SubSession {
         session.respondShellV2Exit(exitCode)
         return this
     }
 
-    suspend fun reject(message: String) {
+    public suspend fun reject(message: String) {
         session.respondTransport(false, message)
     }
 }

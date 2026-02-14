@@ -39,7 +39,7 @@ import java.io.Closeable
 import kotlin.coroutines.CoroutineContext
 import java.net.InetSocketAddress as JavaInetSocketAddress
 
-class EmulatorConsoleServer : CoroutineScope, Closeable {
+public class EmulatorConsoleServer : CoroutineScope, Closeable {
     private val executionDispatcher by lazy {
         newFixedThreadPoolContext(4, "EmulatorConsoleServer")
     }
@@ -47,9 +47,9 @@ class EmulatorConsoleServer : CoroutineScope, Closeable {
         get() = executionDispatcher
 
     private val job = SupervisorJob()
-    var port: Int = 0
+    public var port: Int = 0
 
-    suspend fun startAndListen(block: suspend (ConsoleReadChannel, ConsoleWriteChannel) -> Unit): Pair<AndroidDebugBridgeClient, JavaInetSocketAddress> {
+    public suspend fun startAndListen(block: suspend (ConsoleReadChannel, ConsoleWriteChannel) -> Unit): Pair<AndroidDebugBridgeClient, JavaInetSocketAddress> {
         val address = InetSocketAddress("127.0.0.1", port)
         val server = aSocket(SelectorManager(Dispatchers.IO)).tcp().bind(address)
         port = server.localAddress.toJavaAddress().port
@@ -74,7 +74,7 @@ class EmulatorConsoleServer : CoroutineScope, Closeable {
         return Pair(AndroidDebugBridgeClientFactory().build(), JavaInetSocketAddress(address.hostname, port))
     }
 
-    override fun close() = runBlocking {
+    override fun close(): Unit = runBlocking {
         job.cancelAndJoin()
     }
 }

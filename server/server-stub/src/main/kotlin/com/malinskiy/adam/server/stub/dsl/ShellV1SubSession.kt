@@ -16,18 +16,18 @@
 
 package com.malinskiy.adam.server.stub.dsl
 
-class ShellV1SubSession(private val session: Session) {
-    suspend fun accept(): ShellV1SubSession {
+public class ShellV1SubSession(private val session: Session) {
+    public suspend fun accept(): ShellV1SubSession {
         session.respondOkay()
         return this
     }
 
-    suspend fun respond(stdout: String): ShellV1SubSession {
+    public suspend fun respond(stdout: String): ShellV1SubSession {
         session.respondShellV1(stdout)
         return this
     }
 
-    suspend fun reject(message: String) {
+    public suspend fun reject(message: String) {
         session.respondTransport(false, message)
     }
 }

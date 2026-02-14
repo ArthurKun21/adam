@@ -19,17 +19,17 @@ package com.malinskiy.adam.server.stub.dsl
 import com.malinskiy.adam.Const
 import java.io.File
 
-class SendFileSubSession(private val session: Session) {
-    suspend fun receiveFile(fixture: File): SendFileSubSession {
+public class SendFileSubSession(private val session: Session) {
+    public suspend fun receiveFile(fixture: File): SendFileSubSession {
         session.receiveFile(fixture)
         return this
     }
 
-    suspend fun done() {
+    public suspend fun done() {
         session.respondOkay()
     }
 
-    suspend fun fail(message: String) {
+    public suspend fun fail(message: String) {
         session.output.respond(Const.Message.FAIL)
         session.output.respondStringV1(message)
     }

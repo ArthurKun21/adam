@@ -16,12 +16,12 @@
 
 package com.malinskiy.adam.server.stub.dsl
 
-class DoneFailSubSession(private val session: Session) {
-    suspend fun done() {
+public class DoneFailSubSession(private val session: Session) {
+    public suspend fun done() {
         session.output.respondDone()
     }
 
-    suspend fun fail(message: String) {
+    public suspend fun fail(message: String) {
         session.output.respondFail(message)
     }
 }

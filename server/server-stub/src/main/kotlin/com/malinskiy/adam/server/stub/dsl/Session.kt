@@ -24,33 +24,33 @@ import com.malinskiy.adam.server.stub.ServerWriteChannel
 import java.io.File
 
 
-class Session(val input: ServerReadChannel, val output: ServerWriteChannel) {
-    suspend fun expectCmd(expected: () -> String): OkayFailSubSession {
+public class Session(public val input: ServerReadChannel, public val output: ServerWriteChannel) {
+    public suspend fun expectCmd(expected: () -> String): OkayFailSubSession {
         val transportCmd = input.receiveCommand()
         assertThat(transportCmd).isEqualTo(expected())
 
         return OkayFailSubSession(session = this)
     }
 
-    suspend fun expectShell(expected: () -> String): ShellV1SubSession {
+    public suspend fun expectShell(expected: () -> String): ShellV1SubSession {
         val transportCmd = input.receiveCommand()
         assertThat(transportCmd).isEqualTo("shell:${expected()}")
         return ShellV1SubSession(session = this)
     }
 
-    suspend fun expectShellV2(expected: () -> String): ShellV2SubSession {
+    public suspend fun expectShellV2(expected: () -> String): ShellV2SubSession {
         val transportCmd = input.receiveCommand()
         assertThat(transportCmd).isEqualTo("shell,v2,raw:${expected()}")
         return ShellV2SubSession(session = this)
     }
 
-    suspend fun expectExec(expected: () -> String): ExecSubSession {
+    public suspend fun expectExec(expected: () -> String): ExecSubSession {
         val transportCmd = input.receiveCommand()
         assertThat(transportCmd).isEqualTo("exec:${expected()}")
         return ExecSubSession(session = this)
     }
 
-    suspend fun respondTransport(success: Boolean, message: String? = null) {
+    public suspend fun respondTransport(success: Boolean, message: String? = null) {
         output.respond(
             when (success) {
                 true -> Const.Message.OKAY
@@ -63,16 +63,16 @@ class Session(val input: ServerReadChannel, val output: ServerWriteChannel) {
         }
     }
 
-    suspend fun respondShellV1(stdout: String) {
+    public suspend fun respondShellV1(stdout: String) {
         output.respondShellV1(stdout)
     }
 
-    suspend fun expectFramebuffer(): FramebufferSubSession {
+    public suspend fun expectFramebuffer(): FramebufferSubSession {
         expectCmd { "framebuffer:" }
         return FramebufferSubSession(this)
     }
 
-    suspend fun respondScreencaptureV2(replay: File) {
+    public suspend fun respondScreencaptureV2(replay: File) {
         //Extended version
         output.writeIntLittleEndian(1)
 
@@ -82,7 +82,7 @@ class Session(val input: ServerReadChannel, val output: ServerWriteChannel) {
         output.writeFully(sample, 48, sample.size - 48)
     }
 
-    suspend fun respondScreencaptureV3(replay: File) {
+    public suspend fun respondScreencaptureV3(replay: File) {
         //Extended version
         output.writeIntLittleEndian(2)
 
@@ -92,31 +92,31 @@ class Session(val input: ServerReadChannel, val output: ServerWriteChannel) {
         output.writeFully(sample, 52, sample.size - 52)
     }
 
-    suspend fun respondAdbServerVersion(x: Int) {
+    public suspend fun respondAdbServerVersion(x: Int) {
         output.respondStringV1(x.toString(16))
     }
 
-    suspend fun respondPairDevice(message: String) {
+    public suspend fun respondPairDevice(message: String) {
         output.respondStringV1(message)
     }
 
-    suspend fun respondReconnectOffline(message: String) {
+    public suspend fun respondReconnectOffline(message: String) {
         output.respondStringV1(message)
     }
 
-    suspend fun respondReconnectSingleDevice(message: String) {
+    public suspend fun respondReconnectSingleDevice(message: String) {
         output.respondStringRaw(message)
     }
 
-    suspend fun respondRemountPartitions(message: () -> String) {
+    public suspend fun respondRemountPartitions(message: () -> String) {
         output.respondStringRaw(message())
     }
 
-    suspend fun respondSideloadChunkRequested(part: String) {
+    public suspend fun respondSideloadChunkRequested(part: String) {
         output.respondStringRaw(part)
     }
 
-    suspend fun respondPortForward(success: Boolean, port: Int? = null) {
+    public suspend fun respondPortForward(success: Boolean, port: Int? = null) {
         output.respond(
             when (success) {
                 true -> Const.Message.OKAY
@@ -129,49 +129,49 @@ class Session(val input: ServerReadChannel, val output: ServerWriteChannel) {
         }
     }
 
-    suspend fun respondSetDmVerityChecking(message: String) {
+    public suspend fun respondSetDmVerityChecking(message: String) {
         output.respondStringRaw(message)
     }
 
-    suspend fun expectShellV2Stdin(expected: String) {
+    public suspend fun expectShellV2Stdin(expected: String) {
         val stdin = input.receiveShellV2Stdin()
         assertThat(stdin).isEqualTo(expected)
     }
 
-    suspend fun expectShellV2StdinClose() {
+    public suspend fun expectShellV2StdinClose() {
         input.receiveShellV2StdinClose()
     }
 
-    suspend fun respondShellV2Stdout(message: String) {
+    public suspend fun respondShellV2Stdout(message: String) {
         output.respondShellV2Stdout(message)
     }
 
-    suspend fun respondShellV2Exit(exitCode: Int) {
+    public suspend fun respondShellV2Exit(exitCode: Int) {
         output.respondShellV2Exit(exitCode)
     }
 
-    suspend fun respondShellV2Stderr(stderr: String) {
+    public suspend fun respondShellV2Stderr(stderr: String) {
         output.respondShellV2Stderr(stderr)
     }
 
-    suspend fun respondShellV2WindowSizeChange() {
+    public suspend fun respondShellV2WindowSizeChange() {
         output.respondShellV2WindowSizeChange()
     }
 
-    suspend fun respondShellV2Invalid() {
+    public suspend fun respondShellV2Invalid() {
         output.respondShellV2Invalid()
     }
 
-    suspend fun expectStat(path: () -> String) {
+    public suspend fun expectStat(path: () -> String) {
         val receiveStat = input.receiveStat()
         assertThat(receiveStat).isEqualTo(path())
     }
 
-    suspend fun respondStat(size: Int, mode: Int = 0, lastModified: Int = 0) {
+    public suspend fun respondStat(size: Int, mode: Int = 0, lastModified: Int = 0) {
         output.respondStat(size, mode, lastModified)
     }
 
-    suspend fun respondStatV2(
+    public suspend fun respondStatV2(
         mode: Int,
         size: Int,
         error: Int,
@@ -187,18 +187,18 @@ class Session(val input: ServerReadChannel, val output: ServerWriteChannel) {
         output.respondStatV2(mode, size, error, dev, ino, nlink, uid, gid, atime, mtime, ctime)
     }
 
-    suspend fun expectSend(message: () -> String): SendFileSubSession {
+    public suspend fun expectSend(message: () -> String): SendFileSubSession {
         val receiveCmd = input.receiveSend()
         assertThat(receiveCmd).isEqualTo(message())
 
         return SendFileSubSession(this)
     }
 
-    suspend fun receiveFile(receiveFile: File) {
+    public suspend fun receiveFile(receiveFile: File) {
         input.receiveFile(receiveFile)
     }
 
-    suspend fun expectSendV2(receiveCmd: String, mode: String, flags: Int): SendFileV2SubSession {
+    public suspend fun expectSendV2(receiveCmd: String, mode: String, flags: Int): SendFileV2SubSession {
         val (actualReceiveCmd, actualMode, actualFlags) = input.receiveSendV2()
         assertThat(actualReceiveCmd).isEqualTo(receiveCmd)
         assertThat(actualMode.toString(8)).isEqualTo(mode)
@@ -207,39 +207,39 @@ class Session(val input: ServerReadChannel, val output: ServerWriteChannel) {
         return SendFileV2SubSession(this)
     }
 
-    suspend fun expectRecv(path: () -> String): ReceiveFileSubSession {
+    public suspend fun expectRecv(path: () -> String): ReceiveFileSubSession {
         val recvPath = input.receiveRecv()
         assertThat(recvPath).isEqualTo(path())
         return ReceiveFileSubSession(this)
     }
 
-    suspend fun respondFile(fixture: File) {
+    public suspend fun respondFile(fixture: File) {
         output.respondData(fixture.readBytes())
     }
 
-    suspend fun expectRecv2(path: () -> String): ReceiveFileSubSession {
+    public suspend fun expectRecv2(path: () -> String): ReceiveFileSubSession {
         val recvPath = input.receiveRecv2()
         assertThat(recvPath).isEqualTo(path())
 
         return ReceiveFileSubSession(this)
     }
 
-    suspend fun expectList(path: () -> String) {
+    public suspend fun expectList(path: () -> String) {
         val listPath = input.receiveList()
         assertThat(listPath).isEqualTo(path())
     }
 
-    suspend fun respondList(size: Int, mode: Int = 0, lastModified: Int = 0, name: String): DoneFailSubSession {
+    public suspend fun respondList(size: Int, mode: Int = 0, lastModified: Int = 0, name: String): DoneFailSubSession {
         output.respondList(size, mode, lastModified, name)
         return DoneFailSubSession(this)
     }
 
-    suspend fun expectListV2(path: () -> String) {
+    public suspend fun expectListV2(path: () -> String) {
         val listPath = input.receiveListV2()
         assertThat(listPath).isEqualTo(path())
     }
 
-    suspend fun respondListV2(
+    public suspend fun respondListV2(
         name: String,
         mode: Int = 0,
         size: Int,
@@ -257,56 +257,56 @@ class Session(val input: ServerReadChannel, val output: ServerWriteChannel) {
         return DoneFailSubSession(this)
     }
 
-    suspend fun expectStatV2(path: () -> String) {
+    public suspend fun expectStatV2(path: () -> String) {
         val receiveStat = input.receiveStatV2()
         assertThat(receiveStat).isEqualTo(path())
     }
 
-    suspend fun resondRestartAdbd(message: String) {
+    public suspend fun resondRestartAdbd(message: String) {
         output.respondStringRaw(message)
     }
 
-    suspend fun respondAsyncDeviceMonitor(serial: String, state: String) {
+    public suspend fun respondAsyncDeviceMonitor(serial: String, state: String) {
         output.respondStringV1("$serial\t$state\n")
     }
 
-    suspend fun respondListDevices(serialToState: Map<String, String>) {
+    public suspend fun respondListDevices(serialToState: Map<String, String>) {
         val response = serialToState.map { "${it.key}\t${it.value}\n" }.joinToString(separator = "")
         output.respondStringV1(response)
     }
 
-    suspend fun respondListPortForwards(response: String) {
+    public suspend fun respondListPortForwards(response: String) {
         output.respondStringV1(response)
     }
 
 
-    suspend fun respondConnectDevice(response: String) {
+    public suspend fun respondConnectDevice(response: String) {
         output.respondStringV1(response)
     }
 
-    suspend fun respondDisconnectDevice(response: String) {
+    public suspend fun respondDisconnectDevice(response: String) {
         output.respondStringV1(response)
     }
 
-    suspend fun respondOkay() {
+    public suspend fun respondOkay() {
         output.respondOkay()
     }
 
-    suspend fun expectLegacySideload(size: Int): LegacySideloadSubSession {
+    public suspend fun expectLegacySideload(size: Int): LegacySideloadSubSession {
         expectCmd { "sideload:$size" }.accept()
         return LegacySideloadSubSession(this)
     }
 
-    suspend fun receiveBytes(size: Int): ByteArray {
+    public suspend fun receiveBytes(size: Int): ByteArray {
         return input.receiveBytes(size)
     }
 
-    suspend fun expectBytesAsFile(expected: File) {
+    public suspend fun expectBytesAsFile(expected: File) {
         val actual = receiveBytes(expected.length().toInt())
         assertThat(actual).isEqualTo(expected.readBytes())
     }
 
-    suspend fun expectAdbServerVersion(): GetAdbServerSubSession {
+    public suspend fun expectAdbServerVersion(): GetAdbServerSubSession {
         expectCmd { "host:version" }
         return GetAdbServerSubSession(this)
     }

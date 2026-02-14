@@ -18,22 +18,22 @@ package com.malinskiy.adam.server.stub.dsl
 
 import java.io.File
 
-class FramebufferSubSession(private val session: Session) {
-    suspend fun accept(): FramebufferSubSession {
+public class FramebufferSubSession(private val session: Session) {
+    public suspend fun accept(): FramebufferSubSession {
         session.respondTransport(true)
         return this
     }
 
-    suspend fun reject(message: String): FramebufferSubSession {
+    public suspend fun reject(message: String): FramebufferSubSession {
         session.respondTransport(false, message)
         return this
     }
 
-    suspend fun respondScreencaptureV2(replay: File) {
+    public suspend fun respondScreencaptureV2(replay: File) {
         session.respondScreencaptureV2(replay)
     }
 
-    suspend fun respondScreencaptureV3(replay: File) {
+    public suspend fun respondScreencaptureV3(replay: File) {
         session.respondScreencaptureV3(replay)
     }
 }

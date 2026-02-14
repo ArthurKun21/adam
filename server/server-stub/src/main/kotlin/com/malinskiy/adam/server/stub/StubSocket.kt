@@ -29,16 +29,16 @@ import java.nio.ByteBuffer
 import io.ktor.utils.io.readByte as channelReadByte
 import io.ktor.utils.io.writeByte as channelWriteByte
 
-class StubSocket(
-    val readChannel: ByteReadChannel = ByteChannel(false),
-    val writeChannel: ByteWriteChannel = ByteChannel(false)
+public class StubSocket(
+    public val readChannel: ByteReadChannel = ByteChannel(false),
+    public val writeChannel: ByteWriteChannel = ByteChannel(false)
 ) : Socket {
     override val isClosedForWrite: Boolean
         get() = writeChannel.isClosedForWrite
     override val isClosedForRead: Boolean
         get() = readChannel.isClosedForRead
 
-    constructor(content: ByteArray) : this(readChannel = ByteReadChannel(content))
+    public constructor(content: ByteArray) : this(readChannel = ByteReadChannel(content))
 
     override suspend fun readFully(buffer: ByteBuffer): Int {
         val count = buffer.remaining()
@@ -71,8 +71,8 @@ class StubSocket(
 
     override suspend fun readByte(): Byte = readChannel.channelReadByte()
     override suspend fun readIntLittleEndian(): Int = Integer.reverseBytes(readChannel.readInt())
-    override suspend fun writeByte(value: Int) = writeChannel.channelWriteByte(value.toByte())
-    override suspend fun writeIntLittleEndian(value: Int) = writeChannel.writeInt(Integer.reverseBytes(value))
+    override suspend fun writeByte(value: Int): Unit = writeChannel.channelWriteByte(value.toByte())
+    override suspend fun writeIntLittleEndian(value: Int): Unit = writeChannel.writeInt(Integer.reverseBytes(value))
 
     override suspend fun close() {
         try {

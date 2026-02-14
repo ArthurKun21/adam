@@ -26,9 +26,9 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
-class AdbServerRule : TestRule {
-    lateinit var server: AndroidDebugBridgeServer
-    val client: AndroidDebugBridgeClient
+public class AdbServerRule : TestRule {
+    public lateinit var server: AndroidDebugBridgeServer
+    public val client: AndroidDebugBridgeClient
         get() = server.client
 
     override fun apply(base: Statement, description: Description): Statement {
@@ -50,7 +50,7 @@ class AdbServerRule : TestRule {
         }
     }
 
-    fun session(block: suspend Session.() -> Unit) {
+    public fun session(block: suspend Session.() -> Unit) {
         server.session(block)
     }
 }

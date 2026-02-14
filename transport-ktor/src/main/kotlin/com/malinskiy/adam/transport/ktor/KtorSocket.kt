@@ -33,7 +33,7 @@ import io.ktor.network.sockets.Socket as RealKtorSocket
 import io.ktor.utils.io.readByte as ktorReadByte
 import io.ktor.utils.io.writeByte as ktorWriteByte
 
-class KtorSocket(private val ktorSocket: RealKtorSocket) : Socket {
+public class KtorSocket(private val ktorSocket: RealKtorSocket) : Socket {
     private val readChannel: ByteReadChannel = ktorSocket.openReadChannel()
     private val writeChannel: ByteWriteChannel = ktorSocket.openWriteChannel(autoFlush = true)
     override val isClosedForWrite: Boolean
@@ -99,7 +99,7 @@ class KtorSocket(private val ktorSocket: RealKtorSocket) : Socket {
         }
     }
 
-    companion object {
+    private companion object {
         private val log = AdamLogging.logger {}
     }
 }

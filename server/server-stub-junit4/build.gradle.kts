@@ -19,6 +19,10 @@ plugins {
     id("jacoco")
 }
 
+kotlin {
+    explicitApi()
+}
+
 
 tasks.jacocoTestReport {
     reports {

@@ -32,12 +32,12 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.memberProperties
 
 
-class AdbServerExtension : BeforeEachCallback, AfterEachCallback {
-    lateinit var server: AndroidDebugBridgeServer
-    val client: AndroidDebugBridgeClient
+public class AdbServerExtension : BeforeEachCallback, AfterEachCallback {
+    public lateinit var server: AndroidDebugBridgeServer
+    public val client: AndroidDebugBridgeClient
         get() = server.client
 
-    fun session(block: suspend Session.() -> Unit) {
+    public fun session(block: suspend Session.() -> Unit) {
         server.listen { input, output ->
             val session = Session(input, output)
             block(session)
