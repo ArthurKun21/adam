@@ -23,3 +23,7 @@ plugins {
 android {
     namespace = "com.malinskiy.adam.junit4.android.listener"
 }
+
+dependencies {
+    implementation(libs.kotlin.reflect)
+}

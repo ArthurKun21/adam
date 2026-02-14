@@ -28,6 +28,8 @@ spotless = "8.2.1"
 ktlint-core = "1.8.0"
 
 [libraries]
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 apache-commons-pool2 = { module = "org.apache.commons:commons-pool2", version.ref = "apacheCommonsPool2" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
