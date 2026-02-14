@@ -3,12 +3,16 @@ plugins {
 }
 
 repositories {
+    gradlePluginPortal()
     mavenCentral()
     google()
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
-    implementation("com.android.tools.build:gradle:${libs.versions.androidGradle.get()}")
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:${libs.versions.dokka.get()}")
+    implementation(libs.kotlin.gradle)
+    implementation(libs.androidx.gradle)
+    implementation(libs.dokka.gradle)
+
+    // workaround to enable version catalogs (libs) in buildSrc
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
