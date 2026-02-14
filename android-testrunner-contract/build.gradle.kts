@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget as KotlinJvmTarget
+
 /*
  * Copyright (C) 2021 Anton Malinskiy
  *
@@ -19,14 +21,14 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = KotlinJvmTarget.JVM_11
     kotlinOptions.apiVersion = "1.5"
-    kotlinOptions.languageVersion = "1.8"
+    kotlinOptions.languageVersion = KotlinJvmTarget.JVM_11
 }
 
 Deployment.initialize(project)
