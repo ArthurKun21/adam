@@ -44,7 +44,7 @@ import java.io.File
  * INSTRUMENTATION_STATUS: stream=.
  * INSTRUMENTATION_STATUS: test=ignoreTest
  */
-class AdamScreenCaptureProcessor : BasicScreenCaptureProcessor() {
+public class AdamScreenCaptureProcessor : BasicScreenCaptureProcessor() {
     override fun process(capture: ScreenCapture): String? {
         val filename = super.process(capture)
         val absoluteScreenCapturePath = File(mDefaultScreenshotPath, filename)

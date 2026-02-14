@@ -32,7 +32,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * @param coroutineContext it's your responsibility to cancel this context when needed
  */
-class EmulatorConsoleRule(private val mode: Mode = Mode.ASSERT, private val coroutineContext: CoroutineContext = Dispatchers.IO) :
+public class EmulatorConsoleRule(private val mode: Mode = Mode.ASSERT, private val coroutineContext: CoroutineContext = Dispatchers.IO) :
     TestRule {
     private lateinit var client: AndroidDebugBridgeClient
     private lateinit var inetSocketAddress: InetSocketAddress
@@ -68,5 +68,5 @@ class EmulatorConsoleRule(private val mode: Mode = Mode.ASSERT, private val coro
         }
     }
 
-    suspend fun execute(cmd: String) = client.execute(EmulatorCommandRequest(cmd, inetSocketAddress, authToken))
+    public suspend fun execute(cmd: String): String = client.execute(EmulatorCommandRequest(cmd, inetSocketAddress, authToken))
 }

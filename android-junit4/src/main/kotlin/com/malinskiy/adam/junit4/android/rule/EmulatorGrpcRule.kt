@@ -31,11 +31,11 @@ import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import java.util.concurrent.TimeUnit
 
-class EmulatorGrpcRule(
-    val mode: Mode = Mode.ASSERT,
+public class EmulatorGrpcRule(
+    public val mode: Mode = Mode.ASSERT,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TestRule {
-    lateinit var grpc: EmulatorControllerGrpcKt.EmulatorControllerCoroutineStub
+    public lateinit var grpc: EmulatorControllerGrpcKt.EmulatorControllerCoroutineStub
     private var channel: ManagedChannel? = null
 
     override fun apply(base: Statement, description: Description): Statement {

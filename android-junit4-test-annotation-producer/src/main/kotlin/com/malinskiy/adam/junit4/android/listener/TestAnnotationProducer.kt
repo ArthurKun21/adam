@@ -42,7 +42,7 @@ import kotlin.reflect.full.memberProperties
  * INSTRUMENTATION_STATUS: stream=.
  * INSTRUMENTATION_STATUS: test=ignoreTest
  */
-class TestAnnotationProducer : RunListener() {
+public class TestAnnotationProducer : RunListener() {
     override fun testStarted(description: Description?) {
         super.testStarted(description)
         if (description?.isTest == true) {

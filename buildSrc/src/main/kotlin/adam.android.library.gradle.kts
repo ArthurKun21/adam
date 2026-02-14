@@ -7,6 +7,10 @@ plugins {
     // id("adam.code.lint")
 }
 
+kotlin {
+    explicitApi()
+}
+
 android {
     defaultConfig {
         lint.targetSdk = ProjectConfig.TARGET_SDK

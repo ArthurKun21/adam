@@ -7,4 +7,4 @@ package com.malinskiy.adam.junit4.android
             "Its usage should be marked with '@com.malinskiy.adam.junit4.android.UnsafeAdbAccess' or '@OptIn(com.malinskiy.adam.junit4.android.UnsafeAdbAccess::class)' " +
             "if you accept the potential risks"
 )
-annotation class UnsafeAdbAccess
+public annotation class UnsafeAdbAccess

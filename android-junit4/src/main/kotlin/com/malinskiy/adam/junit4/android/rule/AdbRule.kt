@@ -35,12 +35,12 @@ import kotlin.coroutines.CoroutineContext
  * @param coroutineContext it's your responsibility to cancel this context when needed
  */
 @OptIn(UnsafeAdbAccess::class)
-class AdbRule(private val mode: Mode = Mode.ASSERT, private val coroutineContext: CoroutineContext = Dispatchers.IO) :
+public class AdbRule(private val mode: Mode = Mode.ASSERT, private val coroutineContext: CoroutineContext = Dispatchers.IO) :
     TestRule {
-    lateinit var adb: SingleTargetAndroidDebugBridgeClient
+    public lateinit var adb: SingleTargetAndroidDebugBridgeClient
 
     @UnsafeAdbAccess
-    lateinit var adbUnsafe: AndroidDebugBridgeClient
+    public lateinit var adbUnsafe: AndroidDebugBridgeClient
 
     override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {
