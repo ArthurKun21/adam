@@ -3,7 +3,7 @@ package adam.buildlogic
 import org.gradle.api.JavaVersion as GradleJavaVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget as KotlinJvmTarget
 
-object AndroidConfig {
+object ProjectConfig {
     const val COMPILE_SDK = 36
     const val TARGET_SDK = 36
     const val MIN_SDK = 24

@@ -1,4 +1,4 @@
-import adam.buildlogic.AndroidConfig
+import adam.buildlogic.ProjectConfig
 import adam.buildlogic.configureAndroid
 import org.gradle.accessors.dm.LibrariesForLibs
 
@@ -9,19 +9,19 @@ plugins {
 
 android {
     defaultConfig {
-        lint.targetSdk = AndroidConfig.TARGET_SDK
+        lint.targetSdk = ProjectConfig.TARGET_SDK
     }
     configureAndroid(this)
 }
 
 java {
-    sourceCompatibility = AndroidConfig.JavaVersion
-    targetCompatibility = AndroidConfig.JavaVersion
+    sourceCompatibility = ProjectConfig.JavaVersion
+    targetCompatibility = ProjectConfig.JavaVersion
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
     compilerOptions {
-        jvmTarget.set(AndroidConfig.JvmTarget)
+        jvmTarget.set(ProjectConfig.JvmTarget)
     }
 }
 
