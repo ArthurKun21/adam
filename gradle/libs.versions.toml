@@ -24,6 +24,9 @@ testMonitor = "1.6.1"
 testRunner = "1.5.2"
 gradleVersionsPlugin = "0.49.0"
 
+spotless = "8.2.1"
+ktlint-core = "1.8.0"
+
 [libraries]
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 apache-commons-pool2 = { module = "org.apache.commons:commons-pool2", version.ref = "apacheCommonsPool2" }
@@ -52,6 +55,9 @@ image-comparison = { module = "com.github.romankh3:image-comparison", version.re
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 androidx-gradle = { module = "com.android.tools.build:gradle", version.ref = "androidGradle" }
 dokka-gradle = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+
+spotless-gradle = { group = "com.diffplug.spotless", name = "spotless-plugin-gradle", version.ref = "spotless" }
+ktlint-core = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint-core" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
