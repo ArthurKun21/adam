@@ -1,3 +1,5 @@
+import adam.buildlogic.AndroidConfig
+
 plugins {
     kotlin("jvm")
 }
