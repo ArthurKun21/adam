@@ -32,22 +32,27 @@ jobs:
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
           check_name: Report Build & Test
+
       - name: archive test results
         if: failure()
         run: (cd adam/build/reports/tests/test; zip -r -X ../../../../../test-result.zip .)
+
       - name: Save test output
         uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: test-result
           path: test-result.zip
+
       - name: archive test coverage
         run: (cd adam/build/reports/jacoco/test/html; zip -r -X ../../../../../test-coverage.zip .)
+
       - name: Save coverage output
         uses: actions/upload-artifact@v6
         with:
           name: test-coverage
           path: test-coverage.zip
+          
       - name: codecov unit tests
         uses: codecov/codecov-action@v5
         with:
