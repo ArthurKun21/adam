@@ -17,12 +17,3 @@ tasks.withType<DependencyUpdatesTask> {
         isNonStable(candidate.version) && !isNonStable(currentVersion)
     }
 }
-
-subprojects {
-    repositories {
-        mavenCentral()
-        google()
-    }
-
-    group = "com.malinskiy.adam"
-}

@@ -13,13 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-rootProject.name = "adm"
+
 pluginManagement {
     repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
         gradlePluginPortal()
-        google()
     }
 }
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        // fallback for the rest of the dependencies
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
+rootProject.name = "adm"
 include(":adam")
 include(":transport-ktor")
 include(":android-junit4")
