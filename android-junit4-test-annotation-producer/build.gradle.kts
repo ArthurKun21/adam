@@ -54,10 +54,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8", version = Versions.kotlin))
-    implementation(kotlin("reflect", version = Versions.kotlin))
-    api(TestLibraries.junit4)
-    api(AndroidX.testMonitor)
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("reflect"))
+    api(libs.junit4)
+    api(libs.androidx.test.monitor)
 }
 
 afterEvaluate {

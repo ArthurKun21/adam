@@ -40,10 +40,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
 
 dependencies {
     api(project(":server:server-stub"))
-    implementation(TestLibraries.junit5)
-    implementation(TestLibraries.junit5commons)
-    implementation(kotlin("reflect", version = Versions.kotlin))
-    implementation(Libraries.coroutines)
+    implementation(libs.junit5.engine)
+    implementation(libs.junit5.commons)
+    implementation(kotlin("reflect"))
+    implementation(libs.coroutines.core)
 
-    testImplementation(TestLibraries.coroutinesDebug)
+    testImplementation(libs.coroutines.debug)
 }

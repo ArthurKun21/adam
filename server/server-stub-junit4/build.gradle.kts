@@ -39,8 +39,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
 }
 dependencies {
     api(project(":server:server-stub"))
-    implementation(TestLibraries.junit4)
-    implementation(Libraries.coroutines)
+    implementation(libs.junit4)
+    implementation(libs.coroutines.core)
 
-    testImplementation(TestLibraries.coroutinesDebug)
+    testImplementation(libs.coroutines.debug)
 }

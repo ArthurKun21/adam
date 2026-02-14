@@ -54,11 +54,11 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8", version = Versions.kotlin))
+    implementation(kotlin("stdlib-jdk8"))
     api(project(":adam"))
-    api(TestLibraries.junit4)
-    api(Libraries.coroutines)
-    api(AndroidX.testMonitor)
+    api(libs.junit4)
+    api(libs.coroutines.core)
+    api(libs.androidx.test.monitor)
     api(project(":android-testrunner-contract"))
 }
 

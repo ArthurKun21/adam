@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
-    implementation("com.android.tools.build:gradle:9.0.0")
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.8.10")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
+    implementation("com.android.tools.build:gradle:${libs.versions.androidGradle.get()}")
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:${libs.versions.dokka.get()}")
 }

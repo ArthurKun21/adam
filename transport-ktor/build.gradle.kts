@@ -31,6 +31,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
 
 dependencies {
     implementation(project(":adam"))
-    implementation(Libraries.ktorNetwork)
-    implementation(Libraries.logging)
+    implementation(libs.ktor.network)
+    implementation(libs.logging)
 }
