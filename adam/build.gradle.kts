@@ -25,7 +25,7 @@ plugins {
     id("idea")
 }
 
-// Deployment.initialize(project)
+
 
 protobuf {
     protoc {
