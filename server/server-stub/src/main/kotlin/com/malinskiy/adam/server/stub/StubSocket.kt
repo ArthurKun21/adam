@@ -21,9 +21,10 @@ import io.ktor.utils.io.ByteChannel
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.cancel
-import io.ktor.utils.io.readByteArray
+import io.ktor.utils.io.readAvailable
+import io.ktor.utils.io.readFully
 import io.ktor.utils.io.readInt
-import io.ktor.utils.io.writeByteArray
+import io.ktor.utils.io.writeFully
 import io.ktor.utils.io.writeInt
 import java.nio.ByteBuffer
 import io.ktor.utils.io.readByte as channelReadByte
@@ -42,31 +43,24 @@ public class StubSocket(
 
     override suspend fun readFully(buffer: ByteBuffer): Int {
         val count = buffer.remaining()
-        val dst = readChannel.readByteArray(count)
-        buffer.put(dst)
+        readChannel.readFully(buffer)
         return count
     }
 
     override suspend fun readFully(buffer: ByteArray, offset: Int, limit: Int) {
-        val tmp = readChannel.readByteArray(limit)
-        System.arraycopy(tmp, 0, buffer, offset, limit)
+        readChannel.readFully(buffer, offset, offset + limit)
     }
 
     override suspend fun writeFully(byteBuffer: ByteBuffer) {
-        val src = ByteArray(byteBuffer.remaining())
-        byteBuffer.get(src)
-        writeChannel.writeByteArray(src)
+        writeChannel.writeFully(byteBuffer)
     }
 
     override suspend fun writeFully(byteArray: ByteArray, offset: Int, limit: Int) {
-        writeChannel.writeByteArray(byteArray.copyOfRange(offset, offset + limit))
+        writeChannel.writeFully(byteArray, offset, offset + limit)
     }
 
     override suspend fun readAvailable(buffer: ByteArray, offset: Int, limit: Int): Int {
-        if (readChannel.isClosedForRead) return -1
-        val tmp = readChannel.readByteArray(limit.coerceAtMost(1))
-        System.arraycopy(tmp, 0, buffer, offset, tmp.size)
-        return tmp.size
+        return readChannel.readAvailable(buffer, offset, limit)
     }
 
     override suspend fun readByte(): Byte = readChannel.channelReadByte()

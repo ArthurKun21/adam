@@ -22,11 +22,11 @@ import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.ByteWriteChannel
-import io.ktor.utils.io.availableForRead
 import io.ktor.utils.io.cancel
-import io.ktor.utils.io.readByteArray
+import io.ktor.utils.io.readAvailable
+import io.ktor.utils.io.readFully
 import io.ktor.utils.io.readInt
-import io.ktor.utils.io.writeByteArray
+import io.ktor.utils.io.writeFully
 import io.ktor.utils.io.writeInt
 import java.nio.ByteBuffer
 import io.ktor.network.sockets.Socket as RealKtorSocket
@@ -43,36 +43,24 @@ public class KtorSocket(private val ktorSocket: RealKtorSocket) : Socket {
 
     override suspend fun readFully(buffer: ByteBuffer): Int {
         val count = buffer.remaining()
-        val dst = readChannel.readByteArray(count)
-        buffer.put(dst)
+        readChannel.readFully(buffer)
         return count
     }
 
     override suspend fun readFully(buffer: ByteArray, offset: Int, limit: Int) {
-        val tmp = readChannel.readByteArray(limit)
-        System.arraycopy(tmp, 0, buffer, offset, limit)
+        readChannel.readFully(buffer, offset, offset + limit)
     }
 
     override suspend fun writeFully(byteBuffer: ByteBuffer) {
-        val src = ByteArray(byteBuffer.remaining())
-        byteBuffer.get(src)
-        writeChannel.writeByteArray(src)
-        writeChannel.flush()
+        writeChannel.writeFully(byteBuffer)
     }
 
     override suspend fun writeFully(byteArray: ByteArray, offset: Int, limit: Int) {
-        writeChannel.writeByteArray(byteArray.copyOfRange(offset, offset + limit))
-        writeChannel.flush()
+        writeChannel.writeFully(byteArray, offset, offset + limit)
     }
 
     override suspend fun readAvailable(buffer: ByteArray, offset: Int, limit: Int): Int {
-        if (readChannel.isClosedForRead && readChannel.availableForRead == 0) return -1
-        val avail = readChannel.availableForRead
-        if (avail == 0) return 0
-        val toRead = avail.coerceAtMost(limit)
-        val tmp = readChannel.readByteArray(toRead)
-        System.arraycopy(tmp, 0, buffer, offset, toRead)
-        return toRead
+        return readChannel.readAvailable(buffer, offset, limit)
     }
 
     override suspend fun readByte(): Byte = readChannel.ktorReadByte()
@@ -81,12 +69,10 @@ public class KtorSocket(private val ktorSocket: RealKtorSocket) : Socket {
 
     override suspend fun writeByte(value: Int) {
         writeChannel.ktorWriteByte(value.toByte())
-        writeChannel.flush()
     }
 
     override suspend fun writeIntLittleEndian(value: Int) {
         writeChannel.writeInt(Integer.reverseBytes(value))
-        writeChannel.flush()
     }
 
     override suspend fun close() {

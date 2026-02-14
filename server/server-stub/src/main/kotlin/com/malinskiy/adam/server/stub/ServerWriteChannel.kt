@@ -19,7 +19,7 @@ package com.malinskiy.adam.server.stub
 import com.malinskiy.adam.Const
 import com.malinskiy.adam.request.shell.v2.MessageType
 import io.ktor.utils.io.ByteWriteChannel
-import io.ktor.utils.io.writeByteArray
+import io.ktor.utils.io.writeFully
 import io.ktor.utils.io.writeStringUtf8
 import java.nio.ByteBuffer
 import io.ktor.utils.io.writeInt as channelWriteInt
@@ -28,7 +28,7 @@ import io.ktor.utils.io.writeByte as channelWriteByte
 
 public class ServerWriteChannel(private val delegate: ByteWriteChannel) : ByteWriteChannel by delegate {
     private suspend fun write(request: ByteArray, length: Int? = null) {
-        delegate.writeByteArray(request.copyOfRange(0, length ?: request.size))
+        delegate.writeFully(request, 0, length ?: request.size)
     }
 
     public suspend fun writeIntLittleEndian(value: Int) {
@@ -40,11 +40,11 @@ public class ServerWriteChannel(private val delegate: ByteWriteChannel) : ByteWr
     }
 
     public suspend fun writeFully(src: ByteArray) {
-        delegate.writeByteArray(src)
+        delegate.writeFully(src)
     }
 
     public suspend fun writeFully(src: ByteArray, offset: Int, length: Int) {
-        delegate.writeByteArray(src.copyOfRange(offset, offset + length))
+        delegate.writeFully(src, offset, offset + length)
     }
 
     public suspend fun writeByte(value: Byte) {

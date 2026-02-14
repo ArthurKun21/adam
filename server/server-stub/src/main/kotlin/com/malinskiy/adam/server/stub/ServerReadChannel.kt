@@ -25,8 +25,8 @@ import com.malinskiy.adam.request.shell.v2.MessageType
 import com.malinskiy.adam.request.sync.v2.CompressionType
 import io.ktor.util.cio.writeChannel
 import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.readByteArray
-import io.ktor.utils.io.writeByteArray
+import io.ktor.utils.io.readFully
+import io.ktor.utils.io.writeFully
 import io.ktor.utils.io.readByte as channelReadByte
 import io.ktor.utils.io.readInt as channelReadInt
 import kotlinx.coroutines.Job
@@ -40,8 +40,7 @@ public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteRead
     public suspend fun readIntLittleEndian(): Int = Integer.reverseBytes(delegate.channelReadInt())
 
     public suspend fun readFully(dst: ByteArray, offset: Int, length: Int) {
-        val tmp = delegate.readByteArray(length)
-        System.arraycopy(tmp, 0, dst, offset, length)
+        delegate.readFully(dst, offset, offset + length)
     }
     public suspend fun receiveCommand(): String {
         val bytes = ByteArray(4)
@@ -197,7 +196,7 @@ public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteRead
                             throw UnsupportedSyncProtocolException()
                         }
                         readFully(dataBuffer, 0, available)
-                        channel.writeByteArray(dataBuffer.copyOfRange(0, available))
+                        channel.writeFully(dataBuffer, 0, available)
                     }
                     else -> throw RuntimeException("Something bad happened")
                 }
