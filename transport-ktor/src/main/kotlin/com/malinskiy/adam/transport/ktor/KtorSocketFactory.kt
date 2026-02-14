@@ -18,7 +18,6 @@ package com.malinskiy.adam.transport.ktor
 
 import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.SocketFactory
-import io.ktor.network.selector.ActorSelectorManager
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.aSocket
 import java.net.InetSocketAddress
@@ -31,7 +30,7 @@ class KtorSocketFactory(
     private val connectTimeout: Long = 10_000,
     private val idleTimeout: Long = 30_000
 ) : SocketFactory {
-    private val selectorManager: SelectorManager = ActorSelectorManager(coroutineContext)
+    private val selectorManager: SelectorManager = SelectorManager(coroutineContext)
 
     override suspend fun tcp(socketAddress: InetSocketAddress, connectTimeout: Long?, idleTimeout: Long?): Socket {
         val ktorSocketAddress = KtorSocketAddress(socketAddress.hostName, socketAddress.port)

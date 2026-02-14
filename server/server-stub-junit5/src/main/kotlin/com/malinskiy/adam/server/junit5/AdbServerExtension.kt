@@ -72,7 +72,7 @@ class AdbServerExtension : BeforeEachCallback, AfterEachCallback {
             }
     }
 
-    override fun afterEach(context: ExtensionContext?) {
+    override fun afterEach(context: ExtensionContext) {
         runBlocking {
             withContext(NonCancellable) {
                 server.dispose()

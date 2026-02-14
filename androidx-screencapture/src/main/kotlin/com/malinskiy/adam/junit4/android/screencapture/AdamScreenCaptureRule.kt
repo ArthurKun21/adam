@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package com.malinskiy.adam.junit4.android.screencapture
 
 import androidx.test.runner.screenshot.Screenshot

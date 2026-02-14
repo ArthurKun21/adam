@@ -34,6 +34,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * @param coroutineContext it's your responsibility to cancel this context when needed
  */
+@OptIn(UnsafeAdbAccess::class)
 class AdbRule(private val mode: Mode = Mode.ASSERT, private val coroutineContext: CoroutineContext = Dispatchers.IO) :
     TestRule {
     lateinit var adb: SingleTargetAndroidDebugBridgeClient

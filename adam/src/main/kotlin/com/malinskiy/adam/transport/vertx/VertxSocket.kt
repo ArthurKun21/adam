@@ -32,7 +32,7 @@ import io.vertx.core.net.SocketAddress
 import io.vertx.core.net.impl.NetSocketImpl
 import io.vertx.core.streams.ReadStream
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -60,7 +60,7 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
         netClient = client
         val connect = client.connect(socketAddress)
         state.change(State.CREATED, State.SYN_SENT) { "Socket connection error" }
-        socket = connect.await() as NetSocketImpl
+        socket = connect.coAwait() as NetSocketImpl
 
         state.change(State.SYN_SENT, State.ESTABLISHED) { "Socket connection error" }
         canRead.flip(false) { "Socket connection error: canRead was true, expected false" }
@@ -95,18 +95,18 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
     override suspend fun writeFully(byteBuffer: ByteBuffer) {
         if (isClosedForWrite) throw IllegalStateException("Socket write error: socket is not connected ${state.get()}")
         val appendBytes = Buffer.buffer().appendBytes(byteBuffer.array(), byteBuffer.position(), byteBuffer.remaining())
-        socket.write(appendBytes).await()
+        socket.write(appendBytes).coAwait()
     }
 
     suspend fun writeFully(buffer: Buffer) {
         if (isClosedForWrite) throw IllegalStateException("Socket write error: socket is not connected ${state.get()}")
-        socket.write(buffer).await()
+        socket.write(buffer).coAwait()
     }
 
     override suspend fun writeFully(byteArray: ByteArray, offset: Int, limit: Int) {
         if (isClosedForWrite) throw IllegalStateException("Socket write error: socket is not connected ${state.get()}")
         val appendBytes = Buffer.buffer().appendBytes(byteArray, offset, limit)
-        socket.write(appendBytes).await()
+        socket.write(appendBytes).coAwait()
     }
 
     override suspend fun readAvailable(buffer: ByteArray, offset: Int, limit: Int): Int {
@@ -115,7 +115,7 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
             recordParser.request(limit)
         }
         return readChannel.receiveCatching().getOrNull()?.let {
-            val actualLimit = it.byteBuf.writerIndex()
+            val actualLimit = it.length()
             assert(actualLimit <= limit) { "Received ${it.length()} more than we can chew $limit" }
             it.getBytes(0, actualLimit, buffer, offset)
             actualLimit
@@ -181,7 +181,7 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
     }
 
     override suspend fun close() {
-        socket.close().await()
+        socket.close().coAwait()
         /**
          * This should be maximum buffer that could've been requested in case:
          * 1. Read request for up to max initiated
@@ -195,7 +195,7 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
             }
         }
         id?.let {
-            vertx.undeploy(it).await()
+            vertx.undeploy(it).coAwait()
         }
     }
 }

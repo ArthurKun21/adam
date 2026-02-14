@@ -16,10 +16,8 @@
 
 package com.malinskiy.adam.transport.vertx
 
-import io.netty.buffer.Unpooled
 import io.vertx.core.Handler
 import io.vertx.core.buffer.Buffer
-import io.vertx.core.impl.Arguments
 import io.vertx.core.streams.ReadStream
 import kotlin.math.min
 
@@ -27,9 +25,9 @@ class VariableSizeRecordParser(
     private val stream: ReadStream<Buffer>? = null
 ) : Handler<Buffer>, ReadStream<Buffer> {
     // Empty and unmodifiable
-    private val EMPTY_BUFFER = Buffer.buffer(Unpooled.EMPTY_BUFFER)
-    private var buff = EMPTY_BUFFER
-    private val bufferLock = Object()
+    private val EMPTY_BUFFER: Buffer = Buffer.buffer()
+    private var buff: Buffer = EMPTY_BUFFER
+    private val bufferLock = Any()
     private var pos = 0 // Current position in buffer
     private var start = 0 // Position of beginning of current record
     private var requestedAtMost = 0
@@ -40,7 +38,7 @@ class VariableSizeRecordParser(
     private var exceptionHandler: Handler<Throwable>? = null
     private var streamEnded = false
     private val drained
-        get() = streamEnded && (buff.byteBuf.writerIndex() == 0)
+        get() = streamEnded && (buff.length() == 0)
 
     /**
      * This method is called to provide the parser with data.toChannel
@@ -63,7 +61,7 @@ class VariableSizeRecordParser(
     }
 
     fun request(size: Int) {
-        Arguments.require(size > 0, "Size must be > 0")
+        require(size > 0) { "Size must be > 0" }
         requestedAtMost = size
         handleParsing()
     }
@@ -161,7 +159,7 @@ class VariableSizeRecordParser(
     override fun pause() = apply { demand = 0L }
 
     override fun fetch(amount: Long): ReadStream<Buffer> {
-        Arguments.require(amount > 0, "Fetch amount must be > 0")
+        require(amount > 0) { "Fetch amount must be > 0" }
         demand += amount
         if (demand < 0L) {
             demand = Long.MAX_VALUE

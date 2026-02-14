@@ -25,7 +25,6 @@ import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.exception.UnsupportedImageProtocolException
 import com.malinskiy.adam.extension.newFileWithExtension
 import com.malinskiy.adam.server.junit4.AdbServerRule
-import io.ktor.utils.io.writeIntLittleEndian
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test

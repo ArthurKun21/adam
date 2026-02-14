@@ -28,9 +28,7 @@ import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.request.ValidationResponse
 import com.malinskiy.adam.server.stub.StubSocket
 import com.malinskiy.adam.transport.use
-import io.ktor.utils.io.ByteChannelSequentialJVM
-import io.ktor.utils.io.ByteWriteChannel
-import io.ktor.utils.io.core.internal.ChunkBuffer
+
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -105,7 +103,6 @@ class CreateMultiPackageSessionRequestTest {
     fun testRead() {
         val request = stub()
         val response = "Success [my-session-id]".toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
-        val byteBufferChannel: ByteWriteChannel = ByteChannelSequentialJVM(ChunkBuffer.Empty, false)
         runBlocking {
             StubSocket(response).use { socket ->
                 val (sessionId, output) = request.readElement(socket)
@@ -119,7 +116,6 @@ class CreateMultiPackageSessionRequestTest {
     fun testReadException() {
         val request = stub()
         val response = "Failure".toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
-        val byteBufferChannel: ByteWriteChannel = ByteChannelSequentialJVM(ChunkBuffer.Empty, false)
         runBlocking {
             StubSocket(response).use { socket ->
                 request.readElement(socket)
@@ -232,7 +228,7 @@ class CreateMultiPackageSessionRequestTest {
 
     @Test
     fun testValidationFailureApkSplit() {
-        val pkg = ApkSplitInstallationPackage(listOf(temp.newFileWithExtension("apk"), createTempFile(suffix = ".app")))
+        val pkg = ApkSplitInstallationPackage(listOf(temp.newFileWithExtension("apk"), kotlin.io.path.createTempFile(suffix = ".app").toFile()))
         var request = CreateMultiPackageSessionRequest(
             supportedFeatures = listOf(Feature.CMD),
             extraArgs = emptyList(),

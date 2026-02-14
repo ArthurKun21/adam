@@ -19,17 +19,36 @@ package com.malinskiy.adam.server.stub
 import com.malinskiy.adam.Const
 import com.malinskiy.adam.request.shell.v2.MessageType
 import io.ktor.utils.io.ByteWriteChannel
-import io.ktor.utils.io.writeByte
-import io.ktor.utils.io.writeFully
-import io.ktor.utils.io.writeIntLittleEndian
-import io.ktor.utils.io.writeLongLittleEndian
+import io.ktor.utils.io.writeByteArray
 import io.ktor.utils.io.writeStringUtf8
 import java.nio.ByteBuffer
+import io.ktor.utils.io.writeInt as channelWriteInt
+import io.ktor.utils.io.writeLong as channelWriteLong
+import io.ktor.utils.io.writeByte as channelWriteByte
 
 class ServerWriteChannel(private val delegate: ByteWriteChannel) : ByteWriteChannel by delegate {
     private suspend fun write(request: ByteArray, length: Int? = null) {
-        val requestBuffer = ByteBuffer.wrap(request, 0, length ?: request.size)
-        delegate.writeFully(requestBuffer)
+        delegate.writeByteArray(request.copyOfRange(0, length ?: request.size))
+    }
+
+    suspend fun writeIntLittleEndian(value: Int) {
+        delegate.channelWriteInt(Integer.reverseBytes(value))
+    }
+
+    private suspend fun writeLongLittleEndian(value: Long) {
+        delegate.channelWriteLong(java.lang.Long.reverseBytes(value))
+    }
+
+    suspend fun writeFully(src: ByteArray) {
+        delegate.writeByteArray(src)
+    }
+
+    suspend fun writeFully(src: ByteArray, offset: Int, length: Int) {
+        delegate.writeByteArray(src.copyOfRange(offset, offset + length))
+    }
+
+    suspend fun writeByte(value: Byte) {
+        delegate.channelWriteByte(value)
     }
 
     suspend fun respond(request: ByteArray, length: Int? = null) = write(request, length)
@@ -169,26 +188,26 @@ class ServerWriteChannel(private val delegate: ByteWriteChannel) : ByteWriteChan
     }
 
     suspend fun respondShellV2Exit(exitCode: Int) {
-        writeByte(MessageType.EXIT.toValue().toByte())
-        writeInt(1)
-        writeByte(exitCode)
+        delegate.channelWriteByte(MessageType.EXIT.toValue().toByte())
+        delegate.channelWriteInt(1)
+        delegate.channelWriteByte(exitCode.toByte())
     }
 
     suspend fun respondShellV2Stderr(stderr: String) {
-        writeByte(MessageType.STDERR.toValue().toByte())
+        delegate.channelWriteByte(MessageType.STDERR.toValue().toByte())
         respondStringV2(stderr)
     }
 
     suspend fun respondShellV2Stdout(stdout: String) {
-        writeByte(MessageType.STDOUT.toValue().toByte())
+        delegate.channelWriteByte(MessageType.STDOUT.toValue().toByte())
         respondStringV2(stdout)
     }
 
     suspend fun respondShellV2WindowSizeChange() {
-        writeByte(MessageType.WINDOW_SIZE_CHANGE.toValue().toByte())
+        delegate.channelWriteByte(MessageType.WINDOW_SIZE_CHANGE.toValue().toByte())
     }
 
     suspend fun respondShellV2Invalid() {
-        writeByte(MessageType.INVALID.toValue().toByte())
+        delegate.channelWriteByte(MessageType.INVALID.toValue().toByte())
     }
 }

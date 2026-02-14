@@ -25,13 +25,24 @@ import com.malinskiy.adam.request.shell.v2.MessageType
 import com.malinskiy.adam.request.sync.v2.CompressionType
 import io.ktor.util.cio.writeChannel
 import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.close
-import io.ktor.utils.io.readIntLittleEndian
+import io.ktor.utils.io.readByteArray
+import io.ktor.utils.io.writeByteArray
+import io.ktor.utils.io.readByte as channelReadByte
+import io.ktor.utils.io.readInt as channelReadInt
 import kotlinx.coroutines.Job
 import java.io.File
 import kotlin.coroutines.coroutineContext
 
 class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel by delegate {
+
+    suspend fun readByte(): Byte = delegate.channelReadByte()
+
+    suspend fun readIntLittleEndian(): Int = Integer.reverseBytes(delegate.channelReadInt())
+
+    suspend fun readFully(dst: ByteArray, offset: Int, length: Int) {
+        val tmp = delegate.readByteArray(length)
+        System.arraycopy(tmp, 0, dst, offset, length)
+    }
     suspend fun receiveCommand(): String {
         val bytes = ByteArray(4)
         readFully(bytes, 0, 4)
@@ -177,7 +188,7 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
                 when {
                     header.contentEquals(Const.Message.DONE) -> {
                         channel.flush()
-                        channel.close()
+                        channel.flushAndClose()
                         return file
                     }
                     header.contentEquals(Const.Message.DATA) -> {
@@ -186,7 +197,7 @@ class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel
                             throw UnsupportedSyncProtocolException()
                         }
                         readFully(dataBuffer, 0, available)
-                        channel.writeFully(dataBuffer, 0, available)
+                        channel.writeByteArray(dataBuffer.copyOfRange(0, available))
                     }
                     else -> throw RuntimeException("Something bad happened")
                 }

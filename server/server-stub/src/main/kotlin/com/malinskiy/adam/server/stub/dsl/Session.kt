@@ -21,7 +21,6 @@ import assertk.assertions.isEqualTo
 import com.malinskiy.adam.Const
 import com.malinskiy.adam.server.stub.ServerReadChannel
 import com.malinskiy.adam.server.stub.ServerWriteChannel
-import io.ktor.utils.io.writeIntLittleEndian
 import java.io.File
 
 

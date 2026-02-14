@@ -20,7 +20,7 @@ import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.AndroidDebugBridgeClientFactory
 import com.malinskiy.adam.server.stub.dsl.Expectation
 import com.malinskiy.adam.server.stub.dsl.Session
-import io.ktor.network.selector.ActorSelectorManager
+import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.InetSocketAddress
 import io.ktor.network.sockets.ServerSocket
 import io.ktor.network.sockets.aSocket
@@ -30,7 +30,6 @@ import io.ktor.network.sockets.toJavaAddress
 import io.ktor.util.network.port
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.ByteWriteChannel
-import io.ktor.utils.io.close
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -38,6 +37,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.newFixedThreadPoolContext
+import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
 
@@ -58,12 +58,12 @@ class AndroidDebugBridgeServer : CoroutineScope {
     var port: Int = 0
 
     lateinit var server: ServerSocket
-    lateinit var selector: ActorSelectorManager
+    lateinit var selector: SelectorManager
 
     fun start(): AndroidDebugBridgeClient {
         val address = InetSocketAddress("127.0.0.1", port)
-        selector = ActorSelectorManager(Dispatchers.IO)
-        server = aSocket(selector).tcp().bind(address)
+        selector = SelectorManager(Dispatchers.IO)
+        server = runBlocking { aSocket(selector).tcp().bind(address) }
         port = server.localAddress.toJavaAddress().port
 
         return client
@@ -94,7 +94,7 @@ class AndroidDebugBridgeServer : CoroutineScope {
                 } catch (e: Throwable) {
                     e.printStackTrace()
                 } finally {
-                    output.close()
+                    output.flushAndClose()
                     socket.close()
                 }
             }
@@ -113,7 +113,7 @@ class AndroidDebugBridgeServer : CoroutineScope {
                 } catch (e: Throwable) {
                     e.printStackTrace()
                 } finally {
-                    output.close()
+                    output.flushAndClose()
                     socket.close()
                 }
             } catch (e: Exception) {

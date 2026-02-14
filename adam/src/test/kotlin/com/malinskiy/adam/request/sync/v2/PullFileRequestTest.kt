@@ -25,7 +25,7 @@ import com.malinskiy.adam.exception.UnsupportedSyncProtocolException
 import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.server.junit4.AdbServerRule
 import io.ktor.utils.io.discard
-import io.ktor.utils.io.writeIntLittleEndian
+
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule

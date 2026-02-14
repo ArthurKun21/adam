@@ -16,8 +16,8 @@
 
 package com.malinskiy.adam.log
 
-import mu.KLogger
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object AdamLogging {
     fun logger(func: () -> Unit): KLogger = KotlinLogging.logger(func)

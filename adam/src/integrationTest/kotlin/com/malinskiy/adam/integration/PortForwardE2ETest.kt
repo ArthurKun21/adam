@@ -107,7 +107,7 @@ class PortForwardE2ETest {
             )
 
             assertThat(portString).isNotNull()
-            val actual = portString!!.toInt()
+            val actual = portString!!
             val expected = (currentPortForwards.firstOrNull()?.localSpec as LocalTcpPortSpec).port
 
             assertThat(actual).isEqualTo(expected)
@@ -175,7 +175,7 @@ class PortForwardE2ETest {
 
             if (portString != null) {
                 //Some devices return the allocated port
-                val actual = portString.toInt()
+                val actual = portString
                 val expected = (currentPortForwards.firstOrNull()?.localSpec as RemoteTcpPortSpec).port
 
                 assertThat(actual).isEqualTo(expected)

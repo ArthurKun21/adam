@@ -21,7 +21,7 @@ import com.malinskiy.adam.transport.SocketFactory
 import io.vertx.core.Vertx
 import io.vertx.core.net.NetClientOptions
 import io.vertx.core.net.SocketAddress
-import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import java.net.InetSocketAddress
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -39,7 +39,7 @@ class VertxSocketFactory(
             setConnectTimeout((connectTimeout ?: this@VertxSocketFactory.connectTimeout).toTimeoutInt())
             setIdleTimeout((idleTimeout ?: this@VertxSocketFactory.idleTimeout).toTimeoutInt())
         })
-        val id = vertx.deployVerticle(vertxSocket).await()
+        val id = vertx.deployVerticle(vertxSocket).coAwait()
         vertxSocket.id = id
         return vertxSocket
     }
