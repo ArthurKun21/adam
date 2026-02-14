@@ -32,7 +32,7 @@ import com.malinskiy.adam.transport.withDefaultBuffer
 import java.time.Instant
 
 @Features(Feature.STAT_V2)
-class StatFileRequest(
+public class StatFileRequest(
     private val remotePath: String,
     private val supportedFeatures: List<Feature>
 ) : ComplexRequest<FileEntryV2>() {
@@ -74,6 +74,6 @@ class StatFileRequest(
         }
     }
 
-    override fun serialize() = createBaseRequest("sync:")
+    override fun serialize(): ByteArray = createBaseRequest("sync:")
 }
 

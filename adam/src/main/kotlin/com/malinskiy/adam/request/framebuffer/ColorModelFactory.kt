@@ -26,10 +26,10 @@ import java.awt.image.DataBuffer
 import java.awt.image.DirectColorModel
 import java.io.IOException
 
-class ColorModelFactory {
+public class ColorModelFactory {
     private val cache = mutableMapOf<String, ColorModel>()
 
-    fun get(profileName: String, type: Int): ColorModel {
+    public fun get(profileName: String, type: Int): ColorModel {
         cache[profileName]?.let { return it }
 
         synchronized(cache) {

@@ -19,8 +19,8 @@ package com.malinskiy.adam.interactor
 import com.malinskiy.adam.Const
 import com.malinskiy.adam.log.AdamLogging
 
-class DiscoverAdbSocketInteractor {
-    fun execute() = discover("system property") { System.getProperty(Const.SERVER_PORT_ENV_VAR) }
+public class DiscoverAdbSocketInteractor {
+    public fun execute(): Int = discover("system property") { System.getProperty(Const.SERVER_PORT_ENV_VAR) }
         ?: discover("env var") { System.getenv(Const.SERVER_PORT_ENV_VAR) }
         ?: Const.DEFAULT_ADB_PORT
 
@@ -49,7 +49,7 @@ class DiscoverAdbSocketInteractor {
         else -> true
     }
 
-    companion object {
+    public companion object {
         private val log = AdamLogging.logger {}
     }
 }

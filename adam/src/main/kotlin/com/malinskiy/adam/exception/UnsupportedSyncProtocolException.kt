@@ -16,6 +16,6 @@
 
 package com.malinskiy.adam.exception
 
-class UnsupportedSyncProtocolException(message: String) : RuntimeException(message) {
-    constructor() : this("Unsupported sync: protocol response")
+public class UnsupportedSyncProtocolException(message: String) : RuntimeException(message) {
+    public constructor() : this("Unsupported sync: protocol response")
 }

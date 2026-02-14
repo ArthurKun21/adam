@@ -16,13 +16,13 @@
 
 package com.malinskiy.adam.request.sync.v2
 
-enum class CompressionType {
+public enum class CompressionType {
     NONE,
     BROTLI,
     LZ4,
     Zstd;
 
-    fun toFlag() = when (this) {
+    public fun toFlag(): Int = when (this) {
         NONE -> 0
         BROTLI -> 1
         LZ4 -> 2

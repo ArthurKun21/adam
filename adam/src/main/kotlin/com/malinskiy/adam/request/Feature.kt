@@ -21,7 +21,7 @@ import java.util.*
 /**
  * Each entry represents a service that is supported by the adbd on the device
  */
-enum class Feature {
+public enum class Feature {
     SHELL_V2,
 
     /**
@@ -101,13 +101,13 @@ enum class Feature {
      */
     SENDRECV_V2_DRY_RUN_SEND;
 
-    fun value() = name.lowercase(Locale.ENGLISH)
+    public fun value(): String = name.lowercase(Locale.ENGLISH)
 
-    companion object {
+    public companion object {
         /**
          * see adb/transport.cpp for up-to-date list
          */
-        fun of(value: String) = when (value) {
+        public fun of(value: String): Feature? = when (value) {
             "shell_v2" -> SHELL_V2
             "cmd" -> CMD
             "stat_v2" -> STAT_V2

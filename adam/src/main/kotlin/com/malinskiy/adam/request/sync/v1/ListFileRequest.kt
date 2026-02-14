@@ -26,7 +26,7 @@ import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withDefaultBuffer
 import java.time.Instant
 
-class ListFileRequest(
+public class ListFileRequest(
     private val remotePath: String
 ) : ComplexRequest<List<FileEntryV1>>() {
 
@@ -74,5 +74,5 @@ class ListFileRequest(
         }
     }
 
-    override fun serialize() = createBaseRequest("sync:")
+    override fun serialize(): ByteArray = createBaseRequest("sync:")
 }

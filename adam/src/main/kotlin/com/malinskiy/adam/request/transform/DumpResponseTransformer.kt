@@ -22,7 +22,7 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlin.coroutines.CoroutineContext
 
-class DumpResponseTransformer<T : Any?>(
+public class DumpResponseTransformer<T : Any?>(
     private val file: File,
     private val delegate: ProgressiveResponseTransformer<T>,
     private val dumpContext: CoroutineContext = Dispatchers.IO,

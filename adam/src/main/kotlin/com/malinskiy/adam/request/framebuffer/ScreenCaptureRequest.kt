@@ -26,7 +26,7 @@ import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withDefaultBuffer
 import java.nio.ByteOrder
 
-class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T>) : ComplexRequest<T>() {
+public class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T>) : ComplexRequest<T>() {
     override suspend fun readElement(socket: Socket): T {
         withDefaultBuffer {
             compatLimit(4)
@@ -106,5 +106,5 @@ class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T>) : Co
         }
     }
 
-    override fun serialize() = createBaseRequest("framebuffer:")
+    override fun serialize(): ByteArray = createBaseRequest("framebuffer:")
 }

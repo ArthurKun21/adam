@@ -18,11 +18,11 @@ package com.malinskiy.adam.request.forwarding
 
 import com.malinskiy.adam.exception.UnsupportedForwardingSpecException
 
-sealed class RemotePortSpec {
-    abstract fun toSpec(): String
+public sealed class RemotePortSpec {
+    public abstract fun toSpec(): String
 
-    companion object {
-        fun parse(value: String): RemotePortSpec {
+    public companion object {
+        public fun parse(value: String): RemotePortSpec {
             val split = value.split(':')
             val type = split[0]
             return when (type) {
@@ -38,26 +38,26 @@ sealed class RemotePortSpec {
     }
 }
 
-data class RemoteTcpPortSpec(val port: Int) : RemotePortSpec() {
-    override fun toSpec() = "tcp:$port"
+public data class RemoteTcpPortSpec(public val port: Int) : RemotePortSpec() {
+    override fun toSpec(): String = "tcp:$port"
 }
 
-data class RemoteAbstractPortSpec(val unixDomainSocketName: String) : RemotePortSpec() {
-    override fun toSpec() = "localabstract:$unixDomainSocketName"
+public data class RemoteAbstractPortSpec(public val unixDomainSocketName: String) : RemotePortSpec() {
+    override fun toSpec(): String = "localabstract:$unixDomainSocketName"
 }
 
-data class RemoteReservedPortSpec(val unixDomainSocketName: String) : RemotePortSpec() {
-    override fun toSpec() = "localreserved:$unixDomainSocketName"
+public data class RemoteReservedPortSpec(public val unixDomainSocketName: String) : RemotePortSpec() {
+    override fun toSpec(): String = "localreserved:$unixDomainSocketName"
 }
 
-data class RemoteFilesystemPortSpec(val unixDomainSocketName: String) : RemotePortSpec() {
-    override fun toSpec() = "localfilesystem:$unixDomainSocketName"
+public data class RemoteFilesystemPortSpec(public val unixDomainSocketName: String) : RemotePortSpec() {
+    override fun toSpec(): String = "localfilesystem:$unixDomainSocketName"
 }
 
-data class RemoteDevPortSpec(val charDeviceName: String) : RemotePortSpec() {
-    override fun toSpec() = "dev:$charDeviceName"
+public data class RemoteDevPortSpec(public val charDeviceName: String) : RemotePortSpec() {
+    override fun toSpec(): String = "dev:$charDeviceName"
 }
 
-data class JDWPPortSpec(val processId: Int) : RemotePortSpec() {
-    override fun toSpec() = "jdwp:$processId"
+public data class JDWPPortSpec(public val processId: Int) : RemotePortSpec() {
+    override fun toSpec(): String = "jdwp:$processId"
 }

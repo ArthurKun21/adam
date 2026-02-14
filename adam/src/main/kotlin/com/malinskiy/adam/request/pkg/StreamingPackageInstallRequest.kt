@@ -40,12 +40,12 @@ import kotlin.coroutines.CoroutineContext
  * @see com.malinskiy.adam.request.device.FetchDeviceFeaturesRequest
  */
 @Features(Feature.CMD, Feature.ABB_EXEC, Feature.APEX)
-class StreamingPackageInstallRequest(
+public class StreamingPackageInstallRequest(
     private val pkg: File,
     private val supportedFeatures: List<Feature>,
     private val reinstall: Boolean,
     private val extraArgs: List<String> = emptyList(),
-    val coroutineContext: CoroutineContext = Dispatchers.IO
+    public val coroutineContext: CoroutineContext = Dispatchers.IO
 ) : ComplexRequest<StreamingPackageInstallResult>() {
     private val transformer = StringResponseTransformer()
 
@@ -124,9 +124,9 @@ class StreamingPackageInstallRequest(
         return StreamingPackageInstallResult(output, success)
     }
 
-    companion object {
-        val SUPPORTED_EXTENSIONS = setOf("apk", "apex")
+    public companion object {
+        public val SUPPORTED_EXTENSIONS: Set<String> = setOf("apk", "apex")
     }
 }
 
-data class StreamingPackageInstallResult(val output: String, val success: Boolean)
+public data class StreamingPackageInstallResult(public val output: String, public val success: Boolean)

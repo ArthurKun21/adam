@@ -44,7 +44,7 @@ import java.io.File
  *
  * @see https://android.googlesource.com/platform/frameworks/base/+/master/cmds/am/src/com/android/commands/am/Am.java#155
  */
-class TestRunnerRequest(
+public class TestRunnerRequest(
     private val testPackage: String,
     private val instrumentOptions: InstrumentOptions,
     private val supportedFeatures: List<Feature>,

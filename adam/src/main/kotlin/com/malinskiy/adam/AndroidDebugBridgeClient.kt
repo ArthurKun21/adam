@@ -36,14 +36,14 @@ import java.io.Closeable
 import java.net.InetAddress
 import java.net.InetSocketAddress
 
-class AndroidDebugBridgeClient(
-    val port: Int,
-    val host: InetAddress,
-    val socketFactory: SocketFactory
+public class AndroidDebugBridgeClient(
+    public val port: Int,
+    public val host: InetAddress,
+    public val socketFactory: SocketFactory
 ) : Closeable {
     private val socketAddress: InetSocketAddress = InetSocketAddress(host, port)
 
-    suspend fun <T : Any?> execute(request: ComplexRequest<T>, serial: String? = null): T {
+    public suspend fun <T : Any?> execute(request: ComplexRequest<T>, serial: String? = null): T {
         val validationResponse = request.validate()
         if (!validationResponse.success) {
             val requestSimpleClassName = request.javaClass.simpleName
@@ -61,7 +61,7 @@ class AndroidDebugBridgeClient(
         }
     }
 
-    fun <T : Any?, I : Any?> execute(request: AsyncChannelRequest<T, I>, scope: CoroutineScope, serial: String? = null): ReceiveChannel<T> {
+    public fun <T : Any?, I : Any?> execute(request: AsyncChannelRequest<T, I>, scope: CoroutineScope, serial: String? = null): ReceiveChannel<T> {
         val validationResponse = request.validate()
         if (!validationResponse.success) {
             val requestSimpleClassName = request.javaClass.simpleName
@@ -115,7 +115,7 @@ class AndroidDebugBridgeClient(
         }
     }
 
-    suspend fun execute(request: EmulatorCommandRequest): String {
+    public suspend fun execute(request: EmulatorCommandRequest): String {
         return socketFactory.tcp(
             socketAddress = request.address,
             idleTimeout = request.idleTimeoutOverride
@@ -124,7 +124,7 @@ class AndroidDebugBridgeClient(
         }
     }
 
-    suspend fun <T> execute(request: MultiRequest<T>, serial: String? = null): T {
+    public suspend fun <T> execute(request: MultiRequest<T>, serial: String? = null): T {
         val validationResponse = request.validate()
         if (!validationResponse.success) {
             val requestSimpleClassName = request.javaClass.simpleName
@@ -134,12 +134,12 @@ class AndroidDebugBridgeClient(
         return request.execute(this, serial)
     }
 
-    companion object {
+    public companion object {
         private val log = AdamLogging.logger {}
     }
 
     /**
      * If you're reusing the socket factory across multiple clients then this will affect another client
      */
-    override fun close() = socketFactory.close()
+    override fun close(): Unit = socketFactory.close()
 }

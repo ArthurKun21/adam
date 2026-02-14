@@ -32,15 +32,15 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.produce
 import com.malinskiy.adam.request.shell.v2.ChanneledShellCommandRequest as V2ChanneledShellCommandRequest
 
-abstract class AsyncCompatShellCommandRequest<T : Any>(
-    val cmd: String,
+public abstract class AsyncCompatShellCommandRequest<T : Any>(
+    public val cmd: String,
     private val supportedFeatures: List<Feature>,
     private val target: Target = NonSpecifiedTarget,
     private val coroutineScope: CoroutineScope,
     private val socketIdleTimeout: Long? = null,
 ) : MultiRequest<ReceiveChannel<T>>() {
 
-    abstract suspend fun convertChunk(response: ShellCommandResultChunk): T?
+    public abstract suspend fun convertChunk(response: ShellCommandResultChunk): T?
 
     override suspend fun execute(
         androidDebugBridgeClient: AndroidDebugBridgeClient,
@@ -75,5 +75,5 @@ abstract class AsyncCompatShellCommandRequest<T : Any>(
         }
     }
 
-    abstract suspend fun close(channel: SendChannel<T>)
+    public abstract suspend fun close(channel: SendChannel<T>)
 }

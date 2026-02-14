@@ -49,19 +49,19 @@ import kotlin.coroutines.CoroutineContext
  * If both CMD and ABB_EXEC are missing, falls back to exec:pm
  */
 @Features(Feature.CMD, Feature.ABB_EXEC)
-class InstallSplitPackageRequest(
+public class InstallSplitPackageRequest(
     private val pkg: ApkSplitInstallationPackage,
     private val supportedFeatures: List<Feature>,
     private val reinstall: Boolean,
     private val extraArgs: List<String> = emptyList(),
-    val coroutineContext: CoroutineContext = Dispatchers.IO
+    public val coroutineContext: CoroutineContext = Dispatchers.IO
 ) : AccumulatingMultiRequest<String>() {
 
     private val totalSize: Long by lazy {
         pkg.fileList.sumOf { it.length() }
     }
 
-    override suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?) = with(androidDebugBridgeClient) {
+    override suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?): String = with(androidDebugBridgeClient) {
         val (sessionId, output) = execute(
             CreateIndividualPackageSessionRequest(
                 pkg,
@@ -123,7 +123,7 @@ class InstallSplitPackageRequest(
         }
     }
 
-    companion object {
-        val SUPPORTED_EXTENSIONS = setOf("apk", "dm", "fsv_sig")
+    public companion object {
+        public val SUPPORTED_EXTENSIONS: Set<String> = setOf("apk", "dm", "fsv_sig")
     }
 }

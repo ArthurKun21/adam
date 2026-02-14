@@ -53,20 +53,20 @@ import java.util.*
  *  @param coverageFile Overrides the default location of the EMMA coverage file on the device.
  *  Specify this value as a path and filename in UNIX format. The default filename is described in the entry for the [emma] key.
  */
-data class InstrumentOptions(
-    val pkg: List<String> = emptyList(),
-    val clazz: List<String> = emptyList(),
-    val functional: Boolean? = null,
-    val unit: Boolean? = null,
-    val filterSize: InstrumentationSizeOption? = null,
-    val performance: Boolean? = null,
-    val debug: Boolean? = null,
-    val log: Boolean? = null,
-    val emma: Boolean? = null,
-    val coverageFile: String? = null,
-    val overrides: Map<String, String> = mapOf()
+public data class InstrumentOptions(
+    public val pkg: List<String> = emptyList(),
+    public val clazz: List<String> = emptyList(),
+    public val functional: Boolean? = null,
+    public val unit: Boolean? = null,
+    public val filterSize: InstrumentationSizeOption? = null,
+    public val performance: Boolean? = null,
+    public val debug: Boolean? = null,
+    public val log: Boolean? = null,
+    public val emma: Boolean? = null,
+    public val coverageFile: String? = null,
+    public val overrides: Map<String, String> = mapOf()
 ) {
-    override fun toString() = StringBuilder().apply {
+    override fun toString(): String = StringBuilder().apply {
         if (pkg.isNotEmpty()) append(" -e package " + pkg.joinToString(separator = ","))
         if (clazz.isNotEmpty()) append(" -e class " + clazz.joinToString(separator = ","))
         if (functional != null) append(" -e func $functional")

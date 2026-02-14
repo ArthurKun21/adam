@@ -25,7 +25,9 @@ plugins {
     id("idea")
 }
 
-
+kotlin {
+    explicitApi()
+}
 
 protobuf {
     protoc {

@@ -18,16 +18,16 @@ package com.malinskiy.adam.request.shell.v2
 
 import com.malinskiy.adam.Const
 
-data class ShellCommandResult(
-    val stdout: ByteArray,
-    val stderr: ByteArray,
-    val exitCode: Int
+public data class ShellCommandResult(
+    public val stdout: ByteArray,
+    public val stderr: ByteArray,
+    public val exitCode: Int
 ) {
-    val output: String by lazy {
+    public val output: String by lazy {
         String(stdout, Const.DEFAULT_TRANSPORT_ENCODING)
     }
 
-    val errorOutput: String by lazy {
+    public val errorOutput: String by lazy {
         String(stderr, Const.DEFAULT_TRANSPORT_ENCODING)
     }
 

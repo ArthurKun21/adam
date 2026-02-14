@@ -47,7 +47,7 @@ import kotlin.coroutines.CoroutineContext
  * @param source can be a file or a directory
  */
 @Features(Feature.SENDRECV_V2, Feature.STAT_V2, Feature.LS_V2)
-class PullRequest(
+public class PullRequest(
     private val source: String,
     private val destination: File,
     private val supportedFeatures: List<Feature>,

@@ -19,6 +19,6 @@ package com.malinskiy.adam.request.prop
 import com.malinskiy.adam.request.shell.v1.ShellCommandResult
 import com.malinskiy.adam.request.shell.v1.SyncShellCommandRequest
 
-class GetSinglePropRequest(name: String) : SyncShellCommandRequest<String>("getprop $name") {
-    override fun convertResult(response: ShellCommandResult) = response.output
+public class GetSinglePropRequest(name: String) : SyncShellCommandRequest<String>("getprop $name") {
+    override fun convertResult(response: ShellCommandResult): String = response.output
 }

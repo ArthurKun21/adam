@@ -25,11 +25,11 @@ import com.malinskiy.adam.transport.Socket
 /**
  * @see https://android.googlesource.com/platform/system/core/+/refs/heads/master/adb/adb.h#62
  */
-class GetAdbServerVersionRequest : ComplexRequest<Int>(target = HostTarget) {
+public class GetAdbServerVersionRequest : ComplexRequest<Int>(target = HostTarget) {
     override suspend fun readElement(socket: Socket): Int {
         val version = socket.readOptionalProtocolString()
         return version?.toIntOrNull(radix = 16) ?: throw RequestRejectedException("Empty/corrupt response")
     }
 
-    override fun serialize() = createBaseRequest("version")
+    override fun serialize(): ByteArray = createBaseRequest("version")
 }

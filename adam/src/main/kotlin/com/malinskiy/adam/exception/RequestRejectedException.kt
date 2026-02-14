@@ -16,4 +16,4 @@
 
 package com.malinskiy.adam.exception
 
-class RequestRejectedException(message: String) : RuntimeException(message)
+public class RequestRejectedException(message: String) : RuntimeException(message)

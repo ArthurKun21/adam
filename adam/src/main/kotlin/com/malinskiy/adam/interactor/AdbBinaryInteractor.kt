@@ -22,8 +22,8 @@ import java.lang.ProcessBuilder.Redirect
 import java.util.*
 
 @Suppress("NewApi")
-open class AdbBinaryInteractor {
-    suspend fun execute(
+public open class AdbBinaryInteractor {
+    public suspend fun execute(
         adbBinary: File?,
         androidHome: File?,
         vararg cmd: String

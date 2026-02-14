@@ -30,7 +30,7 @@ import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withDefaultBuffer
 import java.time.Instant
 
-class StatFileRequest(
+public class StatFileRequest(
     private val remotePath: String
 ) : ComplexRequest<FileEntryV1>() {
     override suspend fun readElement(socket: Socket): FileEntryV1 {
@@ -60,6 +60,6 @@ class StatFileRequest(
         }
     }
 
-    override fun serialize() = createBaseRequest("sync:")
+    override fun serialize(): ByteArray = createBaseRequest("sync:")
 }
 

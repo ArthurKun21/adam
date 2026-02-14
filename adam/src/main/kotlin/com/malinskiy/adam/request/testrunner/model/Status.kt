@@ -16,7 +16,7 @@
 
 package com.malinskiy.adam.request.testrunner.model
 
-enum class Status(val value: Int) {
+public enum class Status(public val value: Int) {
     SUCCESS(0),
     START(1),
     IN_PROGRESS(2),
@@ -30,10 +30,10 @@ enum class Status(val value: Int) {
     ASSUMPTION_FAILURE(-4),
     UNKNOWN(6666);
 
-    fun isTerminal() = value < 0
+    public fun isTerminal(): Boolean = value < 0
 
-    companion object {
-        fun valueOf(value: Int?): Status {
+    public companion object {
+        public fun valueOf(value: Int?): Status {
             return when (value) {
                 0 -> SUCCESS
                 1 -> START

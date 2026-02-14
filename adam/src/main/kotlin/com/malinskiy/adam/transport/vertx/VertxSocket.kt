@@ -45,9 +45,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 
-class VertxSocket(private val socketAddress: SocketAddress, private val options: NetClientOptions) : CoroutineVerticle(), Socket {
-    var id: String? = null
-    var netClient: NetClient? = null
+public class VertxSocket(private val socketAddress: SocketAddress, private val options: NetClientOptions) : CoroutineVerticle(), Socket {
+    public var id: String? = null
+    public var netClient: NetClient? = null
     private lateinit var socket: NetSocketImpl
     private lateinit var recordParser: VariableSizeRecordParser
     private lateinit var readChannel: ReceiveChannel<Buffer>
@@ -98,7 +98,7 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
         socket.write(appendBytes).coAwait()
     }
 
-    suspend fun writeFully(buffer: Buffer) {
+    public suspend fun writeFully(buffer: Buffer) {
         if (isClosedForWrite) throw IllegalStateException("Socket write error: socket is not connected ${state.get()}")
         socket.write(buffer).coAwait()
     }
@@ -200,7 +200,7 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
     }
 }
 
-fun <T> ReadStream<T>.toChannel(vertx: Vertx): ReceiveChannel<T> {
+public fun <T> ReadStream<T>.toChannel(vertx: Vertx): ReceiveChannel<T> {
     return toChannel(vertx.orCreateContext)
 }
 
@@ -209,7 +209,7 @@ fun <T> ReadStream<T>.toChannel(vertx: Vertx): ReceiveChannel<T> {
  *
  * @param context the vertx context
  */
-fun <T> ReadStream<T>.toChannel(context: Context): ReceiveChannel<T> {
+public fun <T> ReadStream<T>.toChannel(context: Context): ReceiveChannel<T> {
     this.pause()
     val ret = ChannelReadStream(
         stream = this,

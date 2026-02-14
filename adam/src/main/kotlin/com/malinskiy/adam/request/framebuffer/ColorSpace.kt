@@ -16,19 +16,19 @@
 
 package com.malinskiy.adam.request.framebuffer
 
-enum class ColorSpace {
+public enum class ColorSpace {
     UNKNOWN,
     SRGB,
     P3;
 
-    fun getProfileName(): String? = when (this) {
+    public fun getProfileName(): String? = when (this) {
         UNKNOWN -> null
         SRGB -> "sRGB.icc"
         P3 -> "DisplayP3.icc"
     }
 
-    companion object {
-        fun from(value: Int) = when (value) {
+    public companion object {
+        public fun from(value: Int): ColorSpace = when (value) {
             1 -> SRGB
             2 -> P3
             else -> UNKNOWN

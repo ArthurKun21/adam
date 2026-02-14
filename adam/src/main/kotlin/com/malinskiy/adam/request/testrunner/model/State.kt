@@ -16,9 +16,9 @@
 
 package com.malinskiy.adam.request.testrunner.model
 
-sealed class State(val terminal: Boolean)
+public sealed class State(public val terminal: Boolean)
 
-object NotStarted : State(false)
-object Running : State(false)
-object Finished : State(true)
-object Cancelled : State(true)
+public object NotStarted : State(false)
+public object Running : State(false)
+public object Finished : State(true)
+public object Cancelled : State(true)

@@ -19,7 +19,7 @@ package com.malinskiy.adam.request
 /**
  * MultiRequest that accumulates char sequence responses
  */
-abstract class AccumulatingMultiRequest<T : CharSequence> : MultiRequest<T>() {
+public abstract class AccumulatingMultiRequest<T : CharSequence> : MultiRequest<T>() {
     private val responseBuffer by lazy { StringBuilder() }
     protected val accumulatedResponse: String
         get() = responseBuffer.toString()

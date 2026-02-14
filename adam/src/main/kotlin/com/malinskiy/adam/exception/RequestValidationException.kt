@@ -16,4 +16,4 @@
 
 package com.malinskiy.adam.exception
 
-class RequestValidationException(message: String) : RuntimeException(message)
+public class RequestValidationException(message: String) : RuntimeException(message)

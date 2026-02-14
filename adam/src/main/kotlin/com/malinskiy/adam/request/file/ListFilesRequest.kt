@@ -20,7 +20,7 @@ import com.malinskiy.adam.request.shell.v1.ShellCommandResult
 import com.malinskiy.adam.request.shell.v1.SyncShellCommandRequest
 
 
-class ListFilesRequest(private val directory: String) : SyncShellCommandRequest<List<AndroidFile>>(
+public class ListFilesRequest(private val directory: String) : SyncShellCommandRequest<List<AndroidFile>>(
     cmd = "ls -l $directory"
 ) {
     private val lslRegex: Regex = ("^([bcdlsp-][-r][-w][-xsS][-r][-w][-xsS][-r][-w][-xstST])\\s+" + //permissions
@@ -83,7 +83,7 @@ class ListFilesRequest(private val directory: String) : SyncShellCommandRequest<
     }
 }
 
-enum class AndroidFileType {
+public enum class AndroidFileType {
     REGULAR_FILE,
     DIRECTORY,
     BLOCK_SPECIAL_FILE,
@@ -106,15 +106,15 @@ enum class AndroidFileType {
  * @property type file's type
  * @property link if the file is a symbolic link, this field is what the link points to
  */
-data class AndroidFile(
-    val permissions: String,
-    val owner: String,
-    val group: String,
-    val date: String,
-    val time: String,
-    val name: String,
-    val directory: String,
-    val size: Long,
-    val type: AndroidFileType,
-    val link: String? = null
+public data class AndroidFile(
+    public val permissions: String,
+    public val owner: String,
+    public val group: String,
+    public val date: String,
+    public val time: String,
+    public val name: String,
+    public val directory: String,
+    public val size: Long,
+    public val type: AndroidFileType,
+    public val link: String? = null
 )

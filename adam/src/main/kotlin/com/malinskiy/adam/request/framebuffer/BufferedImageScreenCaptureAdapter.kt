@@ -21,7 +21,7 @@ import com.malinskiy.adam.transport.Socket
 import java.awt.image.BufferedImage
 import java.nio.ByteBuffer
 
-class BufferedImageScreenCaptureAdapter(
+public class BufferedImageScreenCaptureAdapter(
     private var recycledImage: BufferedImage? = null,
     buffer: ByteBuffer? = null,
     colorModelFactory: ColorModelFactory = ColorModelFactory()

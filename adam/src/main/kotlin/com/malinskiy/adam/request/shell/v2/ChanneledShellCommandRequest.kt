@@ -24,7 +24,7 @@ import com.malinskiy.adam.transport.withMaxPacketBuffer
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 
-open class ChanneledShellCommandRequest(
+public open class ChanneledShellCommandRequest(
     private val cmd: String,
     channel: ReceiveChannel<ShellCommandInputChunk>,
     target: Target = NonSpecifiedTarget,
@@ -90,13 +90,13 @@ open class ChanneledShellCommandRequest(
         }
     }
 
-    override fun serialize() = createBaseRequest("shell,v2,raw:$cmd")
+    override fun serialize(): ByteArray = createBaseRequest("shell,v2,raw:$cmd")
 }
 
-data class ShellCommandResultChunk(
-    val stdout: ByteArray? = null,
-    val stderr: ByteArray? = null,
-    val exitCode: Int? = null
+public data class ShellCommandResultChunk(
+    public val stdout: ByteArray? = null,
+    public val stderr: ByteArray? = null,
+    public val exitCode: Int? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -125,9 +125,9 @@ data class ShellCommandResultChunk(
     }
 }
 
-data class ShellCommandInputChunk(
-    val stdin: ByteArray? = null,
-    val close: Boolean = false
+public data class ShellCommandInputChunk(
+    public val stdin: ByteArray? = null,
+    public val close: Boolean = false
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

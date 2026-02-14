@@ -16,7 +16,7 @@
 
 package com.malinskiy.adam.extension
 
-fun Int.toByteArray(): ByteArray {
+public fun Int.toByteArray(): ByteArray {
     return byteArrayOf(
         this.ushr(24).toByte(),
         ((this and 0xFF0000) shr 16).toByte(),

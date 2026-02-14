@@ -24,7 +24,7 @@ import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.request.abb.AbbExecRequest
 import com.malinskiy.adam.transport.Socket
 
-class CreateIndividualPackageSessionRequest(
+public class CreateIndividualPackageSessionRequest(
     private val pkg: InstallationPackage,
     private val pkgList: List<InstallationPackage>,
     private val supportedFeatures: List<Feature>,

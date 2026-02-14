@@ -19,24 +19,24 @@ package com.malinskiy.adam.request.framebuffer
 import java.awt.image.BufferedImage
 
 
-data class RawImage(
-    val version: Int,
-    val bitsPerPixel: Int,
-    val colorSpace: ColorSpace? = null,
-    val size: Int,
-    val width: Int,
-    val height: Int,
-    val redOffset: Int,
-    val redLength: Int,
-    val blueOffset: Int,
-    val blueLength: Int,
-    val greenOffset: Int,
-    val greenLength: Int,
-    val alphaOffset: Int,
-    val alphaLength: Int,
-    val buffer: ByteArray
+public data class RawImage(
+    public val version: Int,
+    public val bitsPerPixel: Int,
+    public val colorSpace: ColorSpace? = null,
+    public val size: Int,
+    public val width: Int,
+    public val height: Int,
+    public val redOffset: Int,
+    public val redLength: Int,
+    public val blueOffset: Int,
+    public val blueLength: Int,
+    public val greenOffset: Int,
+    public val greenLength: Int,
+    public val alphaOffset: Int,
+    public val alphaLength: Int,
+    public val buffer: ByteArray
 ) {
-    fun getARGB(index: Int): Int {
+    public fun getARGB(index: Int): Int {
         return when (bitsPerPixel) {
             16 -> {
                 Color.RGB565_2BYTE.toARGB8888_INT(buffer[index], buffer[index + 1])
@@ -67,7 +67,7 @@ data class RawImage(
     /**
      * @return TYPE_INT_ARGB buffered image
      */
-    fun toBufferedImage(): BufferedImage {
+    public fun toBufferedImage(): BufferedImage {
         val bufferedImage = when (val profileName = colorSpace?.getProfileName()) {
             null -> {
                 BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)

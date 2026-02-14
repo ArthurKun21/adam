@@ -27,7 +27,7 @@ import com.malinskiy.adam.transport.withMaxPacketBuffer
 /**
  * shell v2 service required for this request
  */
-abstract class SyncShellCommandRequest<T : Any?>(val cmd: String, target: Target = NonSpecifiedTarget, socketIdleTimeout: Long? = null) :
+public abstract class SyncShellCommandRequest<T : Any?>(public val cmd: String, target: Target = NonSpecifiedTarget, socketIdleTimeout: Long? = null) :
     ComplexRequest<T>(target, socketIdleTimeout) {
 
     private val stdoutBuilder = ByteStreams.newDataOutput()
@@ -37,9 +37,9 @@ abstract class SyncShellCommandRequest<T : Any?>(val cmd: String, target: Target
     /**
      * Descendants should override this method to map the response to appropriate output
      */
-    abstract fun convertResult(response: ShellCommandResult): T
+    public abstract fun convertResult(response: ShellCommandResult): T
 
-    override fun serialize() = createBaseRequest("shell,v2,raw:$cmd")
+    override fun serialize(): ByteArray = createBaseRequest("shell,v2,raw:$cmd")
     override suspend fun readElement(socket: Socket): T {
         withMaxPacketBuffer {
             val data = array()

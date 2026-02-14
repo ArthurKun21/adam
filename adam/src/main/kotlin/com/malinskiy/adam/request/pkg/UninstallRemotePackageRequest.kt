@@ -24,7 +24,7 @@ import com.malinskiy.adam.request.shell.v1.ShellCommandRequest
  * There is no way to remove the remaining data.
  * You will have to reinstall the application with the same signature, and fully uninstall it.
  */
-class UninstallRemotePackageRequest(
+public class UninstallRemotePackageRequest(
     packageName: String,
     keepData: Boolean = false
 ) : ShellCommandRequest(

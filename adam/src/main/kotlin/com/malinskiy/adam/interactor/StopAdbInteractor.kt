@@ -19,10 +19,10 @@ package com.malinskiy.adam.interactor
 import com.malinskiy.adam.Const
 import java.io.File
 
-class StopAdbInteractor : AdbBinaryInteractor() {
-    suspend fun execute(
+public class StopAdbInteractor : AdbBinaryInteractor() {
+    public suspend fun execute(
         adbBinary: File? = null,
         androidHome: File? = null,
         serverPort: Int = Const.DEFAULT_ADB_PORT
-    ) = execute(adbBinary, androidHome, "-P", serverPort.toString(), "kill-server")
+    ): Boolean = execute(adbBinary, androidHome, "-P", serverPort.toString(), "kill-server")
 }

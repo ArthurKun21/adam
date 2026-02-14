@@ -19,8 +19,8 @@ package com.malinskiy.adam.request.reverse
 import com.malinskiy.adam.request.forwarding.LocalPortSpec
 import com.malinskiy.adam.request.forwarding.RemotePortSpec
 
-data class ReversePortForwardingRule(
-    val serial: String,
-    val localSpec: RemotePortSpec,
-    val remoteSpec: LocalPortSpec
+public data class ReversePortForwardingRule(
+    public val serial: String,
+    public val localSpec: RemotePortSpec,
+    public val remoteSpec: LocalPortSpec
 )

@@ -27,7 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 
-class WriteIndividualPackageRequest(
+public class WriteIndividualPackageRequest(
     private val file: File,
     private val supportedFeatures: List<Feature>,
     private val session: String,

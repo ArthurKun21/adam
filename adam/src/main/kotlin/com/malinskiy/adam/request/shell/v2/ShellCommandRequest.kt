@@ -16,7 +16,7 @@
 
 package com.malinskiy.adam.request.shell.v2
 
-open class ShellCommandRequest(cmd: String, socketIdleTimeout: Long? = null) :
+public open class ShellCommandRequest(cmd: String, socketIdleTimeout: Long? = null) :
     SyncShellCommandRequest<ShellCommandResult>(cmd, socketIdleTimeout = socketIdleTimeout) {
-    override fun convertResult(response: ShellCommandResult) = response
+    override fun convertResult(response: ShellCommandResult): ShellCommandResult = response
 }

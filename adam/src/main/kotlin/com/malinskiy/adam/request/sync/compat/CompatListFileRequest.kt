@@ -23,7 +23,7 @@ import com.malinskiy.adam.request.sync.model.FileEntry
 import com.malinskiy.adam.request.sync.v1.ListFileRequest
 import com.malinskiy.adam.request.sync.v2.ListFileRequest as ListV2FileRequest
 
-class CompatListFileRequest(
+public class CompatListFileRequest(
     private val path: String,
     private val supportedFeatures: List<Feature>
 ) : MultiRequest<List<FileEntry>>() {

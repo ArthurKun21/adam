@@ -21,8 +21,8 @@ import com.malinskiy.adam.request.ComplexRequest
 import com.malinskiy.adam.request.HostTarget
 import com.malinskiy.adam.transport.Socket
 
-class ListDevicesRequest : ComplexRequest<List<Device>>(target = HostTarget) {
-    override fun serialize() = createBaseRequest("devices")
+public class ListDevicesRequest : ComplexRequest<List<Device>>(target = HostTarget) {
+    override fun serialize(): ByteArray = createBaseRequest("devices")
 
     override suspend fun readElement(socket: Socket): List<Device> {
         return socket.readProtocolString().lines()
@@ -38,9 +38,9 @@ class ListDevicesRequest : ComplexRequest<List<Device>>(target = HostTarget) {
     }
 }
 
-data class Device(val serial: String, val state: DeviceState)
+public data class Device(public val serial: String, public val state: DeviceState)
 
-enum class DeviceState {
+public enum class DeviceState {
     OFFLINE,
     BOOTLOADER,
     DEVICE,
@@ -53,8 +53,8 @@ enum class DeviceState {
     CONNECTING,
     UNKNOWN;
 
-    companion object {
-        fun from(value: String) =
+    public companion object {
+        public fun from(value: String): DeviceState =
             when (value) {
                 "offline" -> OFFLINE
                 "bootloader" -> BOOTLOADER

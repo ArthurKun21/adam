@@ -16,16 +16,16 @@
 
 package com.malinskiy.adam.request.testrunner
 
-sealed class TestEvent
+public sealed class TestEvent
 
-data class TestRunStartedEvent(val testCount: Int) : TestEvent()
-data class TestStarted(val id: TestIdentifier) : TestEvent()
-data class TestFailed(val id: TestIdentifier, val stackTrace: String) : TestEvent()
-data class TestAssumptionFailed(val id: TestIdentifier, val stackTrace: String) : TestEvent()
-data class TestIgnored(val id: TestIdentifier) : TestEvent()
-data class TestEnded(val id: TestIdentifier, val metrics: Map<String, String>) : TestEvent()
-data class TestRunFailed(val error: String) : TestEvent()
-data class TestRunFailing(val error: String, val stackTrace: String) : TestEvent()
-data class TestRunStopped(val elapsedTimeMillis: Long) : TestEvent()
-data class TestRunEnded(val elapsedTimeMillis: Long, val metrics: Map<String, String>) : TestEvent()
-data class TestLogcat(val id: TestIdentifier, val log: String)
+public data class TestRunStartedEvent(public val testCount: Int) : TestEvent()
+public data class TestStarted(public val id: TestIdentifier) : TestEvent()
+public data class TestFailed(public val id: TestIdentifier, public val stackTrace: String) : TestEvent()
+public data class TestAssumptionFailed(public val id: TestIdentifier, public val stackTrace: String) : TestEvent()
+public data class TestIgnored(public val id: TestIdentifier) : TestEvent()
+public data class TestEnded(public val id: TestIdentifier, public val metrics: Map<String, String>) : TestEvent()
+public data class TestRunFailed(public val error: String) : TestEvent()
+public data class TestRunFailing(public val error: String, public val stackTrace: String) : TestEvent()
+public data class TestRunStopped(public val elapsedTimeMillis: Long) : TestEvent()
+public data class TestRunEnded(public val elapsedTimeMillis: Long, public val metrics: Map<String, String>) : TestEvent()
+public data class TestLogcat(public val id: TestIdentifier, public val log: String)

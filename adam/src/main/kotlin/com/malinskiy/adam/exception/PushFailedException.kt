@@ -16,4 +16,4 @@
 
 package com.malinskiy.adam.exception
 
-class PushFailedException(message: String) : RuntimeException(message)
+public class PushFailedException(message: String) : RuntimeException(message)

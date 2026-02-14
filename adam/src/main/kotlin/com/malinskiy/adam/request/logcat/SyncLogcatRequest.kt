@@ -20,7 +20,7 @@ import com.malinskiy.adam.request.shell.v1.ShellCommandResult
 import com.malinskiy.adam.request.shell.v1.SyncShellCommandRequest
 import java.time.Instant
 
-class SyncLogcatRequest(
+public class SyncLogcatRequest(
     since: LogcatSinceFormat? = null,
     modes: List<LogcatReadMode> = listOf(LogcatReadMode.long),
     buffers: List<LogcatBuffer> = listOf(LogcatBuffer.default),
@@ -40,5 +40,5 @@ class SyncLogcatRequest(
             " ${filters.joinToString(separator = " ") { "${it.tag}:${it.level.name}" }}"
                 .trimEnd()
 ) {
-    override fun convertResult(response: ShellCommandResult) = response.output
+    override fun convertResult(response: ShellCommandResult): String = response.output
 }

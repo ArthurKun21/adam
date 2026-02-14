@@ -16,6 +16,6 @@
 
 package com.malinskiy.adam.request.shell.v1
 
-open class ShellCommandRequest(cmd: String) : SyncShellCommandRequest<ShellCommandResult>(cmd) {
-    override fun convertResult(response: ShellCommandResult) = response
+public open class ShellCommandRequest(cmd: String) : SyncShellCommandRequest<ShellCommandResult>(cmd) {
+    override fun convertResult(response: ShellCommandResult): ShellCommandResult = response
 }

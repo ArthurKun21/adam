@@ -21,7 +21,7 @@ import com.malinskiy.adam.request.ComplexRequest
 import com.malinskiy.adam.request.HostTarget
 import com.malinskiy.adam.transport.Socket
 
-class ListMdnsServicesRequest : ComplexRequest<List<MdnsService>>(target = HostTarget) {
+public class ListMdnsServicesRequest : ComplexRequest<List<MdnsService>>(target = HostTarget) {
     override suspend fun readElement(socket: Socket): List<MdnsService> {
 
         return socket.readProtocolString().lines()
@@ -36,5 +36,5 @@ class ListMdnsServicesRequest : ComplexRequest<List<MdnsService>>(target = HostT
             }
     }
 
-    override fun serialize() = createBaseRequest("mdns:services")
+    override fun serialize(): ByteArray = createBaseRequest("mdns:services")
 }

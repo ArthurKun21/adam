@@ -21,7 +21,7 @@ import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withMaxPacketBuffer
 import kotlinx.coroutines.yield
 
-abstract class SynchronousRequest<T : Any?>(target: Target = NonSpecifiedTarget) : ComplexRequest<T>(target), ResponseTransformer<T> {
+public abstract class SynchronousRequest<T : Any?>(target: Target = NonSpecifiedTarget) : ComplexRequest<T>(target), ResponseTransformer<T> {
     override suspend fun readElement(socket: Socket): T {
         withMaxPacketBuffer {
             loop@ do {

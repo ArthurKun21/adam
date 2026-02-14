@@ -16,6 +16,6 @@
 
 package com.malinskiy.adam.extension
 
-fun List<String>.bashEscape() = "'" + joinToString(" ") { it.replace("'", "'\\''") } + "'"
+public fun List<String>.bashEscape(): String = "'" + joinToString(" ") { it.replace("'", "'\\''") } + "'"
 
-fun String.bashEscape() = "'" + replace("'", "'\\''") + "'"
+public fun String.bashEscape(): String = "'" + replace("'", "'\\''") + "'"

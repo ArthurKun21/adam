@@ -23,7 +23,7 @@ import com.malinskiy.adam.request.sync.model.FileEntry
 import com.malinskiy.adam.request.sync.v1.StatFileRequest
 import com.malinskiy.adam.request.sync.v2.StatFileRequest as StatV2FileRequest
 
-class CompatStatFileRequest(
+public class CompatStatFileRequest(
     private val source: String,
     private val supportedFeatures: List<Feature>
 ) : MultiRequest<FileEntry>() {

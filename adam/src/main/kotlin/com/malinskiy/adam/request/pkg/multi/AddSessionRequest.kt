@@ -23,7 +23,7 @@ import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.request.abb.AbbExecRequest
 import com.malinskiy.adam.transport.Socket
 
-class AddSessionRequest(
+public class AddSessionRequest(
     private val childSessions: List<String>,
     private val parentSession: String,
     private val supportedFeatures: List<Feature>

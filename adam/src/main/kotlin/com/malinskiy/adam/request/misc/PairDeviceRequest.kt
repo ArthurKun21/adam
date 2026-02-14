@@ -27,12 +27,12 @@ import com.malinskiy.adam.transport.Socket
  *
  * @param url target device in the form of host[:port], port is optional
  */
-class PairDeviceRequest(
+public class PairDeviceRequest(
     private val url: String,
     private val pairingCode: String
 ) : ComplexRequest<String>(target = HostTarget) {
 
-    override suspend fun readElement(socket: Socket) = socket.readProtocolString()
+    override suspend fun readElement(socket: Socket): String = socket.readProtocolString()
 
-    override fun serialize() = createBaseRequest("pair:$pairingCode:$url")
+    override fun serialize(): ByteArray = createBaseRequest("pair:$pairingCode:$url")
 }

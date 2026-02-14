@@ -26,7 +26,7 @@ import kotlinx.coroutines.channels.SendChannel
 /**
  * Executes the command and provides the channel as the input to the command. Does not return anything
  */
-class ExecInRequest(
+public class ExecInRequest(
     private val cmd: String,
     private val channel: ReceiveChannel<ByteArray>,
     private val sizeChannel: SendChannel<Int>,
@@ -51,5 +51,5 @@ class ExecInRequest(
         socket.readStatus()
     }
 
-    override fun serialize() = createBaseRequest("exec:$cmd")
+    override fun serialize(): ByteArray = createBaseRequest("exec:$cmd")
 }

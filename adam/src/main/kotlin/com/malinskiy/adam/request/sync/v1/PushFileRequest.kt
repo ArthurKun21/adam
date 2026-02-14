@@ -26,7 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 
-class PushFileRequest(
+public class PushFileRequest(
     local: File,
     remotePath: String,
     mode: String = "0777",

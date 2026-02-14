@@ -18,7 +18,7 @@ package com.malinskiy.adam.request.logcat
 
 import com.malinskiy.adam.request.shell.v1.ChanneledShellCommandRequest
 
-class ChanneledLogcatRequest(
+public class ChanneledLogcatRequest(
     since: LogcatSinceFormat? = null,
     modes: List<LogcatReadMode> = listOf(LogcatReadMode.long),
     buffers: List<LogcatBuffer> = emptyList(),
@@ -43,7 +43,7 @@ class ChanneledLogcatRequest(
     socketIdleTimeout = Long.MAX_VALUE,
 )
 
-enum class LogcatReadMode {
+public enum class LogcatReadMode {
     brief,
     long,
     process,
@@ -84,7 +84,7 @@ enum class LogcatReadMode {
     zone
 }
 
-enum class LogcatBuffer {
+public enum class LogcatBuffer {
     //View the buffer that contains radio/telephony related messages
     radio,
 
@@ -107,7 +107,7 @@ enum class LogcatBuffer {
     default
 }
 
-enum class LogcatVerbosityLevel {
+public enum class LogcatVerbosityLevel {
     V,
     D,
     I,
@@ -117,6 +117,6 @@ enum class LogcatVerbosityLevel {
     S
 }
 
-data class LogcatFilterSpec(val tag: String, val level: LogcatVerbosityLevel)
+public data class LogcatFilterSpec(public val tag: String, public val level: LogcatVerbosityLevel)
 
-val SupressAll = LogcatFilterSpec("*", LogcatVerbosityLevel.S)
+public val SupressAll: LogcatFilterSpec = LogcatFilterSpec("*", LogcatVerbosityLevel.S)

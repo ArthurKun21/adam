@@ -28,7 +28,7 @@ import java.io.File
 import java.nio.ByteBuffer
 import kotlin.coroutines.CoroutineContext
 
-class AsyncFileWriter(
+public class AsyncFileWriter(
     file: File,
     override val coroutineContext: CoroutineContext = Dispatchers.IO
 ) : CoroutineScope, SuspendCloseable {
@@ -45,7 +45,7 @@ class AsyncFileWriter(
     private var job: Job? = null
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    fun start() {
+    public fun start() {
         job = launch {
             for (buffer in bufferChannel) {
                 fileChannel.write(buffer.array(), buffer.position(), buffer.limit())
@@ -54,7 +54,7 @@ class AsyncFileWriter(
         }
     }
 
-    suspend fun write(byteBuffer: ByteBuffer) {
+    public suspend fun write(byteBuffer: ByteBuffer) {
         bufferChannel.send(byteBuffer)
     }
 

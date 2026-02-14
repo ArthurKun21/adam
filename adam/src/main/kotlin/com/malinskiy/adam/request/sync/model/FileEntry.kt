@@ -19,47 +19,47 @@ package com.malinskiy.adam.request.sync.model
 import com.malinskiy.adam.Const
 import java.time.Instant
 
-sealed class FileEntry {
-    abstract val mode: UInt
-    abstract val name: String?
-    abstract val mtime: Instant
+public sealed class FileEntry {
+    public abstract val mode: UInt
+    public abstract val name: String?
+    public abstract val mtime: Instant
 
-    fun isDirectory() = (mode and Const.FileType.S_IFDIR) == Const.FileType.S_IFDIR
-    fun isRegularFile() = (mode and Const.FileType.S_IFREG) == Const.FileType.S_IFREG
-    fun isBlockDevice() = (mode and Const.FileType.S_IFBLK) == Const.FileType.S_IFBLK
-    fun isCharDevice() = (mode and Const.FileType.S_IFCHR) == Const.FileType.S_IFCHR
-    fun isLink() = (mode and Const.FileType.S_IFLNK) == Const.FileType.S_IFLNK
+    public fun isDirectory(): Boolean = (mode and Const.FileType.S_IFDIR) == Const.FileType.S_IFDIR
+    public fun isRegularFile(): Boolean = (mode and Const.FileType.S_IFREG) == Const.FileType.S_IFREG
+    public fun isBlockDevice(): Boolean = (mode and Const.FileType.S_IFBLK) == Const.FileType.S_IFBLK
+    public fun isCharDevice(): Boolean = (mode and Const.FileType.S_IFCHR) == Const.FileType.S_IFCHR
+    public fun isLink(): Boolean = (mode and Const.FileType.S_IFLNK) == Const.FileType.S_IFLNK
 
-    fun size() = when (this) {
+    public fun size(): ULong = when (this) {
         is FileEntryV1 -> size.toLong().toULong()
         is FileEntryV2 -> size
     }
 
-    abstract fun exists(): Boolean
+    public abstract fun exists(): Boolean
 }
 
-data class FileEntryV1(
+public data class FileEntryV1(
     override val name: String? = null,
     override val mode: UInt,
-    val size: UInt,
+    public val size: UInt,
     override val mtime: Instant
 ) : FileEntry() {
-    override fun exists() = !(size == 0.toUInt() && mode == 0.toUInt() && mtime.epochSecond == 0L)
+    override fun exists(): Boolean = !(size == 0.toUInt() && mode == 0.toUInt() && mtime.epochSecond == 0L)
 }
 
-data class FileEntryV2(
-    val error: UInt,
-    val dev: ULong,
-    val ino: ULong,
+public data class FileEntryV2(
+    public val error: UInt,
+    public val dev: ULong,
+    public val ino: ULong,
     override val mode: UInt,
-    val nlink: UInt,
-    val uid: UInt,
-    val gid: UInt,
-    val size: ULong,
-    val atime: Instant,
+    public val nlink: UInt,
+    public val uid: UInt,
+    public val gid: UInt,
+    public val size: ULong,
+    public val atime: Instant,
     override val mtime: Instant,
-    val ctime: Instant,
+    public val ctime: Instant,
     override val name: String? = null
 ) : FileEntry() {
-    override fun exists() = !(size == 0.toULong() && mode == 0.toUInt() && mtime.epochSecond == 0L)
+    override fun exists(): Boolean = !(size == 0.toULong() && mode == 0.toUInt() && mtime.epochSecond == 0L)
 }

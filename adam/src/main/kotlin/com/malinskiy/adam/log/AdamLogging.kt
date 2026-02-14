@@ -20,12 +20,12 @@ import logcat.LogPriority
 import logcat.logcat
 import logcat.asLog
 
-object AdamLogging {
-    fun logger(func: () -> Unit): AdamLogger = AdamLogger()
+public object AdamLogging {
+    public fun logger(func: () -> Unit): AdamLogger = AdamLogger()
 }
 
-class AdamLogger {
-    inline fun debug(throwable: Throwable? = null, crossinline message: () -> String) {
+public class AdamLogger {
+    public inline fun debug(throwable: Throwable? = null, crossinline message: () -> String) {
         logcat(LogPriority.DEBUG) {
             buildString {
                 throwable?.let {
@@ -37,7 +37,7 @@ class AdamLogger {
         }
     }
 
-    inline fun info(throwable: Throwable? = null, crossinline message: () -> String) {
+    public inline fun info(throwable: Throwable? = null, crossinline message: () -> String) {
         logcat(LogPriority.INFO) {
             buildString {
                 throwable?.let {
@@ -49,7 +49,7 @@ class AdamLogger {
         }
     }
 
-    inline fun warn(throwable: Throwable? = null, crossinline message: () -> String) {
+    public inline fun warn(throwable: Throwable? = null, crossinline message: () -> String) {
         logcat(LogPriority.WARN) {
             buildString {
                 throwable?.let {
@@ -61,7 +61,7 @@ class AdamLogger {
         }
     }
 
-    inline fun error(throwable: Throwable? = null, crossinline message: () -> String) {
+    public inline fun error(throwable: Throwable? = null, crossinline message: () -> String) {
         logcat(LogPriority.ERROR) {
             buildString {
                 throwable?.let {
@@ -73,7 +73,7 @@ class AdamLogger {
         }
     }
 
-    inline fun trace(throwable: Throwable? = null, crossinline message: () -> String) {
+    public inline fun trace(throwable: Throwable? = null, crossinline message: () -> String) {
         logcat(LogPriority.VERBOSE) {
             buildString {
                 throwable?.let {

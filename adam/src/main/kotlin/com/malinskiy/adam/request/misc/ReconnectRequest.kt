@@ -35,7 +35,7 @@ import com.malinskiy.adam.transport.withDefaultBuffer
  *
  * @param reconnectTarget default behaviour depends on the target serial that will be specified during execution
  */
-class ReconnectRequest(
+public class ReconnectRequest(
     private val reconnectTarget: ReconnectTarget? = null,
     target: Target = NonSpecifiedTarget
 ) : ComplexRequest<String>(target = target) {
@@ -58,18 +58,18 @@ class ReconnectRequest(
         }
     }
 
-    override fun serialize() = when (reconnectTarget) {
+    override fun serialize(): ByteArray = when (reconnectTarget) {
         null -> createBaseRequest("reconnect")
         Device -> createBaseRequest("reconnect")
         Offline -> createBaseRequest("reconnect-offline")
     }
 
-    companion object {
+    public companion object {
         /**
          * For some reason this done is lowercase and doesn't use the DONE message as everything else
          * see daemon/services.cpp#reconnect_service
          */
-        val done = byteArrayOf(
+        public val done: ByteArray = byteArrayOf(
             'd'.code.toByte(),
             'o'.code.toByte(),
             'n'.code.toByte(),
@@ -78,10 +78,10 @@ class ReconnectRequest(
     }
 }
 
-sealed class ReconnectTarget
-object Device : ReconnectTarget()
+public sealed class ReconnectTarget
+public object Device : ReconnectTarget()
 
 /**
  * Only supports host target
  */
-object Offline : ReconnectTarget()
+public object Offline : ReconnectTarget()

@@ -31,8 +31,8 @@ import com.malinskiy.adam.request.testrunner.TestStarted
 import com.malinskiy.adam.request.testrunner.model.Status
 import com.malinskiy.adam.request.testrunner.model.TokenType
 
-class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<TestEvent>?> {
-    var buffer = StringBuffer()
+public class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<TestEvent>?> {
+    public var buffer: StringBuffer = StringBuffer()
 
     private var startReported = false
     private var finishReported = false
@@ -257,8 +257,8 @@ class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<T
         }
     }
 
-    companion object {
-        val KNOWN_KEYS = setOf("test", "class", "stack", "numtests", "Error", "shortMsg", "stream", "current", "id")
+    public companion object {
+        public val KNOWN_KEYS: Set<String> = setOf("test", "class", "stack", "numtests", "Error", "shortMsg", "stream", "current", "id")
     }
 }
 

@@ -37,7 +37,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * @param coroutineContext if you don't specify your context then you'll have no control over the `wait for file to finish writing`: closing the channel doesn't close the underlying resources
  */
-abstract class BasePullFileRequest(
+public abstract class BasePullFileRequest(
     private val remotePath: String,
     local: File,
     private val size: Long? = null,
@@ -45,8 +45,8 @@ abstract class BasePullFileRequest(
 ) : AsyncChannelRequest<Double, Unit>() {
 
     private val fileWriter = AsyncFileWriter(local, coroutineContext)
-    var totalBytes = -1L
-    var currentPosition = 0L
+    public var totalBytes: Long = -1L
+    public var currentPosition: Long = 0L
 
     override suspend fun handshake(socket: Socket) {
         super.handshake(socket)
@@ -121,7 +121,7 @@ abstract class BasePullFileRequest(
         }
     }
 
-    override fun serialize() = createBaseRequest("sync:")
+    override fun serialize(): ByteArray = createBaseRequest("sync:")
 
     override fun validate(): ValidationResponse {
         return if (remotePath.length > Const.MAX_REMOTE_PATH_LENGTH) {
@@ -131,6 +131,6 @@ abstract class BasePullFileRequest(
         }
     }
 
-    override suspend fun writeElement(element: Unit, socket: Socket) = Unit
+    override suspend fun writeElement(element: Unit, socket: Socket): Unit = Unit
 
 }

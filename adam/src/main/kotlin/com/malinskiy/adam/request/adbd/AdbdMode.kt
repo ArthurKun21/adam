@@ -16,8 +16,8 @@
 
 package com.malinskiy.adam.request.adbd
 
-sealed class AdbdMode(val requestString: String)
-object RootAdbdMode : AdbdMode("root:")
-object UnrootAdbdMode : AdbdMode("unroot:")
-object UsbAdbdMode : AdbdMode("usb:")
-class TcpIpAdbdMode(port: Int) : AdbdMode("tcpip:$port")
+public sealed class AdbdMode(public val requestString: String)
+public object RootAdbdMode : AdbdMode("root:")
+public object UnrootAdbdMode : AdbdMode("unroot:")
+public object UsbAdbdMode : AdbdMode("usb:")
+public class TcpIpAdbdMode(port: Int) : AdbdMode("tcpip:$port")

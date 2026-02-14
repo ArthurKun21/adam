@@ -19,7 +19,7 @@ package com.malinskiy.adam.request.pkg
 import com.malinskiy.adam.request.ValidationResponse
 import com.malinskiy.adam.request.shell.v1.ShellCommandRequest
 
-class InstallRemotePackageRequest(
+public class InstallRemotePackageRequest(
     private val absoluteRemoteFilePath: String,
     reinstall: Boolean,
     extraArgs: List<String> = emptyList()

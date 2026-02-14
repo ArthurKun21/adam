@@ -23,7 +23,7 @@ import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.request.abb.AbbExecRequest
 import com.malinskiy.adam.transport.Socket
 
-class InstallCommitRequest(
+public class InstallCommitRequest(
     private val parentSession: String,
     private val supportedFeatures: List<Feature>,
     private val abandon: Boolean = false

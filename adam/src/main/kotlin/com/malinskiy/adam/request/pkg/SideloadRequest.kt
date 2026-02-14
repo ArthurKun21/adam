@@ -24,11 +24,11 @@ import com.malinskiy.adam.transport.AdamMaxFilePacketPool
 import com.malinskiy.adam.transport.Socket
 import java.io.File
 
-class SideloadRequest(
+public class SideloadRequest(
     private val pkg: File,
 ) : ComplexRequest<Boolean>() {
     private val blockSize: Int = Const.MAX_FILE_PACKET_LENGTH
-    val buffer = ByteArray(blockSize)
+    public val buffer: ByteArray = ByteArray(blockSize)
 
     override suspend fun readElement(socket: Socket): Boolean {
         var reader: AsyncFileReader? = null
@@ -90,5 +90,5 @@ class SideloadRequest(
         return ValidationResponse(message == null, message)
     }
 
-    override fun serialize() = createBaseRequest("sideload-host:${pkg.length()}:${blockSize}")
+    override fun serialize(): ByteArray = createBaseRequest("sideload-host:${pkg.length()}:${blockSize}")
 }

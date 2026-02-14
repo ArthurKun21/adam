@@ -31,12 +31,12 @@ import kotlin.coroutines.CoroutineContext
  * @param dryRun if true, requires SENDRECV_V2_DRY_RUN_SEND
  */
 @Features(Feature.SENDRECV_V2, Feature.SENDRECV_V2_DRY_RUN_SEND)
-class PushFileRequest(
+public class PushFileRequest(
     local: File,
     remotePath: String,
-    val supportedFeatures: List<Feature>,
+    public val supportedFeatures: List<Feature>,
     mode: String = "0777",
-    val dryRun: Boolean = false,
+    public val dryRun: Boolean = false,
     coroutineContext: CoroutineContext = Dispatchers.IO
 ) : BasePushFileRequest(local, remotePath, mode, coroutineContext) {
     /**
@@ -67,7 +67,7 @@ class PushFileRequest(
         }
     }
 
-    companion object {
-        val DRY_RUN_FLAG = 0x8000_0000
+    public companion object {
+        public val DRY_RUN_FLAG: Long = 0x8000_0000
     }
 }

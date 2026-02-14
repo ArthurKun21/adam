@@ -19,7 +19,7 @@ package com.malinskiy.adam.request.framebuffer
 import com.malinskiy.adam.transport.Socket
 import java.nio.ByteBuffer
 
-class RawImageScreenCaptureAdapter(buffer: ByteBuffer? = null) : ScreenCaptureAdapter<RawImage>(buffer = buffer) {
+public class RawImageScreenCaptureAdapter(buffer: ByteBuffer? = null) : ScreenCaptureAdapter<RawImage>(buffer = buffer) {
 
     override suspend fun process(
         version: Int,

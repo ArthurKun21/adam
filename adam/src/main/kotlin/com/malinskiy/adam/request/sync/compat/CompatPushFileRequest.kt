@@ -27,7 +27,7 @@ import java.io.File
 import kotlin.coroutines.CoroutineContext
 import com.malinskiy.adam.request.sync.v2.PushFileRequest as PushV2FileRequest
 
-class CompatPushFileRequest(
+public class CompatPushFileRequest(
     private val source: File,
     private val destination: String,
     private val supportedFeatures: List<Feature>,

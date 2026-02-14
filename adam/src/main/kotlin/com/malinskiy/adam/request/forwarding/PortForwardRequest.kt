@@ -26,7 +26,7 @@ import com.malinskiy.adam.transport.Socket
 /**
  * Optionally returns a local TCP port that is occupied now if using LocalTcpPortSpec without any parameters
  */
-class PortForwardRequest(
+public class PortForwardRequest(
     private val local: LocalPortSpec,
     private val remote: RemotePortSpec,
     serial: String,
@@ -34,7 +34,7 @@ class PortForwardRequest(
 
 ) : ComplexRequest<Int?>(target = SerialTarget(serial)) {
 
-    override fun serialize() =
+    override fun serialize(): ByteArray =
         createBaseRequest("forward${mode.value}:${local.toSpec()};${remote.toSpec()}")
 
     override suspend fun readElement(socket: Socket): Int? {
@@ -47,7 +47,7 @@ class PortForwardRequest(
     }
 }
 
-enum class PortForwardingMode(val value: String) {
+public enum class PortForwardingMode(public val value: String) {
     DEFAULT(""),
     NO_REBIND(":norebind")
 }

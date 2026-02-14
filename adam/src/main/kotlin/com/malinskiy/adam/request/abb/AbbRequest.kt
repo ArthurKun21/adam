@@ -24,10 +24,10 @@ import com.malinskiy.adam.request.shell.v2.ShellCommandResult
 import com.malinskiy.adam.request.shell.v2.SyncShellCommandRequest
 
 @Features(Feature.ABB)
-class AbbRequest(private val args: List<String>, private val supportedFeatures: List<Feature>) :
+public class AbbRequest(private val args: List<String>, private val supportedFeatures: List<Feature>) :
     SyncShellCommandRequest<ShellCommandResult>("") {
-    override fun serialize() = createBaseRequest("abb:${args.joinToString(DELIMITER.toString())}")
-    override fun convertResult(response: ShellCommandResult) = response
+    override fun serialize(): ByteArray = createBaseRequest("abb:${args.joinToString(DELIMITER.toString())}")
+    override fun convertResult(response: ShellCommandResult): ShellCommandResult = response
     override fun validate(): ValidationResponse {
         val response = super.validate()
         return if (!response.success) {

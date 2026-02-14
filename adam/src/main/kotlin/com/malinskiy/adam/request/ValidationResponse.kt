@@ -20,21 +20,21 @@ import com.malinskiy.adam.Const
 import java.io.File
 import java.util.*
 
-data class ValidationResponse(
-    val success: Boolean,
-    val message: String?
+public data class ValidationResponse(
+    public val success: Boolean,
+    public val message: String?
 ) {
-    companion object {
-        val Success = ValidationResponse(true, null)
+    public companion object {
+        public val Success: ValidationResponse = ValidationResponse(true, null)
 
-        fun missingFeature(feature: Feature) = "${feature.name} is not supported by device"
-        fun missingEitherFeature(vararg feature: Feature) = "Supported features must include either of ${feature.joinToString()}"
-        fun oneOfFilesShouldBe(extension: String) = "At least one of the files has to be an ${extension.uppercase(Locale.ENGLISH)} file"
-        fun packageShouldExist(file: File) = "Package ${file.absolutePath} doesn't exist"
-        fun packageShouldBeRegularFile(file: File) = "Package ${file.absolutePath} is not a regular file"
-        fun packageShouldBeSupportedExtension(file: File, supported: Set<String>) =
+        public fun missingFeature(feature: Feature): String = "${feature.name} is not supported by device"
+        public fun missingEitherFeature(vararg feature: Feature): String = "Supported features must include either of ${feature.joinToString()}"
+        public fun oneOfFilesShouldBe(extension: String): String = "At least one of the files has to be an ${extension.uppercase(Locale.ENGLISH)} file"
+        public fun packageShouldExist(file: File): String = "Package ${file.absolutePath} doesn't exist"
+        public fun packageShouldBeRegularFile(file: File): String = "Package ${file.absolutePath} is not a regular file"
+        public fun packageShouldBeSupportedExtension(file: File, supported: Set<String>): String =
             "Unsupported package extension ${file.extension}. Should be on of ${supported.joinToString()}}"
 
-        fun pathShouldNotBeLong() = "Remote path should be less that ${Const.MAX_REMOTE_PATH_LENGTH} bytes"
+        public fun pathShouldNotBeLong(): String = "Remote path should be less that ${Const.MAX_REMOTE_PATH_LENGTH} bytes"
     }
 }

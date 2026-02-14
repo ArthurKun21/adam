@@ -25,7 +25,7 @@ import io.vertx.kotlin.coroutines.coAwait
 import java.net.InetSocketAddress
 import java.util.concurrent.atomic.AtomicBoolean
 
-class VertxSocketFactory(
+public class VertxSocketFactory(
     private val connectTimeout: Long = 10_000,
     private val idleTimeout: Long = 30_000
 ) : SocketFactory {

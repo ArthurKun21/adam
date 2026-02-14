@@ -42,7 +42,7 @@ import java.nio.channels.FileChannel
  *
  * see frameworks/base/cmds/am/src/com/android/commands/am/Instrument.java#readLogcat
  */
-class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Const.MAX_PROTOBUF_PACKET_LENGTH) :
+public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Const.MAX_PROTOBUF_PACKET_LENGTH) :
     ProgressiveResponseTransformer<List<TestEvent>?> {
     private val backingFile = RandomAccessFile(File.createTempFile("tmp-proto", null, null), "rw")
     private val channel = backingFile.channel

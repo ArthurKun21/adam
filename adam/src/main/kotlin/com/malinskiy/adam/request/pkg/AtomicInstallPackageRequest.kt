@@ -46,14 +46,14 @@ import kotlin.coroutines.CoroutineContext
  * @see com.malinskiy.adam.request.device.FetchDeviceFeaturesRequest
  */
 @Features(Feature.CMD, Feature.ABB_EXEC, Feature.APEX)
-class AtomicInstallPackageRequest(
+public class AtomicInstallPackageRequest(
     private val pkgList: List<InstallationPackage>,
     private val supportedFeatures: List<Feature>,
     private val reinstall: Boolean,
     private val extraArgs: List<String> = emptyList(),
-    val coroutineContext: CoroutineContext = Dispatchers.IO
+    public val coroutineContext: CoroutineContext = Dispatchers.IO
 ) : AccumulatingMultiRequest<String>() {
-    override suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?) = with(androidDebugBridgeClient) {
+    override suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?): String = with(androidDebugBridgeClient) {
         val (parentSessionId, output) =
             execute(CreateMultiPackageSessionRequest(pkgList, supportedFeatures, reinstall, extraArgs), serial)
         output.addToResponse()

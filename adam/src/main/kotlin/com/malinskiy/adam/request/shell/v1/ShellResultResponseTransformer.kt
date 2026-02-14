@@ -21,7 +21,7 @@ import com.malinskiy.adam.Const
 import com.malinskiy.adam.exception.RequestRejectedException
 import com.malinskiy.adam.request.transform.ResponseTransformer
 
-class ShellResultResponseTransformer : ResponseTransformer<ShellCommandResult> {
+public class ShellResultResponseTransformer : ResponseTransformer<ShellCommandResult> {
     override suspend fun process(bytes: ByteArray, offset: Int, limit: Int) {
         builder.write(bytes, 0, limit)
     }

@@ -21,7 +21,7 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.core.streams.ReadStream
 import kotlin.math.min
 
-class VariableSizeRecordParser(
+public class VariableSizeRecordParser(
     private val stream: ReadStream<Buffer>? = null
 ) : Handler<Buffer>, ReadStream<Buffer> {
     // Empty and unmodifiable
@@ -60,7 +60,7 @@ class VariableSizeRecordParser(
         }
     }
 
-    fun request(size: Int) {
+    public fun request(size: Int) {
         require(size > 0) { "Size must be > 0" }
         requestedAtMost = size
         handleParsing()
@@ -133,7 +133,7 @@ class VariableSizeRecordParser(
         endHandler?.handle(null)
     }
 
-    override fun exceptionHandler(handler: Handler<Throwable>?) = apply { exceptionHandler = handler }
+    override fun exceptionHandler(handler: Handler<Throwable>?): VariableSizeRecordParser = apply { exceptionHandler = handler }
 
     override fun handler(handler: Handler<Buffer>?): ReadStream<Buffer> {
         eventHandler = handler
@@ -156,7 +156,7 @@ class VariableSizeRecordParser(
         return this
     }
 
-    override fun pause() = apply { demand = 0L }
+    override fun pause(): VariableSizeRecordParser = apply { demand = 0L }
 
     override fun fetch(amount: Long): ReadStream<Buffer> {
         require(amount > 0) { "Fetch amount must be > 0" }
@@ -168,7 +168,7 @@ class VariableSizeRecordParser(
         return this
     }
 
-    override fun resume() = apply { fetch(Long.MAX_VALUE) }
+    override fun resume(): VariableSizeRecordParser = apply { fetch(Long.MAX_VALUE) }
 
-    override fun endHandler(handler: Handler<Void?>?) = apply { endHandler = handler }
+    override fun endHandler(handler: Handler<Void?>?): VariableSizeRecordParser = apply { endHandler = handler }
 }

@@ -19,11 +19,11 @@ package com.malinskiy.adam.transport
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 
-interface SuspendCloseable {
-    suspend fun close()
+public interface SuspendCloseable {
+    public suspend fun close()
 }
 
-suspend inline fun <C : SuspendCloseable, R> C.use(crossinline block: suspend (C) -> R): R {
+public suspend inline fun <C : SuspendCloseable, R> C.use(crossinline block: suspend (C) -> R): R {
     var closed = false
 
     return try {
