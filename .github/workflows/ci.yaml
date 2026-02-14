@@ -95,12 +95,12 @@ jobs:
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          emulator-options: -no-snapshot-save swiftshader_indirect -noaudio -no-boot-anim -cores 4 -memory 3072 -no-window -gpu auto -grpc 8554 -camera-back none
-          disable-animations: true
-          force-avd-creation: false
           api-level: ${{ matrix.api }}
           target: google_apis
           arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
           script: ./gradlew :adam:integrationTest
 
       - name: Publish Test Report
