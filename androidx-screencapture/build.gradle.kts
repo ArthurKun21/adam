@@ -15,51 +15,11 @@
  */
 
 plugins {
-    id("com.android.library")
+    id("adam.android.library")
     id("maven-publish")
     id("org.jetbrains.dokka")
 }
 
 android {
     namespace = "com.malinskiy.adam.junit4.android.screencapture"
-
-    compileSdk = 33
-
-    defaultConfig {
-        minSdk = 14
-    }
-
-    sourceSets {
-        getByName("main") {
-            java.srcDir("src/main/kotlin")
-        }
-        getByName("test") {
-            java.srcDir("src/test/kotlin")
-        }
-        getByName("androidTest") {
-            java.srcDir("src/androidTest/kotlin")
-        }
-    }
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-    }
-}
-
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    api(libs.androidx.test.runner)
-    api(libs.androidx.test.monitor)
-    api(libs.junit4)
-}
-
-afterEvaluate {
-    
 }
