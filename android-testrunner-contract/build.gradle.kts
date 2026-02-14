@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget as KotlinJvmTarget
-
 /*
  * Copyright (C) 2021 Anton Malinskiy
  *
@@ -25,10 +23,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-    kotlinOptions.jvmTarget = KotlinJvmTarget.JVM_11
-    kotlinOptions.apiVersion = "1.5"
-    kotlinOptions.languageVersion = KotlinJvmTarget.JVM_11
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+    }
 }
 
 Deployment.initialize(project)
