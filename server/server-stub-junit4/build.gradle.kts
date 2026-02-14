@@ -17,6 +17,35 @@
 plugins {
     id("adam.jvm")
     id("jacoco")
+    alias(libs.plugins.vanniktech.maven.publish)
+}
+
+mavenPublishing {
+    coordinates("com.github.ArthurKun21", "server-stub-junit4", version.toString())
+
+    pom {
+        name.set("server-stub-junit4")
+        description.set("Android Debug Bridge helper - Server stub JUnit4")
+        url.set("https://github.com/ArthurKun21/adam")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        developers {
+            developer {
+                id.set("ArthurKun21")
+                name.set("Arthur")
+                email.set("16458204+ArthurKun21@users.noreply.github.com")
+            }
+        }
+        scm {
+            connection.set("scm:git:git://github.com/ArthurKun21/adam.git")
+            developerConnection.set("scm:git:ssh://github.com/ArthurKun21/adam.git")
+            url.set("https://github.com/ArthurKun21/adam")
+        }
+    }
 }
 
 tasks.jacocoTestReport {

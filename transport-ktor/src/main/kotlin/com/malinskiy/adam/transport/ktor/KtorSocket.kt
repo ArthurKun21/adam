@@ -59,7 +59,9 @@ public class KtorSocket(private val ktorSocket: RealKtorSocket) : Socket {
         writeChannel.writeFully(byteArray, offset, offset + limit)
     }
 
+    @OptIn(io.ktor.utils.io.InternalAPI::class, kotlinx.io.InternalIoApi::class)
     override suspend fun readAvailable(buffer: ByteArray, offset: Int, limit: Int): Int {
+        if (!readChannel.isClosedForRead && readChannel.readBuffer.buffer.size == 0L) return 0
         return readChannel.readAvailable(buffer, offset, limit)
     }
 
