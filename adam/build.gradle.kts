@@ -93,6 +93,7 @@ val integrationTest = tasks.register<Test>("integrationTest") {
 }
 integrationTest.configure {
     outputs.upToDateWhen { false }
+    finalizedBy("jacocoIntegrationTestReport")
 }
 
 // See https://github.com/jacoco/jacoco/issues/1357
@@ -116,9 +117,10 @@ val jacocoIntegrationTestReport = tasks.register<JacocoReport>("jacocoIntegratio
         xml.required.set(true)
     }
 
-    executionData(integrationTest)
+    executionData(fileTree(layout.buildDirectory).include("jacoco/integrationTest.exec"))
     sourceSets(sourceSets.getByName("integrationTest"))
     classDirectories.setFrom(sourceSets.getByName("main").output.classesDirs)
+    mustRunAfter(integrationTest)
 }
 tasks.check { dependsOn(integrationTest, jacocoIntegrationTestReport) }
 
@@ -126,10 +128,10 @@ val jacocoCombinedTestReport = tasks.register<JacocoReport>("jacocoCombinedTestR
     description = "Generates code coverage report for all test tasks"
     group = "verification"
 
-    executionData(integrationTest, tasks["test"])
+    executionData(fileTree(layout.buildDirectory).include("jacoco/*.exec"))
     sourceSets(sourceSets.getByName("integrationTest"), sourceSets.getByName("test"))
     classDirectories.setFrom(sourceSets.getByName("main").output.classesDirs)
-    dependsOn(tasks["test"], integrationTest)
+    mustRunAfter(tasks["test"], integrationTest)
 }
 
 tasks.jacocoTestReport {

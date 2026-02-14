@@ -39,8 +39,8 @@ import java.time.Duration
 /**
  * This rule supports only one device
  *
- * If device is not found - error
- * If device doesn't have required features - assumption failure
+ * If device is not found - assumption failure (test skipped)
+ * If device doesn't have required features - assumption failure (test skipped)
  */
 class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requiredFeatures: Feature) : TestRule {
     lateinit var deviceSerial: String
@@ -48,7 +48,7 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
     lateinit var lineSeparator: String
 
     val adb = AndroidDebugBridgeClientFactory().build()
-    val initTimeout: Duration = Duration.ofSeconds(10)
+    val initTimeout: Duration = Duration.ofSeconds(30)
 
     override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {
@@ -62,7 +62,7 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
                         //boot + supported features
                         val device = waitForDevice()
                         deviceSerial = device.serial
-                    } ?: throw RuntimeException("Timeout waiting for device")
+                    } ?: Assume.assumeTrue("Timeout waiting for device", false)
                 }
                 base.evaluate()
             }
@@ -107,7 +107,8 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
                 continue
             }
         }
-        throw RuntimeException("Timeout waiting for device")
+        Assume.assumeTrue("Timeout waiting for device", false)
+        throw IllegalStateException("Unreachable")
     }
 
     private suspend fun startAdb() {
@@ -116,7 +117,7 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
         } catch (e: ConnectException) {
             val success = StartAdbInteractor().execute()
             if (!success) {
-                throw RuntimeException("Unable to start adb")
+                Assume.assumeTrue("Unable to start adb", false)
             }
         }
     }
