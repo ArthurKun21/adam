@@ -1,3 +1,5 @@
+import adam.buildlogic.ProjectConfig
+
 /*
  * Copyright (C) 2021 Anton Malinskiy
  *
@@ -19,13 +21,13 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = ProjectConfig.JavaVersion
+    targetCompatibility = ProjectConfig.JavaVersion
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
     compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        jvmTarget.set(ProjectConfig.JvmTarget)
     }
 }
 
