@@ -24,7 +24,7 @@ object Versions {
     val protobuf = "3.25.0"
     val javax = "1.3.2"
 
-    val androidGradle = "8.1.3"
+    val androidGradle = "8.13.2"
     val testMonitor = "1.6.1"
     val testRunner = "1.5.2"
     val gradleVersionsPlugin = "0.49.0"

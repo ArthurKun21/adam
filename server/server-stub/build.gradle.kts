@@ -38,7 +38,7 @@ fun DependencyHandler.`integrationTestImplementation`(dependencyNotation: Any): 
     add("integrationTestImplementation", dependencyNotation)
 
 
-val integrationTest = task<Test>("integrationTest") {
+val integrationTest = tasks.register<Test>("integrationTest") {
     description = "Runs integration tests"
     group = "verification"
 
@@ -50,9 +50,11 @@ val integrationTest = task<Test>("integrationTest") {
         include("**")
     }
 }
-integrationTest.outputs.upToDateWhen { false }
+integrationTest.configure {
+    outputs.upToDateWhen { false }
+}
 
-val jacocoIntegrationTestReport = task<JacocoReport>("jacocoIntegrationTestReport") {
+val jacocoIntegrationTestReport = tasks.register<JacocoReport>("jacocoIntegrationTestReport") {
     description = "Generates code coverage report for integrationTest task"
     group = "verification"
     reports {

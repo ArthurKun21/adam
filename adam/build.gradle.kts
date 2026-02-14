@@ -79,7 +79,7 @@ fun DependencyHandler.`integrationTestImplementation`(dependencyNotation: Any): 
     add("integrationTestImplementation", dependencyNotation)
 
 
-val integrationTest = task<Test>("integrationTest") {
+val integrationTest = tasks.register<Test>("integrationTest") {
     description = "Runs integration tests"
     group = "verification"
 
@@ -91,7 +91,9 @@ val integrationTest = task<Test>("integrationTest") {
         include("**")
     }
 }
-integrationTest.outputs.upToDateWhen { false }
+integrationTest.configure {
+    outputs.upToDateWhen { false }
+}
 
 // See https://github.com/jacoco/jacoco/issues/1357
 tasks.withType<Test> {
@@ -100,14 +102,14 @@ tasks.withType<Test> {
     }
 }
 
-val connectedAndroidTest = task<Test>("connectedAndroidTest") {
+val connectedAndroidTest = tasks.register<Test>("connectedAndroidTest") {
     description = "Runs integration tests"
     group = "verification"
 
     dependsOn(integrationTest)
 }
 
-val jacocoIntegrationTestReport = task<JacocoReport>("jacocoIntegrationTestReport") {
+val jacocoIntegrationTestReport = tasks.register<JacocoReport>("jacocoIntegrationTestReport") {
     description = "Generates code coverage report for integrationTest task"
     group = "verification"
     reports {
@@ -120,7 +122,7 @@ val jacocoIntegrationTestReport = task<JacocoReport>("jacocoIntegrationTestRepor
 }
 tasks.check { dependsOn(integrationTest, jacocoIntegrationTestReport) }
 
-val jacocoCombinedTestReport = task<JacocoReport>("jacocoCombinedTestReport") {
+val jacocoCombinedTestReport = tasks.register<JacocoReport>("jacocoCombinedTestReport") {
     description = "Generates code coverage report for all test tasks"
     group = "verification"
 
