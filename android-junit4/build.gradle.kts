@@ -16,7 +16,6 @@
 
 plugins {
     id("com.android.library")
-    id("kotlin-android")
     id("maven-publish")
     id("org.jetbrains.dokka")
 }
@@ -28,7 +27,6 @@ android {
 
     defaultConfig {
         minSdk = 14
-        targetSdk = 33
     }
 
     sourceSets {
