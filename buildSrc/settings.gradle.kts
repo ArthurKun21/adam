@@ -5,3 +5,4 @@ dependencyResolutionManagement {
         }
     }
 }
+rootProject.name = "adam-buildSrc"
