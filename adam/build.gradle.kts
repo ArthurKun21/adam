@@ -18,7 +18,7 @@ import com.google.protobuf.gradle.remove
  */
 
 plugins {
-    kotlin("jvm")
+    id("adam.jvm")
     id("jacoco")
     id("org.jetbrains.dokka")
     alias(libs.plugins.protobuf)
@@ -140,21 +140,6 @@ tasks.jacocoTestReport {
 
 tasks.dokkaHtml.configure {
     outputDirectory.set(rootProject.rootDir.resolve("docs/api"))
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-        freeCompilerArgs.addAll(
-            "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi",
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-        )
-    }
 }
 
 dependencies {
