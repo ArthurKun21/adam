@@ -17,7 +17,6 @@
 plugins {
     id("adam.android.library")
     id("maven-publish")
-    id("org.jetbrains.dokka")
 }
 
 android {
