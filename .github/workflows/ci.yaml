@@ -58,7 +58,6 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   integration-test:
-    timeout-minutes: 30
     needs: test
     runs-on: ubuntu-latest
     strategy:
@@ -94,6 +93,7 @@ jobs:
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 30
         with:
           api-level: ${{ matrix.api }}
           target: google_apis
