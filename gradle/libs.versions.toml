@@ -12,7 +12,7 @@ junit4 = "4.13.2"
 junit5 = "5.10.1"
 junit5commons = "1.10.1"
 imageComparison = "4.4.0"
-dokka = "1.9.10"
+
 grpc = "1.59.0"
 grpcKotlin = "1.4.0"
 grpcOkhttp = "1.59.0"
@@ -56,14 +56,14 @@ image-comparison = { module = "com.github.romankh3:image-comparison", version.re
 ## Gradle Plugins
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 androidx-gradle = { module = "com.android.tools.build:gradle", version.ref = "androidGradle" }
-dokka-gradle = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+dokka-gradle = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "kotlin" }
 
 spotless-gradle = { group = "com.diffplug.spotless", name = "spotless-plugin-gradle", version.ref = "spotless" }
 ktlint-core = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint-core" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "kotlin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufGradle" }
 android-library = { id = "com.android.library", version.ref = "androidGradle" }
 gradle-versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
