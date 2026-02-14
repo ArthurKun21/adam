@@ -18,10 +18,6 @@ plugins {
     id("adam.jvm")
 }
 
-kotlin {
-    explicitApi()
-}
-
 dependencies {
     implementation(project(":adam"))
     implementation(libs.ktor.network)

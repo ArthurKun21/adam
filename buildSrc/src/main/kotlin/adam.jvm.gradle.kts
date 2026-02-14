@@ -5,6 +5,10 @@ plugins {
     // id("adam.code.lint")
 }
 
+kotlin {
+    explicitApi()
+}
+
 java {
     sourceCompatibility = ProjectConfig.JavaVersion
     targetCompatibility = ProjectConfig.JavaVersion

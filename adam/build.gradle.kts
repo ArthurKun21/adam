@@ -25,10 +25,6 @@ plugins {
     id("idea")
 }
 
-kotlin {
-    explicitApi()
-}
-
 protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:${libs.versions.protobuf.get()}"

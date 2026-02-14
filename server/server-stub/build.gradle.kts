@@ -19,11 +19,6 @@ plugins {
     id("jacoco")
 }
 
-kotlin {
-    explicitApi()
-}
-
-
 sourceSets {
     create("integrationTest") {
         compileClasspath += sourceSets.main.get().output
