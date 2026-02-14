@@ -25,6 +25,10 @@ tasks.jacocoTestReport {
     }
 }
 
+tasks.test {
+    useJUnitPlatform()
+}
+
 dependencies {
     api(project(":server:server-stub"))
     implementation(libs.junit5.engine)
@@ -33,4 +37,5 @@ dependencies {
     implementation(libs.coroutines.core)
 
     testImplementation(libs.coroutines.debug)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
