@@ -55,6 +55,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         api: [ 24, 25, 26, 28, 29, 30, 31, 33, 34, 35, 36 ]
     steps:
