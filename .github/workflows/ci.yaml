@@ -31,6 +31,7 @@ jobs:
         if: always()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
+          check_name: Build & Test
       - name: archive test results
         if: failure()
         run: (cd adam/build/reports/tests/test; zip -r -X ../../../../../test-result.zip .)
@@ -90,6 +91,7 @@ jobs:
         if: always()
         with:
           report_paths: '**/build/test-results/integrationTest/TEST-*.xml'
+          check_name: Integration Test API ${{ matrix.api }}
       - name: Generate integration code coverage report
         run: ./gradlew :adam:jacocoIntegrationTestReport
       - name: archive integration test results
