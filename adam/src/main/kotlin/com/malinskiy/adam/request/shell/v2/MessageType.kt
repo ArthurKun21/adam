@@ -35,7 +35,9 @@ public enum class MessageType {
     /**
      * Indicates an invalid or unknown packet
      */
-    INVALID;
+    INVALID,
+
+    ;
 
     public fun toValue(): Int = when (this) {
         STDIN -> 0

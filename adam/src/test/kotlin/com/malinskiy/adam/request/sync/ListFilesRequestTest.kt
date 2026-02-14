@@ -51,7 +51,7 @@ class ListFilesRequestTest {
                     drwxrwx--x 2 root sdcard_rw 4096 2020-10-24 16:29 Ringtones
                     Orwxrwx--x 2 root sdcard_rw 4096 2020-10-24 16:29 XXX
                     x0
-                """.trimIndent()
+                        """.trimIndent(),
                     )
             }
 
@@ -67,7 +67,7 @@ class ListFilesRequestTest {
                     owner = "root",
                     size = 4096,
                     time = "16:29",
-                    type = AndroidFileType.REGULAR_FILE
+                    type = AndroidFileType.REGULAR_FILE,
                 ),
                 AndroidFile(
                     permissions = "brwxrwx--x",
@@ -79,7 +79,7 @@ class ListFilesRequestTest {
                     owner = "root",
                     size = 4096,
                     time = "16:29",
-                    type = AndroidFileType.BLOCK_SPECIAL_FILE
+                    type = AndroidFileType.BLOCK_SPECIAL_FILE,
                 ),
                 AndroidFile(
                     permissions = "lrwxrwx--x",
@@ -91,7 +91,7 @@ class ListFilesRequestTest {
                     owner = "root",
                     size = 4096,
                     time = "16:29",
-                    type = AndroidFileType.SYMBOLIC_LINK
+                    type = AndroidFileType.SYMBOLIC_LINK,
                 ),
                 AndroidFile(
                     permissions = "crwxrwx--x",
@@ -103,7 +103,7 @@ class ListFilesRequestTest {
                     owner = "root",
                     size = 4096,
                     time = "19:11",
-                    type = AndroidFileType.CHARACTER_SPECIAL_FILE
+                    type = AndroidFileType.CHARACTER_SPECIAL_FILE,
                 ),
                 AndroidFile(
                     permissions = "srwxrwx--x",
@@ -115,7 +115,7 @@ class ListFilesRequestTest {
                     owner = "root",
                     size = 4096,
                     time = "16:29",
-                    type = AndroidFileType.SOCKET_LINK
+                    type = AndroidFileType.SOCKET_LINK,
                 ),
                 AndroidFile(
                     permissions = "prwxrwx--x",
@@ -127,7 +127,7 @@ class ListFilesRequestTest {
                     owner = "root",
                     size = 4096,
                     time = "16:29",
-                    type = AndroidFileType.FIFO
+                    type = AndroidFileType.FIFO,
                 ),
                 AndroidFile(
                     permissions = "drwxrwx--x",
@@ -139,8 +139,8 @@ class ListFilesRequestTest {
                     owner = "root",
                     size = 4096,
                     time = "16:29",
-                    type = AndroidFileType.DIRECTORY
-                )
+                    type = AndroidFileType.DIRECTORY,
+                ),
             )
 
             assertThat(files.first().permissions).isEqualTo("-rwxrwx--x")

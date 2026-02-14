@@ -27,7 +27,7 @@ import kotlinx.coroutines.channels.SendChannel
 public open class ChanneledShellCommandRequest(
     public val cmd: String,
     target: Target = NonSpecifiedTarget,
-    socketIdleTimeout: Long? = null
+    socketIdleTimeout: Long? = null,
 ) : AsyncChannelRequest<String, Unit>(target = target, socketIdleTimeout = socketIdleTimeout) {
 
     override suspend fun readElement(socket: Socket, sendChannel: SendChannel<String>): Boolean {

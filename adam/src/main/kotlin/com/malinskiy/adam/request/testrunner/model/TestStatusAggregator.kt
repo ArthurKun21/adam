@@ -21,5 +21,5 @@ import com.malinskiy.adam.Const
 public data class TestStatusAggregator(
     public var statusCode: Status,
     public val logcatBuilder: StringBuilder = StringBuilder(Const.MAX_PROTOBUF_LOGCAT_LENGTH),
-    public val metrics: MutableMap<String, String> = mutableMapOf()
+    public val metrics: MutableMap<String, String> = mutableMapOf(),
 )

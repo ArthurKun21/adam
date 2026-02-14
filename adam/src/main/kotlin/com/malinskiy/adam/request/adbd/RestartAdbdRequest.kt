@@ -22,7 +22,11 @@ import com.malinskiy.adam.request.transform.StringResponseTransformer
 public class RestartAdbdRequest(private val mode: AdbdMode) : SynchronousRequest<String>() {
     private val transformer = StringResponseTransformer()
 
-    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = transformer.process(bytes, offset, limit)
+    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = transformer.process(
+        bytes,
+        offset,
+        limit,
+    )
 
     override fun serialize(): ByteArray = createBaseRequest(mode.requestString)
 

@@ -23,12 +23,17 @@ import com.malinskiy.adam.request.MultiRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel
 
-public class SingleTargetAndroidDebugBridgeClient(private val client: AndroidDebugBridgeClient, private val serial: String) {
+public class SingleTargetAndroidDebugBridgeClient(
+    private val client: AndroidDebugBridgeClient,
+    private val serial: String,
+) {
 
     public suspend fun <T : Any?> execute(request: ComplexRequest<T>): T = client.execute(request, serial)
 
-    public fun <T : Any?, I : Any?> execute(request: AsyncChannelRequest<T, I>, scope: CoroutineScope): ReceiveChannel<T> =
-        client.execute(request, scope, serial)
+    public fun <T : Any?, I : Any?> execute(
+        request: AsyncChannelRequest<T, I>,
+        scope: CoroutineScope,
+    ): ReceiveChannel<T> = client.execute(request, scope, serial)
 
     public suspend fun <T> execute(request: MultiRequest<T>): T = client.execute(request, serial)
 }

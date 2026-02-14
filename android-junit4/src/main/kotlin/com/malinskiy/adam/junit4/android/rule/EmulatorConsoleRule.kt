@@ -32,7 +32,10 @@ import kotlin.coroutines.CoroutineContext
 /**
  * @param coroutineContext it's your responsibility to cancel this context when needed
  */
-public class EmulatorConsoleRule(private val mode: Mode = Mode.ASSERT, private val coroutineContext: CoroutineContext = Dispatchers.IO) :
+public class EmulatorConsoleRule(
+    private val mode: Mode = Mode.ASSERT,
+    private val coroutineContext: CoroutineContext = Dispatchers.IO,
+) :
     TestRule {
     private lateinit var client: AndroidDebugBridgeClient
     private lateinit var inetSocketAddress: InetSocketAddress
@@ -54,8 +57,14 @@ public class EmulatorConsoleRule(private val mode: Mode = Mode.ASSERT, private v
                 } else {
                     when (mode) {
                         Mode.SKIP -> return
-                        Mode.ASSUME -> throw AssumptionViolatedException("No access to console port: host = $host, port = $port, token = $authToken")
-                        Mode.ASSERT -> throw AssertionError("No access to console port: host = $host, port = $port, token = $authToken")
+
+                        Mode.ASSUME -> throw AssumptionViolatedException(
+                            "No access to console port: host = $host, port = $port, token = $authToken",
+                        )
+
+                        Mode.ASSERT -> throw AssertionError(
+                            "No access to console port: host = $host, port = $port, token = $authToken",
+                        )
                     }
                 }
 
@@ -68,5 +77,7 @@ public class EmulatorConsoleRule(private val mode: Mode = Mode.ASSERT, private v
         }
     }
 
-    public suspend fun execute(cmd: String): String = client.execute(EmulatorCommandRequest(cmd, inetSocketAddress, authToken))
+    public suspend fun execute(cmd: String): String = client.execute(
+        EmulatorCommandRequest(cmd, inetSocketAddress, authToken),
+    )
 }

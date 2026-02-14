@@ -32,7 +32,7 @@ public open class ChanneledShellCommandRequest(
 ) : AsyncChannelRequest<ShellCommandResultChunk, ShellCommandInputChunk>(
     target = target,
     channel = channel,
-    socketIdleTimeout = socketIdleTimeout
+    socketIdleTimeout = socketIdleTimeout,
 ) {
 
     override suspend fun readElement(socket: Socket, sendChannel: SendChannel<ShellCommandResultChunk>): Boolean {
@@ -60,7 +60,7 @@ public open class ChanneledShellCommandRequest(
                 }
 
                 MessageType.EXIT -> {
-                    //ignoredLength
+                    // ignoredLength
                     socket.readIntLittleEndian()
                     val exitCode = socket.readByte().toInt()
                     sendChannel.send(ShellCommandResultChunk(exitCode = exitCode))
@@ -96,7 +96,7 @@ public open class ChanneledShellCommandRequest(
 public data class ShellCommandResultChunk(
     public val stdout: ByteArray? = null,
     public val stderr: ByteArray? = null,
-    public val exitCode: Int? = null
+    public val exitCode: Int? = null,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -107,11 +107,15 @@ public data class ShellCommandResultChunk(
         if (stdout != null) {
             if (other.stdout == null) return false
             if (!stdout.contentEquals(other.stdout)) return false
-        } else if (other.stdout != null) return false
+        } else if (other.stdout != null) {
+            return false
+        }
         if (stderr != null) {
             if (other.stderr == null) return false
             if (!stderr.contentEquals(other.stderr)) return false
-        } else if (other.stderr != null) return false
+        } else if (other.stderr != null) {
+            return false
+        }
         if (exitCode != other.exitCode) return false
 
         return true
@@ -127,7 +131,7 @@ public data class ShellCommandResultChunk(
 
 public data class ShellCommandInputChunk(
     public val stdin: ByteArray? = null,
-    public val close: Boolean = false
+    public val close: Boolean = false,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -138,7 +142,9 @@ public data class ShellCommandInputChunk(
         if (stdin != null) {
             if (other.stdin == null) return false
             if (!stdin.contentEquals(other.stdin)) return false
-        } else if (other.stdin != null) return false
+        } else if (other.stdin != null) {
+            return false
+        }
         if (close != other.close) return false
 
         return true

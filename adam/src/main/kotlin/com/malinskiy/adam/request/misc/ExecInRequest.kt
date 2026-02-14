@@ -30,24 +30,31 @@ public class ExecInRequest(
     private val cmd: String,
     private val channel: ReceiveChannel<ByteArray>,
     private val sizeChannel: SendChannel<Int>,
-    socketIdleTimeout: Long? = null
+    socketIdleTimeout: Long? = null,
 ) :
     ComplexRequest<Unit>(socketIdleTimeout = socketIdleTimeout) {
     override suspend fun readElement(socket: Socket) {
         while (true) {
             if (!channel.isClosedForReceive) {
-                //Should not request more if read channel is already closed
+                // Should not request more if read channel is already closed
                 sizeChannel.send(Const.MAX_FILE_PACKET_LENGTH)
             }
             val result = channel.tryReceive()
             when {
-                result.isSuccess && result.getOrThrow().isNotEmpty() -> socket.writeFully(result.getOrThrow(), 0, result.getOrThrow().size)
+                result.isSuccess && result.getOrThrow().isNotEmpty() -> socket.writeFully(
+                    result.getOrThrow(),
+                    0,
+                    result.getOrThrow().size,
+                )
+
                 result.isClosed -> break
+
                 result.isFailure -> continue
+
                 else -> break
             }
         }
-        //Have to poll
+        // Have to poll
         socket.readStatus()
     }
 

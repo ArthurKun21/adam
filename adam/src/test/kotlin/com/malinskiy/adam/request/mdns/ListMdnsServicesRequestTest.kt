@@ -35,7 +35,9 @@ class ListMdnsServicesRequestTest {
     @Test
     fun testReturnsContent() {
         runBlocking {
-            val response = "0027adb-serial\t_adb._tcp.\t192.168.1.2:9999\n".toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
+            val response = "0027adb-serial\t_adb._tcp.\t192.168.1.2:9999\n".toByteArray(
+                Const.DEFAULT_TRANSPORT_ENCODING,
+            )
 
             StubSocket(response).use { socket ->
                 val services = ListMdnsServicesRequest().readElement(socket)
@@ -43,8 +45,8 @@ class ListMdnsServicesRequestTest {
                     MdnsService(
                         name = "adb-serial",
                         serviceType = "_adb._tcp.",
-                        url = "192.168.1.2:9999"
-                    )
+                        url = "192.168.1.2:9999",
+                    ),
                 )
 
                 assertThat(services.first().name).isEqualTo("adb-serial")

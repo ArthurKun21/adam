@@ -32,7 +32,7 @@ public class ListDevicesRequest : ComplexRequest<List<Device>>(target = HostTarg
                 val split = line.split("\t")
                 Device(
                     serial = split[0],
-                    state = DeviceState.from(split[1])
+                    state = DeviceState.from(split[1]),
                 )
             }
     }
@@ -51,7 +51,8 @@ public enum class DeviceState {
     UNAUTHORIZED,
     AUTHORIZING,
     CONNECTING,
-    UNKNOWN;
+    UNKNOWN,
+    ;
 
     public companion object {
         public fun from(value: String): DeviceState =

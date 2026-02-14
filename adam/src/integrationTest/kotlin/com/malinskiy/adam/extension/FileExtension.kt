@@ -21,7 +21,9 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
 import java.io.File
 
-fun CoroutineScope.sequentialRead(file: File, sizeChannel: ReceiveChannel<Int>): ReceiveChannel<ByteArray> = produce(capacity = 1) {
+fun CoroutineScope.sequentialRead(file: File, sizeChannel: ReceiveChannel<Int>): ReceiveChannel<ByteArray> = produce(
+    capacity = 1,
+) {
     file.inputStream().buffered().use { stream ->
         var position = 0
         for (size in sizeChannel) {

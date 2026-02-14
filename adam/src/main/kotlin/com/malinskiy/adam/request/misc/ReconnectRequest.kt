@@ -37,7 +37,7 @@ import com.malinskiy.adam.transport.withDefaultBuffer
  */
 public class ReconnectRequest(
     private val reconnectTarget: ReconnectTarget? = null,
-    target: Target = NonSpecifiedTarget
+    target: Target = NonSpecifiedTarget,
 ) : ComplexRequest<String>(target = target) {
     override suspend fun readElement(socket: Socket): String {
         withDefaultBuffer {
@@ -47,7 +47,7 @@ public class ReconnectRequest(
             return if (array().copyOfRange(0, 4).contentEquals(done)) {
                 "done"
             } else {
-                //This is length of a response string
+                // This is length of a response string
                 val size = String(array(), 0, 4, Const.DEFAULT_TRANSPORT_ENCODING).toInt(radix = 16)
                 compatClear()
                 compatLimit(size)

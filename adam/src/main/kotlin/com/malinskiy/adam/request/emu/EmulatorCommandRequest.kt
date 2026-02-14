@@ -43,7 +43,7 @@ public class EmulatorCommandRequest(
     public val address: InetSocketAddress,
     private val authToken: String? = null,
     private val cleanResponse: Boolean = true,
-    public val idleTimeoutOverride: Long? = null
+    public val idleTimeoutOverride: Long? = null,
 ) {
     private suspend fun readAuthToken(): String? {
         val authTokenFile = File(System.getProperty("user.home"), ".emulator_console_auth_token")
@@ -81,6 +81,7 @@ public class EmulatorCommandRequest(
                     count == 0 -> {
                         continue@loop
                     }
+
                     count > 0 -> {
                         output.append(String(buffer, 0, count, Charsets.UTF_8))
                     }
@@ -94,6 +95,7 @@ public class EmulatorCommandRequest(
                  * Additional confirmation of auth
                  */
                 token.isNotBlank() -> output.indexOf(OUTPUT_DELIMITER, firstOkPosition + 1)
+
                 else -> firstOkPosition
             }
 

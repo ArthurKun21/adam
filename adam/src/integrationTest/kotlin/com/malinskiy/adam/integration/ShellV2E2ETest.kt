@@ -50,18 +50,18 @@ class ShellV2E2ETest {
     fun testChanneled() = runBlocking {
         val stdio = Channel<ShellCommandInputChunk>()
         val receiveChannel = adbRule.adb.execute(ChanneledShellCommandRequest("cat", stdio), this, adbRule.deviceSerial)
-        //Sending commands requires additional pool, otherwise we might deadlock
+        // Sending commands requires additional pool, otherwise we might deadlock
         val stdioJob = launch(Dispatchers.IO) {
             stdio.send(
                 ShellCommandInputChunk(
-                    stdin = "cafebabe".toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
-                )
+                    stdin = "cafebabe".toByteArray(Const.DEFAULT_TRANSPORT_ENCODING),
+                ),
             )
 
             stdio.send(
                 ShellCommandInputChunk(
-                    close = true
-                )
+                    close = true,
+                ),
             )
         }
 
@@ -78,6 +78,5 @@ class ShellV2E2ETest {
         assertThat(stdoutBuilder.toString()).isEqualTo("cafebabe")
         assertThat(stderrBuilder.toString()).isEmpty()
         assertThat(exitCode).isEqualTo(0)
-
     }
 }

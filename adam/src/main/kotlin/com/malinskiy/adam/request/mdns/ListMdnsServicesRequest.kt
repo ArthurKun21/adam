@@ -23,7 +23,6 @@ import com.malinskiy.adam.transport.Socket
 
 public class ListMdnsServicesRequest : ComplexRequest<List<MdnsService>>(target = HostTarget) {
     override suspend fun readElement(socket: Socket): List<MdnsService> {
-
         return socket.readProtocolString().lines()
             .filterNot { it.isEmpty() }
             .map {
@@ -31,7 +30,7 @@ public class ListMdnsServicesRequest : ComplexRequest<List<MdnsService>>(target 
                 MdnsService(
                     name = split[0].trim(),
                     serviceType = split[1].trim(),
-                    url = split[2].trim()
+                    url = split[2].trim(),
                 )
             }
     }

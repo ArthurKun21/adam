@@ -39,7 +39,7 @@ class InstallCommitRequestTest {
     fun serializeAbb() {
         val request = InstallCommitRequest(
             supportedFeatures = listOf(Feature.CMD, Feature.ABB_EXEC),
-            parentSession = "parent-session-id"
+            parentSession = "parent-session-id",
         )
         assertThat(request.serialize().toRequestString())
             .isEqualTo("0031abb_exec:package\u0000install-commit\u0000parent-session-id")
@@ -50,7 +50,7 @@ class InstallCommitRequestTest {
         val request = InstallCommitRequest(
             supportedFeatures = listOf(Feature.CMD, Feature.ABB_EXEC),
             parentSession = "parent-session-id",
-            abandon = true
+            abandon = true,
         )
         assertThat(request.serialize().toRequestString())
             .isEqualTo("0032abb_exec:package\u0000install-abandon\u0000parent-session-id")
@@ -84,8 +84,8 @@ class InstallCommitRequestTest {
             InstallCommitRequest(
                 supportedFeatures = listOf(),
                 parentSession = "parent-session-id",
-                abandon = false
-            ).serialize().toRequestString()
+                abandon = false,
+            ).serialize().toRequestString(),
         ).isEqualTo("0028exec:pm install-commit parent-session-id")
     }
 
@@ -93,7 +93,7 @@ class InstallCommitRequestTest {
         val request = InstallCommitRequest(
             supportedFeatures = listOf(Feature.CMD),
             parentSession = "parent-session-id",
-            abandon = false
+            abandon = false,
         )
         return request
     }

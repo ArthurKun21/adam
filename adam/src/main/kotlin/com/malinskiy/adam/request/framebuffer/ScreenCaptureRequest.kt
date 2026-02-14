@@ -35,9 +35,15 @@ public class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T
 
             val protocolVersion = order(ByteOrder.LITTLE_ENDIAN).int
             val headerSize = when (protocolVersion) {
-                1 -> 12 // bpp, size, width, height, 4*(length, offset)
-                2 -> 13 // bpp, colorSpace, size, width, height, 4*(length, offset)
-                16 -> 3 // compatibility mode: size, width, height. used previously to denote framebuffer depth
+                1 -> 12
+
+                // bpp, size, width, height, 4*(length, offset)
+                2 -> 13
+
+                // bpp, colorSpace, size, width, height, 4*(length, offset)
+                16 -> 3
+
+                // compatibility mode: size, width, height. used previously to denote framebuffer depth
                 /**
                  * See https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/master/daemon/framebuffer_service.cpp#42
                  * for a possible new value for DDMS_RAWIMAGE_VERSION
@@ -66,8 +72,9 @@ public class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T
                     blueLength = 5,
                     alphaOffset = 0,
                     alphaLength = 0,
-                    socket = socket
+                    socket = socket,
                 )
+
                 1 -> adapter.process(
                     version = protocolVersion,
                     bitsPerPixel = int,
@@ -82,8 +89,9 @@ public class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T
                     greenLength = int,
                     alphaOffset = int,
                     alphaLength = int,
-                    socket = socket
+                    socket = socket,
                 )
+
                 2 -> adapter.process(
                     version = protocolVersion,
                     bitsPerPixel = int,
@@ -99,8 +107,9 @@ public class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T
                     greenLength = int,
                     alphaOffset = int,
                     alphaLength = int,
-                    socket = socket
+                    socket = socket,
                 )
+
                 else -> throw UnsupportedImageProtocolException(protocolVersion)
             }
         }

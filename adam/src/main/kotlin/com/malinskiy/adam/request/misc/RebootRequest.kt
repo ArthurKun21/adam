@@ -31,5 +31,5 @@ public enum class RebootMode(public val value: String) {
     RECOVERY("recovery"),
     BOOTLOADER("bootloader"),
     SIDELOAD("sideload"),
-    SIDELOAD_AUTO_REBOOT("sideload-auto-reboot")
+    SIDELOAD_AUTO_REBOOT("sideload-auto-reboot"),
 }

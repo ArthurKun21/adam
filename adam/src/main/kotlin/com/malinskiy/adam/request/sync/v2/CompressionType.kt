@@ -20,7 +20,8 @@ public enum class CompressionType {
     NONE,
     BROTLI,
     LZ4,
-    Zstd;
+    Zstd,
+    ;
 
     public fun toFlag(): Int = when (this) {
         NONE -> 0

@@ -48,18 +48,20 @@ public class ColorModelFactory {
                         true,
                         false,
                         Transparency.TRANSLUCENT,
-                        DataBuffer.TYPE_BYTE
+                        DataBuffer.TYPE_BYTE,
                     )
                 }
+
                 BufferedImage.TYPE_3BYTE_BGR -> {
                     ComponentColorModel(
                         colorSpace,
                         false,
                         false,
                         Transparency.TRANSLUCENT,
-                        DataBuffer.TYPE_BYTE
+                        DataBuffer.TYPE_BYTE,
                     )
                 }
+
                 BufferedImage.TYPE_INT_ARGB -> {
                     DirectColorModel(
                         colorSpace,
@@ -69,14 +71,13 @@ public class ColorModelFactory {
                         0x000000ff,
                         -0x1000000,
                         false,
-                        DataBuffer.TYPE_INT
+                        DataBuffer.TYPE_INT,
                     )
                 }
+
                 else -> throw RuntimeException("Unsupported buffered image type $type")
             }
             return colorModel.also { cache[profileName] = it }
         }
     }
-
-
 }

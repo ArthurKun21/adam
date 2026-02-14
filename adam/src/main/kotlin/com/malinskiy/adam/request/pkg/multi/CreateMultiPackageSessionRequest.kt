@@ -32,7 +32,7 @@ public class CreateMultiPackageSessionRequest(
     private val pkgList: List<InstallationPackage>,
     private val supportedFeatures: List<Feature>,
     private val reinstall: Boolean,
-    private val extraArgs: List<String> = emptyList()
+    private val extraArgs: List<String> = emptyList(),
 ) : ComplexRequest<CreateSessionResponse>() {
     override fun validate(): ValidationResponse {
         val response = super.validate()
@@ -84,7 +84,7 @@ public class CreateMultiPackageSessionRequest(
                     "package"
                 } else {
                     "exec:cmd package"
-                }
+                },
             )
 
             add("install-create")

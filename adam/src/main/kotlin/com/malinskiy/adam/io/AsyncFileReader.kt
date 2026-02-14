@@ -40,7 +40,7 @@ public class AsyncFileReader(
     private val start: Long = 0,
     private val offset: Int = 0,
     private val length: Int = Const.MAX_FILE_PACKET_LENGTH,
-    override val coroutineContext: CoroutineContext = Dispatchers.IO
+    override val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : CoroutineScope, SuspendCloseable {
     private val fileChannel = file.inputStream().buffered()
     private val bufferChannel: Channel<ByteBuffer> = Channel(capacity = 2)
@@ -59,6 +59,7 @@ public class AsyncFileReader(
                             AdamMaxFilePacketPool.recycle(byteBuffer)
                             shouldClose = true
                         }
+
                         else -> {
                             byteBuffer.compatLimit(read + offset)
                             bufferChannel.send(byteBuffer)

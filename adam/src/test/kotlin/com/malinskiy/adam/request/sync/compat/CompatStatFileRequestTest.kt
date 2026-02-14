@@ -72,11 +72,14 @@ class CompatStatFileRequestTest {
                     gid = 1000,
                     atime = 1589042331,
                     mtime = 1589042332,
-                    ctime = 1589042333
+                    ctime = 1589042333,
                 )
             }
 
-            val result = client.execute(CompatStatFileRequest("/sdcard/testfile", listOf(Feature.STAT_V2)), serial = "serial")
+            val result = client.execute(
+                CompatStatFileRequest("/sdcard/testfile", listOf(Feature.STAT_V2)),
+                serial = "serial",
+            )
             val output = result as FileEntryV2
             assertThat(output).isEqualTo(
                 FileEntryV2(
@@ -90,8 +93,8 @@ class CompatStatFileRequestTest {
                     gid = 1000.toUInt(),
                     atime = Instant.ofEpochSecond(1589042331),
                     mtime = Instant.ofEpochSecond(1589042332),
-                    ctime = Instant.ofEpochSecond(1589042333)
-                )
+                    ctime = Instant.ofEpochSecond(1589042333),
+                ),
             )
         }
     }

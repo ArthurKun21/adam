@@ -36,7 +36,7 @@ public class PullFileRequest(
     local: File,
     private val supportedFeatures: List<Feature>,
     size: Long? = null,
-    coroutineContext: CoroutineContext = Dispatchers.IO
+    coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : BasePullFileRequest(remotePath, local, size, coroutineContext) {
     /**
      * We don't have support for any compression, so the only value is NONE

@@ -18,5 +18,5 @@ package com.malinskiy.adam.transport
 
 public class TransportResponse(
     public val okay: Boolean,
-    public val message: String?
+    public val message: String?,
 )

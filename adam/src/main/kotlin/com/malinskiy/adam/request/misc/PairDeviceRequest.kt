@@ -29,7 +29,7 @@ import com.malinskiy.adam.transport.Socket
  */
 public class PairDeviceRequest(
     private val url: String,
-    private val pairingCode: String
+    private val pairingCode: String,
 ) : ComplexRequest<String>(target = HostTarget) {
 
     override suspend fun readElement(socket: Socket): String = socket.readProtocolString()

@@ -23,5 +23,5 @@ internal data class SyncFile(
     val remote: String,
     val mtime: Long,
     val mode: UInt,
-    val size: ULong
+    val size: ULong,
 )

@@ -35,7 +35,11 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Copies up to limit bytes into transformer using buffer. If limit is null - copy until EOF
  */
-public suspend fun <T> Socket.copyTo(transformer: ResponseTransformer<T>, buffer: ByteArray, limit: Long? = null): Long {
+public suspend fun <T> Socket.copyTo(
+    transformer: ResponseTransformer<T>,
+    buffer: ByteArray,
+    limit: Long? = null,
+): Long {
     var processed = 0L
     loop@ while (true) {
         val toRead = when {
@@ -53,6 +57,7 @@ public suspend fun <T> Socket.copyTo(transformer: ResponseTransformer<T>, buffer
         val available = readAvailable(buffer, 0, toRead)
         when {
             processed == limit -> break@loop
+
             available < 0 -> {
                 break@loop
             }
@@ -76,8 +81,15 @@ public suspend fun <T> Socket.copyTo(transformer: ResponseTransformer<T>, buffer
  * TODO: rewrite
  * Assumes buffer hasArray == true
  */
-public suspend fun <T> Socket.copyTo(transformer: ResponseTransformer<T>, buffer: ByteBuffer): Long = copyTo(transformer, buffer.array())
-public suspend fun <T> Socket.copyTo(transformer: ResponseTransformer<T>, buffer: ByteBuffer, limit: Long? = null): Long =
+public suspend fun <T> Socket.copyTo(
+    transformer: ResponseTransformer<T>,
+    buffer: ByteBuffer,
+): Long = copyTo(transformer, buffer.array())
+public suspend fun <T> Socket.copyTo(
+    transformer: ResponseTransformer<T>,
+    buffer: ByteBuffer,
+    limit: Long? = null,
+): Long =
     copyTo(transformer, buffer.array(), limit)
 
 public suspend fun Socket.readOptionalProtocolString(): String? {
@@ -109,7 +121,8 @@ public suspend fun Socket.readProtocolString(): String {
         if (copied != 4L) {
             throw RequestRejectedException("Unexpected string length: $length")
         }
-        val messageLength = length.toIntOrNull(16) ?: throw RequestRejectedException("Unexpected string length: $length")
+        val messageLength =
+            length.toIntOrNull(16) ?: throw RequestRejectedException("Unexpected string length: $length")
 
         compatClear()
         compatLimit(messageLength)

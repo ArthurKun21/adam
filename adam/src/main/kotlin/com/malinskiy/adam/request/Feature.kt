@@ -99,7 +99,9 @@ public enum class Feature {
     /**
      * adbd supports dry-run send for send/recv v2.
      */
-    SENDRECV_V2_DRY_RUN_SEND;
+    SENDRECV_V2_DRY_RUN_SEND,
+
+    ;
 
     public fun value(): String = name.lowercase(Locale.ENGLISH)
 

@@ -27,7 +27,6 @@ import org.junit.Rule
 import org.junit.Test
 import java.time.Instant
 
-
 class StatFileRequestTest {
     @get:Rule
     val server = AdbServerRule()
@@ -53,11 +52,14 @@ class StatFileRequestTest {
                     gid = 1000,
                     atime = 1589042331,
                     mtime = 1589042332,
-                    ctime = 1589042333
+                    ctime = 1589042333,
                 )
             }
 
-            val output: FileEntryV2 = client.execute(StatFileRequest("/sdcard/testfile", listOf(Feature.STAT_V2)), serial = "serial")
+            val output: FileEntryV2 = client.execute(
+                StatFileRequest("/sdcard/testfile", listOf(Feature.STAT_V2)),
+                serial = "serial",
+            )
             assertThat(output).isEqualTo(
                 FileEntryV2(
                     mode = 123.toUInt(),
@@ -70,10 +72,9 @@ class StatFileRequestTest {
                     gid = 1000.toUInt(),
                     atime = Instant.ofEpochSecond(1589042331),
                     mtime = Instant.ofEpochSecond(1589042332),
-                    ctime = Instant.ofEpochSecond(1589042333)
-                )
+                    ctime = Instant.ofEpochSecond(1589042333),
+                ),
             )
         }
     }
-
 }

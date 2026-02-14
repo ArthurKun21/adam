@@ -30,7 +30,7 @@ public class PortForwardRequest(
     private val local: LocalPortSpec,
     private val remote: RemotePortSpec,
     serial: String,
-    private val mode: PortForwardingMode = PortForwardingMode.DEFAULT
+    private val mode: PortForwardingMode = PortForwardingMode.DEFAULT,
 
 ) : ComplexRequest<Int?>(target = SerialTarget(serial)) {
 
@@ -49,5 +49,5 @@ public class PortForwardRequest(
 
 public enum class PortForwardingMode(public val value: String) {
     DEFAULT(""),
-    NO_REBIND(":norebind")
+    NO_REBIND(":norebind"),
 }

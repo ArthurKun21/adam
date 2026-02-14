@@ -30,7 +30,7 @@ public class PushFileRequest(
     local: File,
     remotePath: String,
     mode: String = "0777",
-    coroutineContext: CoroutineContext = Dispatchers.IO
+    coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : BasePushFileRequest(local, remotePath, mode, coroutineContext) {
 
     override suspend fun handshake(socket: Socket) {

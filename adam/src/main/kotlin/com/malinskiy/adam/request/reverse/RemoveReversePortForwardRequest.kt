@@ -24,7 +24,7 @@ import com.malinskiy.adam.request.forwarding.RemotePortSpec
  * Doesn't work with SerialTarget, have to use the serial as a parameter for the execute method
  */
 public class RemoveReversePortForwardRequest(
-    private val local: RemotePortSpec
+    private val local: RemotePortSpec,
 ) : SynchronousRequest<Unit>(target = NonSpecifiedTarget) {
     override fun serialize(): ByteArray = createBaseRequest("reverse:killforward:${local.toSpec()}")
 

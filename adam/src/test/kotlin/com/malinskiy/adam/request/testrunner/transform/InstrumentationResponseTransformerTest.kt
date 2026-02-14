@@ -168,7 +168,8 @@ class InstrumentationResponseTransformerTest {
     fun testBufferFraming() = runBlocking {
         val transformer = InstrumentationResponseTransformer()
 
-        val lines = javaClass.getResourceAsStream("/instrumentation/log_6.input").reader().readLines()
+        val lines = javaClass.getResourceAsStream(
+            "/instrumentation/log_6.input").reader().readLines()
 
         val events = mutableListOf<TestEvent>()
         for (line in lines) {

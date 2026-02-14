@@ -21,6 +21,6 @@ public fun Int.toByteArray(): ByteArray {
         this.ushr(24).toByte(),
         ((this and 0xFF0000) shr 16).toByte(),
         ((this and 0xFF00) shr 8).toByte(),
-        (this and 0xFF).toByte()
+        (this and 0xFF).toByte(),
     )
 }

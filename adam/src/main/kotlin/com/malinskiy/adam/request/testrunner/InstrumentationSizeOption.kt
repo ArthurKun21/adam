@@ -19,5 +19,5 @@ package com.malinskiy.adam.request.testrunner
 public enum class InstrumentationSizeOption {
     SMALL,
     MEDIUM,
-    LARGE
+    LARGE,
 }

@@ -49,7 +49,7 @@ public class PushRequest(
     private val destination: String,
     private val supportedFeatures: List<Feature>,
     private val mode: String = "0777",
-    override val coroutineContext: CoroutineContext = Dispatchers.IO
+    override val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : MultiRequest<Boolean>(), CoroutineScope {
 
     /**
@@ -63,57 +63,67 @@ public class PushRequest(
                 source.isFile -> {
                     when {
                         remoteFileEntry.isDirectory() -> {
-                            //Put into folder
+                            // Put into folder
                             doPushFile(
                                 source,
-                                destination.removeSuffix(Const.ANDROID_FILE_SEPARATOR) + Const.ANDROID_FILE_SEPARATOR + source.name,
+                                destination.removeSuffix(Const.ANDROID_FILE_SEPARATOR) + Const.ANDROID_FILE_SEPARATOR +
+                                    source.name,
                                 mode,
-                                serial
+                                serial,
                             )
                         }
+
                         remoteFileEntry.isRegularFile() || !remoteFileEntry.exists() -> {
                             doPushFile(source, destination, mode, serial)
                         }
+
                         else -> {
                             throw PushFailedException(
                                 "Target $destination exists and is not a directory or a file: mode=${
                                     remoteFileEntry.mode.toString(
-                                        8
+                                        8,
                                     )
-                                }"
+                                }",
                             )
                         }
                     }
                 }
+
                 source.isDirectory -> {
                     when {
                         remoteFileEntry.isDirectory() -> {
-                            //Put into subfolder
+                            // Put into subfolder
                             pushFolder(
-                                destination.removeSuffix(Const.ANDROID_FILE_SEPARATOR) + Const.ANDROID_FILE_SEPARATOR + source.name,
-                                serial
+                                destination.removeSuffix(Const.ANDROID_FILE_SEPARATOR) + Const.ANDROID_FILE_SEPARATOR +
+                                    source.name,
+                                serial,
                             )
                         }
+
                         remoteFileEntry.isRegularFile() -> {
                             throw PushFailedException("Can't push folder $source: target $destination is a file")
                         }
+
                         !remoteFileEntry.exists() -> {
                             pushFolder(destination.removeSuffix(Const.ANDROID_FILE_SEPARATOR), serial)
                         }
+
                         else -> {
                             throw PushFailedException(
                                 "Target $destination exists and is not a directory or a file: mode=${
                                     remoteFileEntry.mode.toString(
-                                        8
+                                        8,
                                     )
-                                }"
+                                }",
                             )
                         }
                     }
                 }
+
                 !source.exists() -> {
                     throw PushFailedException("Source $source doesn't exist")
                 }
+
                 else -> {
                     throw PushFailedException("Source $source is not a directory or a file")
                 }
@@ -126,7 +136,7 @@ public class PushRequest(
     private suspend fun AndroidDebugBridgeClient.pushFolder(destination: String, serial: String?): Boolean {
         val (filesToPush, dirsToCreate) = BFFSearch<File, String>().execute(
             source,
-            destination
+            destination,
         ) { currentDir, newDirs, newFiles, newTargetDirs, destinationRoot ->
             val ls = currentDir.listFiles()?.filterNot { Const.SYNC_IGNORED_FILES.contains(it.name) }
             if (ls.isNullOrEmpty()) return@execute
@@ -138,6 +148,7 @@ public class PushRequest(
                         newTargetDirs.add(destinationRoot + Const.ANDROID_FILE_SEPARATOR + remoteRelativePath)
                         newDirs.add(file)
                     }
+
                     file.isFile -> {
                         newFiles.add(
                             SyncFile(
@@ -145,8 +156,8 @@ public class PushRequest(
                                 remote = destinationRoot + Const.ANDROID_FILE_SEPARATOR + remoteRelativePath,
                                 mtime = file.lastModified() / 1000,
                                 mode = mode.toUInt(8) and "0777".toUInt(8),
-                                size = file.length().toULong()
-                            )
+                                size = file.length().toULong(),
+                            ),
                         )
                     }
                 }
@@ -170,7 +181,7 @@ public class PushRequest(
     private suspend fun AndroidDebugBridgeClient.createRemoteDirectories(
         destination: String,
         serial: String?,
-        dirsToCreate: List<String>
+        dirsToCreate: List<String>,
     ) {
         execute(ShellCommandRequest("mkdir -p ${listOf(destination).bashEscape()}"), serial)
 
@@ -179,7 +190,7 @@ public class PushRequest(
         val limit = 1024 * 4
         for (dir in dirsToCreate) {
             val escapedDirArg = " ${listOf(dir).bashEscape()}"
-            //This check might fail for multi-byte encodings
+            // This check might fail for multi-byte encodings
             if (cmdBuilder.length + escapedDirArg.length > limit) {
                 execute(ShellCommandRequest(cmdBuilder.toString()), serial)
                 cmdBuilder.clear()
@@ -200,11 +211,11 @@ public class PushRequest(
         source: File,
         destination: String,
         mode: String,
-        serial: String?
+        serial: String?,
     ): Boolean {
         val channel = execute(
             CompatPushFileRequest(source, destination, supportedFeatures, this@PushRequest, mode, coroutineContext),
-            serial
+            serial,
         )
         var progress = 0.0
         for (update in channel) {

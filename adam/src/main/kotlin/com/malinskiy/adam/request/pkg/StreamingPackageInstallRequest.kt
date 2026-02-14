@@ -45,7 +45,7 @@ public class StreamingPackageInstallRequest(
     private val supportedFeatures: List<Feature>,
     private val reinstall: Boolean,
     private val extraArgs: List<String> = emptyList(),
-    public val coroutineContext: CoroutineContext = Dispatchers.IO
+    public val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : ComplexRequest<StreamingPackageInstallResult>() {
     private val transformer = StringResponseTransformer()
 
@@ -81,7 +81,7 @@ public class StreamingPackageInstallRequest(
                     "package"
                 } else {
                     "exec:cmd package"
-                }
+                },
             )
 
             add("install")

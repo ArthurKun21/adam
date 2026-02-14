@@ -32,7 +32,7 @@ import java.io.UnsupportedEncodingException
  */
 public abstract class Request(
     public val target: Target = HostTarget,
-    public val socketIdleTimeout: Long? = null
+    public val socketIdleTimeout: Long? = null,
 ) {
 
     /**
@@ -61,7 +61,7 @@ public abstract class Request(
         val result = String.format("%04X%s", fullRequest.length, fullRequest)
             .toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
 
-        //Need to set proper length in case there are multi-byte characters
+        // Need to set proper length in case there are multi-byte characters
         val actualLength = result.size - 4
         String.format("%04X", actualLength).toByteArray(Const.DEFAULT_TRANSPORT_ENCODING).copyInto(result, 0, 0, 4)
 

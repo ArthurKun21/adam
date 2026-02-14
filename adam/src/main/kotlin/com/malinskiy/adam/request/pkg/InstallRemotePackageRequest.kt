@@ -22,7 +22,7 @@ import com.malinskiy.adam.request.shell.v1.ShellCommandRequest
 public class InstallRemotePackageRequest(
     private val absoluteRemoteFilePath: String,
     reinstall: Boolean,
-    extraArgs: List<String> = emptyList()
+    extraArgs: List<String> = emptyList(),
 ) : ShellCommandRequest(
     cmd = StringBuilder().apply {
         append("pm install ")
@@ -37,7 +37,7 @@ public class InstallRemotePackageRequest(
         }
 
         append(absoluteRemoteFilePath)
-    }.toString()
+    }.toString(),
 ) {
     override fun validate(): ValidationResponse {
         val result = super.validate()
@@ -46,7 +46,10 @@ public class InstallRemotePackageRequest(
         } else if (absoluteRemoteFilePath.endsWith(".apex")) {
             ValidationResponse(false, "APEX packages are only not compatible with InstallRemotePackageRequest")
         } else if (!absoluteRemoteFilePath.endsWith(".apk")) {
-            ValidationResponse(false, "Unsupported package extension ${absoluteRemoteFilePath.substringAfterLast('.')}. Should be apk")
+            ValidationResponse(
+                false,
+                "Unsupported package extension ${absoluteRemoteFilePath.substringAfterLast('.')}. Should be apk",
+            )
         } else {
             ValidationResponse.Success
         }

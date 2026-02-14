@@ -22,13 +22,17 @@ import com.malinskiy.adam.request.transform.StringResponseTransformer
 public class RemountPartitionsRequest(private val autoReboot: Boolean = false) : SynchronousRequest<String>() {
     private val transformer = StringResponseTransformer()
 
-    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = transformer.process(bytes, offset, limit)
+    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = transformer.process(
+        bytes,
+        offset,
+        limit,
+    )
 
     override fun serialize(): ByteArray = createBaseRequest(
         when (autoReboot) {
             true -> "remount:-R"
             false -> "remount:"
-        }
+        },
     )
 
     override fun transform(): String = transformer.transform()

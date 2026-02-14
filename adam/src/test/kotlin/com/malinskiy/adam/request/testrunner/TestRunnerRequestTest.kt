@@ -50,13 +50,13 @@ class TestRunnerRequestTest {
                 runnerClass = "com.example.test.AndroidTestRunner",
                 userId = 1000,
                 supportedFeatures = emptyList(),
-                coroutineScope = this
+                coroutineScope = this,
             )
 
             assertThat(request.cmd)
                 .isEqualTo(
                     "am instrument -w -r --no-hidden-api-checks --no-window-animation --user 1000 --abi x86 " +
-                            "-p /sdcard/profiling -f /sdcard/log com.example.test/com.example.test.AndroidTestRunner"
+                        "-p /sdcard/profiling -f /sdcard/log com.example.test/com.example.test.AndroidTestRunner",
                 )
         }
     }
@@ -68,12 +68,12 @@ class TestRunnerRequestTest {
                 testPackage = "com.example.test",
                 instrumentOptions = InstrumentOptions(),
                 supportedFeatures = emptyList(),
-                coroutineScope = this
+                coroutineScope = this,
             )
 
             assertThat(request.cmd)
                 .isEqualTo(
-                    "am instrument -w -r com.example.test/android.support.test.runner.AndroidJUnitRunner"
+                    "am instrument -w -r com.example.test/android.support.test.runner.AndroidJUnitRunner",
                 )
         }
     }
@@ -84,7 +84,9 @@ class TestRunnerRequestTest {
             launch {
                 server.session {
                     expectCmd { "host:transport:serial" }.accept()
-                    expectShell { "am instrument -w -r com.example.test/android.support.test.runner.AndroidJUnitRunner" }
+                    expectShell {
+                        "am instrument -w -r com.example.test/android.support.test.runner.AndroidJUnitRunner"
+                    }
                         .accept()
                         .respond(
                             """
@@ -111,7 +113,7 @@ class TestRunnerRequestTest {
 
 
                             INSTRUMENTATION_CODE: -1
-                        """.trimIndent()
+                            """.trimIndent(),
                         )
                 }
 
@@ -120,7 +122,7 @@ class TestRunnerRequestTest {
                         testPackage = "com.example.test",
                         instrumentOptions = InstrumentOptions(),
                         supportedFeatures = emptyList(),
-                        coroutineScope = this
+                        coroutineScope = this,
                     ),
                     serial = "serial",
                 )
@@ -132,12 +134,14 @@ class TestRunnerRequestTest {
 
                 assertThat(events).containsExactly(
                     TestRunStartedEvent(testCount = 1),
-                    TestStarted(id = TestIdentifier(className = "com.example.MainActivityAllureTest", testName = "testText")),
+                    TestStarted(
+                        id = TestIdentifier(className = "com.example.MainActivityAllureTest", testName = "testText"),
+                    ),
                     TestEnded(
                         id = TestIdentifier(className = "com.example.MainActivityAllureTest", testName = "testText"),
-                        metrics = emptyMap()
+                        metrics = emptyMap(),
                     ),
-                    TestRunEnded(elapsedTimeMillis = 0, metrics = emptyMap())
+                    TestRunEnded(elapsedTimeMillis = 0, metrics = emptyMap()),
                 )
             }.join()
         }
@@ -149,7 +153,9 @@ class TestRunnerRequestTest {
             launch {
                 server.session {
                     expectCmd { "host:transport:serial" }.accept()
-                    expectShellV2 { "am instrument -w -r com.example.test/android.support.test.runner.AndroidJUnitRunner" }
+                    expectShellV2 {
+                        "am instrument -w -r com.example.test/android.support.test.runner.AndroidJUnitRunner"
+                    }
                         .accept()
                         .respondStdout(
                             """
@@ -176,7 +182,7 @@ class TestRunnerRequestTest {
 
 
                             INSTRUMENTATION_CODE: -1
-                        """.trimIndent()
+                            """.trimIndent(),
                         )
                         .respondExit(0)
                 }
@@ -186,7 +192,7 @@ class TestRunnerRequestTest {
                         testPackage = "com.example.test",
                         instrumentOptions = InstrumentOptions(),
                         supportedFeatures = listOf(Feature.SHELL_V2),
-                        coroutineScope = this
+                        coroutineScope = this,
                     ),
                     serial = "serial",
                 )
@@ -198,12 +204,14 @@ class TestRunnerRequestTest {
 
                 assertThat(events).containsExactly(
                     TestRunStartedEvent(testCount = 1),
-                    TestStarted(id = TestIdentifier(className = "com.example.MainActivityAllureTest", testName = "testText")),
+                    TestStarted(
+                        id = TestIdentifier(className = "com.example.MainActivityAllureTest", testName = "testText"),
+                    ),
                     TestEnded(
                         id = TestIdentifier(className = "com.example.MainActivityAllureTest", testName = "testText"),
-                        metrics = emptyMap()
+                        metrics = emptyMap(),
                     ),
-                    TestRunEnded(elapsedTimeMillis = 0, metrics = emptyMap())
+                    TestRunEnded(elapsedTimeMillis = 0, metrics = emptyMap()),
                 )
             }.join()
         }
@@ -215,7 +223,9 @@ class TestRunnerRequestTest {
             launch {
                 server.session {
                     expectCmd { "host:transport:serial" }.accept()
-                    expectShellV2 { "am instrument -w -r com.example.test/android.support.test.runner.AndroidJUnitRunner" }
+                    expectShellV2 {
+                        "am instrument -w -r com.example.test/android.support.test.runner.AndroidJUnitRunner"
+                    }
                         .accept()
                         .respondStdout(
                             """
@@ -225,18 +235,18 @@ class TestRunnerRequestTest {
                             INSTRUMENTATION_STATUS: numtests=1
                             INSTRUMENTATION_STATUS: stream=
                             com.example.MainActivityAllureTest:
-                            INSTRUMENTATION_STATUS: test=testText                          
-                        """.trimIndent()
+                            INSTRUMENTATION_STATUS: test=testText
+                            """.trimIndent(),
                         )
                         .respondStderr(
                             """
                             s_glBindAttribLocation: bind attrib 0 name position
                             s_glBindAttribLocation: bind attrib 1 name localCoord
-                        """.trimIndent()
+                            """.trimIndent(),
                         )
                         .respondStdout(
                             """
-                                
+
                             INSTRUMENTATION_STATUS_CODE: 1
                             INSTRUMENTATION_STATUS: class=com.example.MainActivityAllureTest
                             INSTRUMENTATION_STATUS: current=1
@@ -253,7 +263,7 @@ class TestRunnerRequestTest {
 
 
                             INSTRUMENTATION_CODE: -1
-                        """.trimIndent()
+                            """.trimIndent(),
                         )
                         .respondExit(0)
                 }
@@ -263,7 +273,7 @@ class TestRunnerRequestTest {
                         testPackage = "com.example.test",
                         instrumentOptions = InstrumentOptions(),
                         supportedFeatures = listOf(Feature.SHELL_V2),
-                        coroutineScope = this
+                        coroutineScope = this,
                     ),
                     serial = "serial",
                 )
@@ -274,12 +284,14 @@ class TestRunnerRequestTest {
 
                 assertThat(events).containsExactly(
                     TestRunStartedEvent(testCount = 1),
-                    TestStarted(id = TestIdentifier(className = "com.example.MainActivityAllureTest", testName = "testText")),
+                    TestStarted(
+                        id = TestIdentifier(className = "com.example.MainActivityAllureTest", testName = "testText"),
+                    ),
                     TestEnded(
                         id = TestIdentifier(className = "com.example.MainActivityAllureTest", testName = "testText"),
-                        metrics = emptyMap()
+                        metrics = emptyMap(),
                     ),
-                    TestRunEnded(elapsedTimeMillis = 0, metrics = emptyMap())
+                    TestRunEnded(elapsedTimeMillis = 0, metrics = emptyMap()),
                 )
             }.join()
         }
@@ -291,7 +303,9 @@ class TestRunnerRequestTest {
             launch {
                 server.session {
                     expectCmd { "host:transport:serial" }.accept()
-                    expectShell { "am instrument -w -r com.example.test/android.support.test.runner.AndroidJUnitRunner" }
+                    expectShell {
+                        "am instrument -w -r com.example.test/android.support.test.runner.AndroidJUnitRunner"
+                    }
                         .accept()
                         .respond("something-something")
                 }
@@ -301,7 +315,7 @@ class TestRunnerRequestTest {
                         testPackage = "com.example.test",
                         instrumentOptions = InstrumentOptions(),
                         supportedFeatures = emptyList(),
-                        coroutineScope = this
+                        coroutineScope = this,
                     ),
                     serial = "serial",
                 )

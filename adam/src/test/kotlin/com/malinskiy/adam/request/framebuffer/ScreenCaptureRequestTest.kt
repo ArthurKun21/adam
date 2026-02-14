@@ -34,7 +34,6 @@ import java.io.File
 import javax.imageio.ImageIO
 import kotlin.system.measureTimeMillis
 
-
 class ScreenCaptureRequestTest {
     @Rule
     @JvmField
@@ -287,7 +286,7 @@ class ScreenCaptureRequestTest {
                 expectCmd { "host:transport:serial" }.accept()
                 expectCmd { "framebuffer:" }.accept()
 
-                //Unsupported version
+                // Unsupported version
                 output.writeIntLittleEndian(99)
             }
 
@@ -297,7 +296,7 @@ class ScreenCaptureRequestTest {
 
     private fun compare(
         expected: BufferedImage,
-        actual: BufferedImage
+        actual: BufferedImage,
     ): ImageComparisonResult {
         val imageComparison = ImageComparison(expected, actual)
         val comparisonResult = imageComparison.compareImages()

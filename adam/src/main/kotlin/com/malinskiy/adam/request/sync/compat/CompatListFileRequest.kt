@@ -25,14 +25,15 @@ import com.malinskiy.adam.request.sync.v2.ListFileRequest as ListV2FileRequest
 
 public class CompatListFileRequest(
     private val path: String,
-    private val supportedFeatures: List<Feature>
+    private val supportedFeatures: List<Feature>,
 ) : MultiRequest<List<FileEntry>>() {
     override suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?): List<FileEntry> {
         return when {
             supportedFeatures.contains(Feature.LS_V2) -> androidDebugBridgeClient.execute(
                 ListV2FileRequest(path, supportedFeatures),
-                serial
+                serial,
             )
+
             else -> androidDebugBridgeClient.execute(ListFileRequest(path), serial)
         }
     }

@@ -45,7 +45,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 
-public class VertxSocket(private val socketAddress: SocketAddress, private val options: NetClientOptions) : CoroutineVerticle(), Socket {
+public class VertxSocket(
+    private val socketAddress: SocketAddress,
+    private val options: NetClientOptions,
+) : CoroutineVerticle(), Socket {
+
     public var id: String? = null
     public var netClient: NetClient? = null
     private lateinit var socket: NetSocketImpl
@@ -214,7 +218,7 @@ public fun <T> ReadStream<T>.toChannel(context: Context): ReceiveChannel<T> {
     val ret = ChannelReadStream(
         stream = this,
         channel = Channel(16),
-        context = context
+        context = context,
     )
     ret.subscribe()
     this.fetch(1)
@@ -224,7 +228,7 @@ public fun <T> ReadStream<T>.toChannel(context: Context): ReceiveChannel<T> {
 private class ChannelReadStream<T>(
     val stream: ReadStream<T>,
     val channel: Channel<T>,
-    context: Context
+    context: Context,
 ) : Channel<T> by channel, CoroutineScope {
 
     private val logger = AdamLogging.logger { }
@@ -256,7 +260,7 @@ private enum class State {
     SYN_SENT,
     ESTABLISHED,
     CLOSING,
-    CLOSE_WAIT
+    CLOSE_WAIT,
 }
 
 private fun AtomicBoolean.flip(expected: Boolean, error: () -> String) {

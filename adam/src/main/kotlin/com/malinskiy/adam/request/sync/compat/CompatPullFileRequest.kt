@@ -36,22 +36,26 @@ public class CompatPullFileRequest(
     private val supportedFeatures: List<Feature>,
     private val coroutineScope: CoroutineScope,
     private val size: Long? = null,
-    private val coroutineContext: CoroutineContext = Dispatchers.IO
+    private val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : MultiRequest<ReceiveChannel<Double>>() {
-    override suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?): ReceiveChannel<Double> {
+    override suspend fun execute(
+        androidDebugBridgeClient: AndroidDebugBridgeClient,
+        serial: String?,
+    ): ReceiveChannel<Double> {
         return when {
             supportedFeatures.contains(Feature.SENDRECV_V2) -> {
                 androidDebugBridgeClient.execute(
                     PullV2FileRequest(source, realDestination, supportedFeatures, size, coroutineContext),
                     coroutineScope,
-                    serial
+                    serial,
                 )
             }
+
             else -> {
                 androidDebugBridgeClient.execute(
                     PullFileRequest(source, realDestination, size, coroutineContext),
                     coroutineScope,
-                    serial
+                    serial,
                 )
             }
         }

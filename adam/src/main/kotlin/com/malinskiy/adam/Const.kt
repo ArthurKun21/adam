@@ -28,30 +28,44 @@ public object Const {
     public const val MAX_FILE_PACKET_LENGTH: Int = 64 * 1024
 
     public const val MAX_PROTOBUF_LOGCAT_LENGTH: Int = 10_000
-    public const val MAX_PROTOBUF_PACKET_LENGTH: Long = 10 * 1024 * 1024L //10Mb
+    public const val MAX_PROTOBUF_PACKET_LENGTH: Long = 10 * 1024 * 1024L // 10Mb
     public const val TEST_LOGCAT_METRIC: String = "com.malinskiy.adam.logcat"
 
     public const val ANDROID_FILE_SEPARATOR: String = "/"
     public val SYNC_IGNORED_FILES: Set<String> = setOf(".", "..")
 
     public object Message {
-        public val OKAY: ByteArray = byteArrayOf('O'.code.toByte(), 'K'.code.toByte(), 'A'.code.toByte(), 'Y'.code.toByte())
-        public val FAIL: ByteArray = byteArrayOf('F'.code.toByte(), 'A'.code.toByte(), 'I'.code.toByte(), 'L'.code.toByte())
+        public val OKAY: ByteArray =
+            byteArrayOf('O'.code.toByte(), 'K'.code.toByte(), 'A'.code.toByte(), 'Y'.code.toByte())
+        public val FAIL: ByteArray =
+            byteArrayOf('F'.code.toByte(), 'A'.code.toByte(), 'I'.code.toByte(), 'L'.code.toByte())
 
-        public val DATA: ByteArray = byteArrayOf('D'.code.toByte(), 'A'.code.toByte(), 'T'.code.toByte(), 'A'.code.toByte())
-        public val DONE: ByteArray = byteArrayOf('D'.code.toByte(), 'O'.code.toByte(), 'N'.code.toByte(), 'E'.code.toByte())
+        public val DATA: ByteArray =
+            byteArrayOf('D'.code.toByte(), 'A'.code.toByte(), 'T'.code.toByte(), 'A'.code.toByte())
+        public val DONE: ByteArray =
+            byteArrayOf('D'.code.toByte(), 'O'.code.toByte(), 'N'.code.toByte(), 'E'.code.toByte())
 
-        public val LSTAT_V1: ByteArray = byteArrayOf('S'.code.toByte(), 'T'.code.toByte(), 'A'.code.toByte(), 'T'.code.toByte())
-        public val LIST_V1: ByteArray = byteArrayOf('L'.code.toByte(), 'I'.code.toByte(), 'S'.code.toByte(), 'T'.code.toByte())
-        public val DENT_V1: ByteArray = byteArrayOf('D'.code.toByte(), 'E'.code.toByte(), 'N'.code.toByte(), 'T'.code.toByte())
-        public val SEND_V1: ByteArray = byteArrayOf('S'.code.toByte(), 'E'.code.toByte(), 'N'.code.toByte(), 'D'.code.toByte())
-        public val RECV_V1: ByteArray = byteArrayOf('R'.code.toByte(), 'E'.code.toByte(), 'C'.code.toByte(), 'V'.code.toByte())
+        public val LSTAT_V1: ByteArray =
+            byteArrayOf('S'.code.toByte(), 'T'.code.toByte(), 'A'.code.toByte(), 'T'.code.toByte())
+        public val LIST_V1: ByteArray =
+            byteArrayOf('L'.code.toByte(), 'I'.code.toByte(), 'S'.code.toByte(), 'T'.code.toByte())
+        public val DENT_V1: ByteArray =
+            byteArrayOf('D'.code.toByte(), 'E'.code.toByte(), 'N'.code.toByte(), 'T'.code.toByte())
+        public val SEND_V1: ByteArray =
+            byteArrayOf('S'.code.toByte(), 'E'.code.toByte(), 'N'.code.toByte(), 'D'.code.toByte())
+        public val RECV_V1: ByteArray =
+            byteArrayOf('R'.code.toByte(), 'E'.code.toByte(), 'C'.code.toByte(), 'V'.code.toByte())
 
-        public val LIST_V2: ByteArray = byteArrayOf('L'.code.toByte(), 'I'.code.toByte(), 'S'.code.toByte(), '2'.code.toByte())
-        public val DENT_V2: ByteArray = byteArrayOf('D'.code.toByte(), 'N'.code.toByte(), 'T'.code.toByte(), '2'.code.toByte())
-        public val LSTAT_V2: ByteArray = byteArrayOf('L'.code.toByte(), 'S'.code.toByte(), 'T'.code.toByte(), '2'.code.toByte())
-        public val RECV_V2: ByteArray = byteArrayOf('R'.code.toByte(), 'C'.code.toByte(), 'V'.code.toByte(), '2'.code.toByte())
-        public val SEND_V2: ByteArray = byteArrayOf('S'.code.toByte(), 'N'.code.toByte(), 'D'.code.toByte(), '2'.code.toByte())
+        public val LIST_V2: ByteArray =
+            byteArrayOf('L'.code.toByte(), 'I'.code.toByte(), 'S'.code.toByte(), '2'.code.toByte())
+        public val DENT_V2: ByteArray =
+            byteArrayOf('D'.code.toByte(), 'N'.code.toByte(), 'T'.code.toByte(), '2'.code.toByte())
+        public val LSTAT_V2: ByteArray =
+            byteArrayOf('L'.code.toByte(), 'S'.code.toByte(), 'T'.code.toByte(), '2'.code.toByte())
+        public val RECV_V2: ByteArray =
+            byteArrayOf('R'.code.toByte(), 'C'.code.toByte(), 'V'.code.toByte(), '2'.code.toByte())
+        public val SEND_V2: ByteArray =
+            byteArrayOf('S'.code.toByte(), 'N'.code.toByte(), 'D'.code.toByte(), '2'.code.toByte())
 
         public val DONEDONE: ByteArray =
             byteArrayOf(
@@ -62,7 +76,7 @@ public object Const {
                 'D'.code.toByte(),
                 'O'.code.toByte(),
                 'N'.code.toByte(),
-                'E'.code.toByte()
+                'E'.code.toByte(),
             )
         public val FAILFAIL: ByteArray =
             byteArrayOf(
@@ -73,7 +87,7 @@ public object Const {
                 'F'.code.toByte(),
                 'A'.code.toByte(),
                 'I'.code.toByte(),
-                'L'.code.toByte()
+                'L'.code.toByte(),
             )
     }
 

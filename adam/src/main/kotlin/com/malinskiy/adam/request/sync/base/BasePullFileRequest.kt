@@ -41,7 +41,7 @@ public abstract class BasePullFileRequest(
     private val remotePath: String,
     local: File,
     private val size: Long? = null,
-    coroutineContext: CoroutineContext = Dispatchers.IO
+    coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : AsyncChannelRequest<Double, Unit>() {
 
     private val fileWriter = AsyncFileWriter(local, coroutineContext)
@@ -50,7 +50,7 @@ public abstract class BasePullFileRequest(
 
     override suspend fun handshake(socket: Socket) {
         super.handshake(socket)
-        //If we don't have expected size, fetch it
+        // If we don't have expected size, fetch it
         totalBytes = size ?: StatFileRequest(remotePath).readElement(socket).size.toLong()
         if (totalBytes > 0) {
             fileWriter.start()
@@ -73,6 +73,7 @@ public abstract class BasePullFileRequest(
                         }
                         true
                     }
+
                     header.contentEquals(Const.Message.DATA) -> {
                         val available = data.copyOfRange(4, 8).toInt()
                         if (available > Const.MAX_FILE_PACKET_LENGTH) {
@@ -88,6 +89,7 @@ public abstract class BasePullFileRequest(
                         sendChannel.send(currentPosition.toDouble() / totalBytes)
                         false
                     }
+
                     header.contentEquals(Const.Message.FAIL) -> {
                         val size = data.copyOfRange(4, 8).toInt()
                         compatClear()
@@ -98,14 +100,15 @@ public abstract class BasePullFileRequest(
                         val errorMessage = String(array(), 0, size)
                         throw PullFailedException("Failed to pull file $remotePath: $errorMessage")
                     }
+
                     else -> {
                         throw UnsupportedSyncProtocolException(
                             "Unexpected header message ${
                                 String(
                                     header,
-                                    Const.DEFAULT_TRANSPORT_ENCODING
+                                    Const.DEFAULT_TRANSPORT_ENCODING,
                                 )
-                            }"
+                            }",
                         )
                     }
                 }
@@ -132,5 +135,4 @@ public abstract class BasePullFileRequest(
     }
 
     override suspend fun writeElement(element: Unit, socket: Socket): Unit = Unit
-
 }

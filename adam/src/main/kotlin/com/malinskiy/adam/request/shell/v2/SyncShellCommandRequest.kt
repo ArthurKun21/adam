@@ -27,7 +27,11 @@ import com.malinskiy.adam.transport.withMaxPacketBuffer
 /**
  * shell v2 service required for this request
  */
-public abstract class SyncShellCommandRequest<T : Any?>(public val cmd: String, target: Target = NonSpecifiedTarget, socketIdleTimeout: Long? = null) :
+public abstract class SyncShellCommandRequest<T : Any?>(
+    public val cmd: String,
+    target: Target = NonSpecifiedTarget,
+    socketIdleTimeout: Long? = null,
+) :
     ComplexRequest<T>(target, socketIdleTimeout) {
 
     private val stdoutBuilder = ByteStreams.newDataOutput()
@@ -66,7 +70,7 @@ public abstract class SyncShellCommandRequest<T : Any?>(public val cmd: String, 
                     }
 
                     MessageType.EXIT -> {
-                        //ignoredLength
+                        // ignoredLength
                         socket.readIntLittleEndian()
                         exitCode = socket.readByte().toInt()
                         break@loop
@@ -82,7 +86,7 @@ public abstract class SyncShellCommandRequest<T : Any?>(public val cmd: String, 
         val shellCommandResult = ShellCommandResult(
             stdout = stdoutBuilder.toByteArray(),
             stderr = stderrBuilder.toByteArray(),
-            exitCode = exitCode
+            exitCode = exitCode,
         )
 
         return convertResult(shellCommandResult)

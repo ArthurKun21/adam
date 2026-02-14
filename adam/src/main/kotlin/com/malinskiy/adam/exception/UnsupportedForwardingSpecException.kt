@@ -16,4 +16,6 @@
 
 package com.malinskiy.adam.exception
 
-public class UnsupportedForwardingSpecException(type: String) : RuntimeException("Unknown type $type for forwarding spec")
+public class UnsupportedForwardingSpecException(type: String) : RuntimeException(
+    "Unknown type $type for forwarding spec",
+)

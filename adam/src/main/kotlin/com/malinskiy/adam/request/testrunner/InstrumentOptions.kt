@@ -64,7 +64,7 @@ public data class InstrumentOptions(
     public val log: Boolean? = null,
     public val emma: Boolean? = null,
     public val coverageFile: String? = null,
-    public val overrides: Map<String, String> = mapOf()
+    public val overrides: Map<String, String> = mapOf(),
 ) {
     override fun toString(): String = StringBuilder().apply {
         if (pkg.isNotEmpty()) append(" -e package " + pkg.joinToString(separator = ","))

@@ -44,13 +44,15 @@ public abstract class AsyncCompatShellCommandRequest<T : Any>(
 
     override suspend fun execute(
         androidDebugBridgeClient: AndroidDebugBridgeClient,
-        serial: String?
+        serial: String?,
     ): ReceiveChannel<T> {
         return when {
             supportedFeatures.contains(Feature.SHELL_V2) -> {
                 val channel = Channel<ShellCommandInputChunk>()
                 val receiveChannel = androidDebugBridgeClient.execute(
-                    V2ChanneledShellCommandRequest(cmd, channel, target, socketIdleTimeout), coroutineScope, serial,
+                    V2ChanneledShellCommandRequest(cmd, channel, target, socketIdleTimeout),
+                    coroutineScope,
+                    serial,
                 )
                 coroutineScope.produce {
                     for (chunk in receiveChannel) {
@@ -62,7 +64,9 @@ public abstract class AsyncCompatShellCommandRequest<T : Any>(
 
             else -> {
                 val receiveChannel: ReceiveChannel<String> = androidDebugBridgeClient.execute(
-                    ChanneledShellCommandRequest(cmd, target, socketIdleTimeout), coroutineScope, serial,
+                    ChanneledShellCommandRequest(cmd, target, socketIdleTimeout),
+                    coroutineScope,
+                    serial,
                 )
                 coroutineScope.produce {
                     for (line in receiveChannel) {

@@ -54,29 +54,34 @@ public class InstallSplitPackageRequest(
     private val supportedFeatures: List<Feature>,
     private val reinstall: Boolean,
     private val extraArgs: List<String> = emptyList(),
-    public val coroutineContext: CoroutineContext = Dispatchers.IO
+    public val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : AccumulatingMultiRequest<String>() {
 
     private val totalSize: Long by lazy {
         pkg.fileList.sumOf { it.length() }
     }
 
-    override suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?): String = with(androidDebugBridgeClient) {
+    override suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?): String = with(
+        androidDebugBridgeClient,
+    ) {
         val (sessionId, output) = execute(
             CreateIndividualPackageSessionRequest(
                 pkg,
                 listOf(pkg),
                 supportedFeatures,
                 reinstall,
-                extraArgs + "-S${totalSize}"
+                extraArgs + "-S$totalSize",
             ),
-            serial
+            serial,
         )
         output.addToResponse()
 
         try {
             for (file in pkg.fileList) {
-                execute(WriteIndividualPackageRequest(file, supportedFeatures, sessionId, coroutineContext), serial).addToResponse()
+                execute(
+                    WriteIndividualPackageRequest(file, supportedFeatures, sessionId, coroutineContext),
+                    serial,
+                ).addToResponse()
             }
             execute(InstallCommitRequest(sessionId, supportedFeatures), serial).addToResponse()
 
@@ -85,7 +90,7 @@ public class InstallSplitPackageRequest(
             try {
                 execute(InstallCommitRequest(sessionId, supportedFeatures, abandon = true), serial)
             } catch (e: Exception) {
-                //Ignore
+                // Ignore
             }
             throw e
         }

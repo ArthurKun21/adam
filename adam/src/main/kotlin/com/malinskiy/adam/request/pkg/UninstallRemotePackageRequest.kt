@@ -26,7 +26,7 @@ import com.malinskiy.adam.request.shell.v1.ShellCommandRequest
  */
 public class UninstallRemotePackageRequest(
     packageName: String,
-    keepData: Boolean = false
+    keepData: Boolean = false,
 ) : ShellCommandRequest(
     cmd = StringBuilder().apply {
         append("pm uninstall ")
@@ -36,5 +36,5 @@ public class UninstallRemotePackageRequest(
         }
 
         append(packageName)
-    }.toString()
+    }.toString(),
 )

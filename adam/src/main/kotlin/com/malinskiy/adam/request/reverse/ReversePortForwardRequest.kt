@@ -34,7 +34,7 @@ import com.malinskiy.adam.transport.Socket
 public class ReversePortForwardRequest(
     private val local: RemotePortSpec,
     private val remote: LocalPortSpec,
-    private val mode: PortForwardingMode = PortForwardingMode.DEFAULT
+    private val mode: PortForwardingMode = PortForwardingMode.DEFAULT,
 
 ) : ComplexRequest<Int?>(target = NonSpecifiedTarget) {
 

@@ -30,5 +30,5 @@ public enum class Mode {
     /**
      * Assert failure if the rule can't be satisfied
      */
-    ASSERT
+    ASSERT,
 }

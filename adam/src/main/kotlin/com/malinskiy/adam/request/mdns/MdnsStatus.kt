@@ -18,5 +18,5 @@ package com.malinskiy.adam.request.mdns
 
 public data class MdnsStatus(
     public val available: Boolean,
-    public val version: String? = null
+    public val version: String? = null,
 )

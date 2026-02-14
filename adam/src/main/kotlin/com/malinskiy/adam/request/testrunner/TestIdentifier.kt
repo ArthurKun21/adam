@@ -18,5 +18,5 @@ package com.malinskiy.adam.request.testrunner
 
 public data class TestIdentifier(
     public val className: String,
-    public val testName: String
+    public val testName: String,
 )

@@ -46,7 +46,7 @@ class PortForwardRequestTest {
             LocalTcpPortSpec(80),
             RemoteTcpPortSpec(80),
             "emulator-5554",
-            mode = PortForwardingMode.NO_REBIND
+            mode = PortForwardingMode.NO_REBIND,
         ).serialize()
 
         assertThat(String(bytes, Const.DEFAULT_TRANSPORT_ENCODING))

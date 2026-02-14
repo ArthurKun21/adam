@@ -39,8 +39,8 @@ class EmulatorE2ETest {
             val output = adbRule.adb.execute(
                 EmulatorCommandRequest(
                     "help",
-                    InetSocketAddress("localhost", port)
-                )
+                    InetSocketAddress("localhost", port),
+                ),
             )
             assertThat(output).startsWith("Android console commands")
         }

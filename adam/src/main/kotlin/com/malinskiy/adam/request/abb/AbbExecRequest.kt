@@ -26,7 +26,10 @@ import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withDefaultBuffer
 
 @Features(Feature.ABB_EXEC)
-public open class AbbExecRequest(private val args: List<String>, private val supportedFeatures: List<Feature>) : ComplexRequest<String>() {
+public open class AbbExecRequest(
+    private val args: List<String>,
+    private val supportedFeatures: List<Feature>,
+) : ComplexRequest<String>() {
     private val transformer = StringResponseTransformer()
 
     override suspend fun readElement(socket: Socket): String {

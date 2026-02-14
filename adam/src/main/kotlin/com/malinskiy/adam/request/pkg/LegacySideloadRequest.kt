@@ -32,7 +32,7 @@ import kotlin.coroutines.CoroutineContext
  */
 public class LegacySideloadRequest(
     private val pkg: File,
-    public val coroutineContext: CoroutineContext = Dispatchers.IO
+    public val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : ComplexRequest<Boolean>() {
     override fun validate(): ValidationResponse {
         val message =

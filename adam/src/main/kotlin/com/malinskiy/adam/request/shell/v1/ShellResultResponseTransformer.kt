@@ -36,10 +36,11 @@ public class ShellResultResponseTransformer : ResponseTransformer<ShellCommandRe
         }
         val stdout = output.substring(0 until indexOfDelimiter)
         val exitCodeString = output.substring(indexOfDelimiter + 1).trim()
-        val exitCode = exitCodeString.toIntOrNull() ?: throw RequestRejectedException("Unexpected exit code value $exitCodeString")
+        val exitCode =
+            exitCodeString.toIntOrNull() ?: throw RequestRejectedException("Unexpected exit code value $exitCodeString")
         return ShellCommandResult(
             stdout = stdout.toByteArray(Const.DEFAULT_TRANSPORT_ENCODING),
-            exitCode = exitCode
+            exitCode = exitCode,
         )
     }
 }

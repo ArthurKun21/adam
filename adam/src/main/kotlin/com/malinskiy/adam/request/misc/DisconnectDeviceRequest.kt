@@ -29,7 +29,7 @@ import com.malinskiy.adam.transport.Socket
  */
 public class DisconnectDeviceRequest(
     private val host: String? = null,
-    private val port: Int? = 5555
+    private val port: Int? = 5555,
 ) : ComplexRequest<String>(target = HostTarget) {
 
     override fun serialize(): ByteArray = createBaseRequest(
@@ -41,7 +41,7 @@ public class DisconnectDeviceRequest(
             } else {
                 "$host"
             }
-        }"
+        }",
     )
 
     override suspend fun readElement(socket: Socket): String = socket.readProtocolString()

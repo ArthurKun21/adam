@@ -34,7 +34,10 @@ class AbbE2ETest {
     @Test
     fun testStreamingInstallRequest() {
         runBlocking {
-            var result = adbRule.adb.execute(AbbRequest(listOf("-l"), adbRule.supportedFeatures), serial = adbRule.deviceSerial)
+            var result = adbRule.adb.execute(
+                AbbRequest(listOf("-l"), adbRule.supportedFeatures),
+                serial = adbRule.deviceSerial,
+            )
             assertThat(result.output).startsWith("Currently running services:")
         }
     }

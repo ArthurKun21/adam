@@ -20,7 +20,7 @@ import com.malinskiy.adam.Const
 
 public data class ShellCommandResult(
     public val stdout: ByteArray,
-    public val exitCode: Int
+    public val exitCode: Int,
 ) {
     public val output: String by lazy {
         String(stdout, Const.DEFAULT_TRANSPORT_ENCODING)

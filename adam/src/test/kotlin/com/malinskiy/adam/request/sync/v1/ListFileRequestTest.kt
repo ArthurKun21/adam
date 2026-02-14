@@ -44,22 +44,22 @@ class ListFileRequestTest {
                 420,
                 123,
                 1589042331,
-                "some-file"
+                "some-file",
             ).done()
         }
 
         val list = client.execute(
-            ListFileRequest("/sdcard/"), "serial"
+            ListFileRequest("/sdcard/"),
+            "serial",
         )
-
 
         assertThat(list).containsExactly(
             FileEntryV1(
                 name = "some-file",
                 mode = 123.toUInt(),
                 mtime = Instant.ofEpochSecond(1589042331),
-                size = 420.toUInt()
-            )
+                size = 420.toUInt(),
+            ),
         )
 
         assertThat(list.first().name).isEqualTo("some-file")

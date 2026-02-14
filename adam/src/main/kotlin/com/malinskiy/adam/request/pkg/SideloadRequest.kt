@@ -42,12 +42,14 @@ public class SideloadRequest(
                 val bytes = buffer.copyOfRange(0, 8)
                 when {
                     bytes.contentEquals(Const.Message.DONEDONE) -> return true
+
                     bytes.contentEquals(Const.Message.FAILFAIL) -> return false
+
                     else -> {
                         val blockId = String(bytes, 0, 8, Const.DEFAULT_TRANSPORT_ENCODING).toLong()
                         val offset = blockId * blockSize
                         if (offset != currentOffset) {
-                            //We can't seek on the channels. Recreating the channel again
+                            // We can't seek on the channels. Recreating the channel again
                             reader?.close()
                             reader = AsyncFileReader(pkg, start = offset)
                             reader.start()
@@ -90,5 +92,5 @@ public class SideloadRequest(
         return ValidationResponse(message == null, message)
     }
 
-    override fun serialize(): ByteArray = createBaseRequest("sideload-host:${pkg.length()}:${blockSize}")
+    override fun serialize(): ByteArray = createBaseRequest("sideload-host:${pkg.length()}:$blockSize")
 }

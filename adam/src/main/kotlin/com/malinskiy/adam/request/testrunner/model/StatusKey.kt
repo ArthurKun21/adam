@@ -26,7 +26,8 @@ public enum class StatusKey(public val value: String) {
     STREAM("stream"),
     CURRENT("current"),
     ID("id"),
-    UNKNOWN("");
+    UNKNOWN(""),
+    ;
 
     public companion object {
         public fun of(value: String?): StatusKey = when (value) {

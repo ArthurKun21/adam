@@ -26,7 +26,7 @@ import com.malinskiy.adam.transport.Socket
 public class AddSessionRequest(
     private val childSessions: List<String>,
     private val parentSession: String,
-    private val supportedFeatures: List<Feature>
+    private val supportedFeatures: List<Feature>,
 ) : ComplexRequest<String>() {
     override fun serialize(): ByteArray {
         val hasAbbExec = supportedFeatures.contains(Feature.ABB_EXEC)
@@ -36,7 +36,7 @@ public class AddSessionRequest(
                     "package"
                 } else {
                     "exec:cmd package"
-                }
+                },
             )
             add("install-add-session")
             add(parentSession)
@@ -55,7 +55,7 @@ public class AddSessionRequest(
         if (!response.contains("Success")) {
             throw RequestRejectedException(
                 "Failed to add child sessions ${childSessions.joinToString()} to a parent session " +
-                        "$parentSession: $response"
+                    "$parentSession: $response",
             )
         }
 

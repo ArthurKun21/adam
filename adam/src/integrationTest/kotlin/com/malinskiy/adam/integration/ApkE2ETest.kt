@@ -75,14 +75,17 @@ class ApkE2ETest {
                     client.execute(
                         PushFileRequest(testFile, "/data/local/tmp/$fileName", coroutineContext = coroutineContext),
                         this,
-                        serial = adb.deviceSerial
+                        serial = adb.deviceSerial,
                     )
 
                 for (result in channel) {
-                    //Do something with result
+                    // Do something with result
                 }
 
-                client.execute(InstallRemotePackageRequest("/data/local/tmp/$fileName", true), serial = adb.deviceSerial).let {
+                client.execute(
+                    InstallRemotePackageRequest("/data/local/tmp/$fileName", true),
+                    serial = adb.deviceSerial,
+                ).let {
                     println(it)
                 }
             }.let { println(it) }
@@ -108,12 +111,12 @@ class ApkE2ETest {
                 InstallSplitPackageRequest(
                     ApkSplitInstallationPackage(appFile1, appFile2),
                     listOf(),
-                    true
+                    true,
                 ),
-                adb.deviceSerial
+                adb.deviceSerial,
             )
 
-            //Takes some time until it shows in the pm list. Wait for 10 seconds max
+            // Takes some time until it shows in the pm list. Wait for 10 seconds max
             var packages: List<Package> = emptyList()
             for (i in 1..100) {
                 packages = client.execute(PmListRequest(), serial = adb.deviceSerial)
@@ -138,12 +141,12 @@ class ApkE2ETest {
                     ApkSplitInstallationPackage(appFile1, appFile2),
                     listOf(),
                     true,
-                    extraArgs = listOf("-t")
+                    extraArgs = listOf("-t"),
                 ),
-                adb.deviceSerial
+                adb.deviceSerial,
             )
 
-            //Takes some time until it shows in the pm list. Wait for 10 seconds max
+            // Takes some time until it shows in the pm list. Wait for 10 seconds max
             var packages: List<Package> = emptyList()
             for (i in 1..100) {
                 packages = client.execute(PmListRequest(), serial = adb.deviceSerial)

@@ -43,7 +43,7 @@ class BufferedImageScreenCaptureAdapterTest {
                     0,
                     0,
                     null,
-                    socket
+                    socket,
                 )
             }
         }

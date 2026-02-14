@@ -27,7 +27,7 @@ import com.malinskiy.adam.transport.withDefaultBuffer
 import java.time.Instant
 
 public class ListFileRequest(
-    private val remotePath: String
+    private val remotePath: String,
 ) : ComplexRequest<List<FileEntryV1>>() {
 
     override fun validate(): ValidationResponse {
@@ -45,7 +45,6 @@ public class ListFileRequest(
             val data = array()
             val result = mutableListOf<FileEntryV1>()
             loop@ while (true) {
-
                 socket.readFully(data, 0, 4)
                 when {
                     data.copyOfRange(0, 4).contentEquals(Const.Message.DENT_V1) -> {
@@ -61,11 +60,13 @@ public class ListFileRequest(
                                 mode = mode,
                                 size = size,
                                 mtime = mtime,
-                                name = String(data, 0, nameLength, Const.DEFAULT_TRANSPORT_ENCODING)
-                            )
+                                name = String(data, 0, nameLength, Const.DEFAULT_TRANSPORT_ENCODING),
+                            ),
                         )
                     }
+
                     data.copyOfRange(0, 4).contentEquals(Const.Message.DONE) -> break@loop
+
                     else -> break@loop
                 }
             }

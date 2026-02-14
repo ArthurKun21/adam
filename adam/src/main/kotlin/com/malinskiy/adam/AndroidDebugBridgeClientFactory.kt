@@ -37,8 +37,8 @@ public class AndroidDebugBridgeClientFactory {
             host = host ?: InetAddress.getByName(Const.DEFAULT_ADB_HOST),
             socketFactory = socketFactory ?: VertxSocketFactory(
                 idleTimeout = idleTimeout?.toMillis() ?: 30_000,
-                connectTimeout = connectTimeout?.toMillis() ?: 10_000
-            )
+                connectTimeout = connectTimeout?.toMillis() ?: 10_000,
+            ),
         )
     }
 }

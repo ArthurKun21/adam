@@ -22,5 +22,5 @@ import com.malinskiy.adam.request.forwarding.RemotePortSpec
 public data class ReversePortForwardingRule(
     public val serial: String,
     public val localSpec: RemotePortSpec,
-    public val remoteSpec: LocalPortSpec
+    public val remoteSpec: LocalPortSpec,
 )

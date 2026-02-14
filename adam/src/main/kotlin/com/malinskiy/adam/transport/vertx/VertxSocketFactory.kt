@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 public class VertxSocketFactory(
     private val connectTimeout: Long = 10_000,
-    private val idleTimeout: Long = 30_000
+    private val idleTimeout: Long = 30_000,
 ) : SocketFactory {
     private val vertx by lazy {
         Vertx.vertx().also { initialized.set(true) }
@@ -35,10 +35,13 @@ public class VertxSocketFactory(
     private val initialized = AtomicBoolean(false)
 
     override suspend fun tcp(socketAddress: InetSocketAddress, connectTimeout: Long?, idleTimeout: Long?): Socket {
-        val vertxSocket = VertxSocket(SocketAddress.inetSocketAddress(socketAddress), NetClientOptions().apply {
-            setConnectTimeout((connectTimeout ?: this@VertxSocketFactory.connectTimeout).toTimeoutInt())
-            setIdleTimeout((idleTimeout ?: this@VertxSocketFactory.idleTimeout).toTimeoutInt())
-        })
+        val vertxSocket = VertxSocket(
+            SocketAddress.inetSocketAddress(socketAddress),
+            NetClientOptions().apply {
+                setConnectTimeout((connectTimeout ?: this@VertxSocketFactory.connectTimeout).toTimeoutInt())
+                setIdleTimeout((idleTimeout ?: this@VertxSocketFactory.idleTimeout).toTimeoutInt())
+            },
+        )
         val id = vertx.deployVerticle(vertxSocket).coAwait()
         vertxSocket.id = id
         return vertxSocket
@@ -52,7 +55,10 @@ public class VertxSocketFactory(
 
     private fun Long.toTimeoutInt(): Int {
         val toInt = toInt()
-        return if (toInt < 0) Int.MAX_VALUE
-        else toInt
+        return if (toInt < 0) {
+            Int.MAX_VALUE
+        } else {
+            toInt
+        }
     }
 }

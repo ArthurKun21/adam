@@ -19,5 +19,5 @@ package com.malinskiy.adam.request.forwarding
 public data class PortForwardingRule(
     public val serial: String,
     public val localSpec: LocalPortSpec,
-    public val remoteSpec: RemotePortSpec
+    public val remoteSpec: RemotePortSpec,
 )

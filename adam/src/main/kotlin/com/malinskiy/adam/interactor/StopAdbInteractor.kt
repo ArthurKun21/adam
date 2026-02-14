@@ -23,6 +23,6 @@ public class StopAdbInteractor : AdbBinaryInteractor() {
     public suspend fun execute(
         adbBinary: File? = null,
         androidHome: File? = null,
-        serverPort: Int = Const.DEFAULT_ADB_PORT
+        serverPort: Int = Const.DEFAULT_ADB_PORT,
     ): Boolean = execute(adbBinary, androidHome, "-P", serverPort.toString(), "kill-server")
 }

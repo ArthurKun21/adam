@@ -28,7 +28,7 @@ import io.ktor.network.sockets.InetSocketAddress as KtorSocketAddress
 public class KtorSocketFactory(
     coroutineContext: CoroutineContext,
     private val connectTimeout: Long = 10_000,
-    private val idleTimeout: Long = 30_000
+    private val idleTimeout: Long = 30_000,
 ) : SocketFactory {
     private val selectorManager: SelectorManager = SelectorManager(coroutineContext)
 
@@ -39,7 +39,8 @@ public class KtorSocketFactory(
                 .tcp()
                 .connect(ktorSocketAddress) {
                     socketTimeout = idleTimeout ?: this@KtorSocketFactory.idleTimeout
-                })
+                },
+        )
     }
 
     override fun close() {

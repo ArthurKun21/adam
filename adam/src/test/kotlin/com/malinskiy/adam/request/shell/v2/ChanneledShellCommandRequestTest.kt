@@ -60,7 +60,7 @@ class ChanneledShellCommandRequestTest {
             val updates = client.execute(
                 ChanneledShellCommandRequest("echo foo; echo bar >&2; exit 17", stdio),
                 scope = this,
-                serial = "serial"
+                serial = "serial",
             )
             val stdoutBuffer = StringBuffer()
             val stderrBuffer = StringBuffer()

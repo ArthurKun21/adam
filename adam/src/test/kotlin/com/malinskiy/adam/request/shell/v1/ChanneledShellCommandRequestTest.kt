@@ -41,7 +41,11 @@ class ChanneledShellCommandRequestTest {
                     .respond("something2-something2")
             }
 
-            val updates = client.execute(ChanneledShellCommandRequest("logcat -v"), scope = this, serial = "emulator-5554")
+            val updates = client.execute(
+                ChanneledShellCommandRequest("logcat -v"),
+                scope = this,
+                serial = "emulator-5554",
+            )
             val stringBuffer = StringBuffer()
 
             for (update in updates) {

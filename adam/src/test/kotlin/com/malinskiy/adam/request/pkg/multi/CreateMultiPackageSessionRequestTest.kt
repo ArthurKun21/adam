@@ -28,7 +28,6 @@ import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.request.ValidationResponse
 import com.malinskiy.adam.server.stub.StubSocket
 import com.malinskiy.adam.transport.use
-
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -54,7 +53,7 @@ class CreateMultiPackageSessionRequestTest {
             supportedFeatures = listOf(Feature.CMD, Feature.ABB_EXEC),
             extraArgs = emptyList(),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.serialize().toRequestString())
             .isEqualTo("002Fabb_exec:package\u0000install-create\u0000--multi-package")
@@ -67,7 +66,7 @@ class CreateMultiPackageSessionRequestTest {
             supportedFeatures = listOf(Feature.CMD),
             extraArgs = listOf("-g"),
             pkgList = listOf(pkg),
-            reinstall = true
+            reinstall = true,
         )
         assertThat(request.serialize().toRequestString())
             .isEqualTo("0037exec:cmd package install-create --multi-package '-g' -r")
@@ -80,7 +79,7 @@ class CreateMultiPackageSessionRequestTest {
             supportedFeatures = listOf(Feature.CMD),
             extraArgs = listOf("-g"),
             pkgList = listOf(pkg),
-            reinstall = true
+            reinstall = true,
         )
         assertThat(request.serialize().toRequestString())
             .isEqualTo("0040exec:cmd package install-create --multi-package '-g' -r --staged")
@@ -88,12 +87,13 @@ class CreateMultiPackageSessionRequestTest {
 
     @Test
     fun serializeApkSplit() {
-        val pkg = ApkSplitInstallationPackage(listOf(temp.newFileWithExtension("apex"), temp.newFileWithExtension("apex")))
+        val pkg =
+            ApkSplitInstallationPackage(listOf(temp.newFileWithExtension("apex"), temp.newFileWithExtension("apex")))
         val request = CreateMultiPackageSessionRequest(
             supportedFeatures = listOf(Feature.CMD),
             extraArgs = listOf("-g"),
             pkgList = listOf(pkg),
-            reinstall = true
+            reinstall = true,
         )
         assertThat(request.serialize().toRequestString())
             .isEqualTo("0040exec:cmd package install-create --multi-package '-g' -r --staged")
@@ -146,7 +146,7 @@ class CreateMultiPackageSessionRequestTest {
             supportedFeatures = listOf(Feature.CMD),
             extraArgs = emptyList(),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.validate().success).isFalse()
     }
@@ -157,7 +157,7 @@ class CreateMultiPackageSessionRequestTest {
         val request = CreateMultiPackageSessionRequest(
             supportedFeatures = listOf(Feature.CMD),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.validate().success).isFalse()
     }
@@ -169,7 +169,7 @@ class CreateMultiPackageSessionRequestTest {
             supportedFeatures = listOf(Feature.CMD),
             extraArgs = emptyList(),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.validate().success).isFalse()
     }
@@ -181,7 +181,7 @@ class CreateMultiPackageSessionRequestTest {
             supportedFeatures = listOf(),
             extraArgs = emptyList(),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.validate().success).isFalse()
 
@@ -189,7 +189,7 @@ class CreateMultiPackageSessionRequestTest {
             supportedFeatures = listOf(Feature.ABB_EXEC),
             extraArgs = emptyList(),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.validate().success).isTrue()
 
@@ -197,7 +197,7 @@ class CreateMultiPackageSessionRequestTest {
             supportedFeatures = listOf(Feature.CMD),
             extraArgs = emptyList(),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.validate().success).isTrue()
     }
@@ -209,31 +209,35 @@ class CreateMultiPackageSessionRequestTest {
             supportedFeatures = listOf(Feature.CMD),
             extraArgs = emptyList(),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.validate().success).isFalse()
     }
 
     @Test
     fun testValidationApkSplit() {
-        val pkg = ApkSplitInstallationPackage(listOf(temp.newFileWithExtension("apk"), temp.newFileWithExtension("apk")))
+        val pkg =
+            ApkSplitInstallationPackage(listOf(temp.newFileWithExtension("apk"), temp.newFileWithExtension("apk")))
         var request = CreateMultiPackageSessionRequest(
             supportedFeatures = listOf(Feature.CMD),
             extraArgs = emptyList(),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.validate().success).isTrue()
     }
 
     @Test
     fun testValidationFailureApkSplit() {
-        val pkg = ApkSplitInstallationPackage(listOf(temp.newFileWithExtension("apk"), kotlin.io.path.createTempFile(suffix = ".app").toFile()))
+        val pkg =
+            ApkSplitInstallationPackage(
+                listOf(temp.newFileWithExtension("apk"), kotlin.io.path.createTempFile(suffix = ".app").toFile()),
+            )
         var request = CreateMultiPackageSessionRequest(
             supportedFeatures = listOf(Feature.CMD),
             extraArgs = emptyList(),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.validate().success).isFalse()
     }
@@ -244,7 +248,7 @@ class CreateMultiPackageSessionRequestTest {
             supportedFeatures = listOf(Feature.CMD),
             extraArgs = emptyList(),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         return request
     }

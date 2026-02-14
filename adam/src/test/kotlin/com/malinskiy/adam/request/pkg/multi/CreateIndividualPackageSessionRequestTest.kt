@@ -50,7 +50,7 @@ class CreateIndividualPackageSessionRequestTest {
             supportedFeatures = listOf(Feature.CMD, Feature.ABB_EXEC),
             pkg = pkg,
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.serialize().toRequestString())
             .isEqualTo("001Fabb_exec:package\u0000install-create")
@@ -63,7 +63,7 @@ class CreateIndividualPackageSessionRequestTest {
             supportedFeatures = listOf(),
             pkg = pkg,
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         assertThat(request.serialize().toRequestString())
             .isEqualTo("0016exec:pm install-create")
@@ -77,7 +77,7 @@ class CreateIndividualPackageSessionRequestTest {
             pkg = pkg,
             extraArgs = listOf("-g"),
             pkgList = listOf(pkg),
-            reinstall = true
+            reinstall = true,
         )
         assertThat(request.serialize().toRequestString())
             .isEqualTo("0027exec:cmd package install-create '-g' -r")
@@ -91,7 +91,7 @@ class CreateIndividualPackageSessionRequestTest {
             pkg = pkg,
             extraArgs = listOf("-g"),
             pkgList = listOf(pkg),
-            reinstall = true
+            reinstall = true,
         )
         assertThat(request.serialize().toRequestString())
             .isEqualTo("0037exec:cmd package install-create '-g' -r --staged --apex")
@@ -139,7 +139,7 @@ class CreateIndividualPackageSessionRequestTest {
             pkg = pkg,
             extraArgs = emptyList(),
             pkgList = listOf(pkg),
-            reinstall = false
+            reinstall = false,
         )
         return request
     }

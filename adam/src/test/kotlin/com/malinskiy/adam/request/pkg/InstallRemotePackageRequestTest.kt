@@ -50,8 +50,14 @@ class InstallRemotePackageRequestTest {
 
     @Test
     fun testValidation() {
-        assertThat(InstallRemotePackageRequest("/data/local/tmp/file.apk", true, emptyList()).validate().success).isTrue()
-        assertThat(InstallRemotePackageRequest("/data/local/tmp/file.apex", true, emptyList()).validate().success).isFalse()
-        assertThat(InstallRemotePackageRequest("/data/local/tmp/file.bin", true, emptyList()).validate().success).isFalse()
+        assertThat(
+            InstallRemotePackageRequest("/data/local/tmp/file.apk", true, emptyList()).validate().success,
+        ).isTrue()
+        assertThat(
+            InstallRemotePackageRequest("/data/local/tmp/file.apex", true, emptyList()).validate().success,
+        ).isFalse()
+        assertThat(
+            InstallRemotePackageRequest("/data/local/tmp/file.bin", true, emptyList()).validate().success,
+        ).isFalse()
     }
 }

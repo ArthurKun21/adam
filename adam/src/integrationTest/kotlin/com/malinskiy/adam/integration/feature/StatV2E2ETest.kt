@@ -46,11 +46,11 @@ class StatV2E2ETest {
                 adbRule.adb.execute(
                     PushFileRequest(testFile, "/data/local/tmp/$fileName", coroutineContext = coroutineContext),
                     this,
-                    serial = adbRule.deviceSerial
+                    serial = adbRule.deviceSerial,
                 )
 
             var percentage = 0
-            for(percentageDouble in channel) {
+            for (percentageDouble in channel) {
                 val newPercentage = (percentageDouble * 100).roundToInt()
                 if (newPercentage != percentage) {
                     print('.')
@@ -71,7 +71,10 @@ class StatV2E2ETest {
     fun testListFile() {
         runBlocking {
             val stats =
-                adbRule.adb.execute(StatFileRequest("/data/local/tmp/app-debug.apk", adbRule.supportedFeatures), adbRule.deviceSerial)
+                adbRule.adb.execute(
+                    StatFileRequest("/data/local/tmp/app-debug.apk", adbRule.supportedFeatures),
+                    adbRule.deviceSerial,
+                )
             assertThat(stats.size).isEqualTo(testFile.length().toULong())
         }
     }

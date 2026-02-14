@@ -34,8 +34,12 @@ class RemovePortForwardRequestTest {
     @Test
     fun testDummy() {
         runBlocking {
-            assertThat(RemovePortForwardRequest(serial = "serial", local = LocalTcpPortSpec()).process(ByteArray(1), 0, 1)).isEqualTo(Unit)
-            assertThat(RemovePortForwardRequest(serial = "serial", local = LocalTcpPortSpec()).transform()).isEqualTo(Unit)
+            assertThat(
+                RemovePortForwardRequest(serial = "serial", local = LocalTcpPortSpec()).process(ByteArray(1), 0, 1),
+            ).isEqualTo(Unit)
+            assertThat(
+                RemovePortForwardRequest(serial = "serial", local = LocalTcpPortSpec()).transform(),
+            ).isEqualTo(Unit)
         }
     }
 }

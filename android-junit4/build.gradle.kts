@@ -28,4 +28,3 @@ dependencies {
     api(libs.coroutines.core)
     api(project(":android-testrunner-contract"))
 }
-

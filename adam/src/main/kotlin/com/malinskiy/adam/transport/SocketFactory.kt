@@ -20,6 +20,10 @@ import java.io.Closeable
 import java.net.InetSocketAddress
 
 public interface SocketFactory : Closeable {
-    public suspend fun tcp(socketAddress: InetSocketAddress, connectTimeout: Long? = null, idleTimeout: Long? = null): Socket
+    public suspend fun tcp(
+        socketAddress: InetSocketAddress,
+        connectTimeout: Long? = null,
+        idleTimeout: Long? = null,
+    ): Socket
     override fun close()
 }

@@ -18,5 +18,5 @@ package com.malinskiy.adam.rule
 
 enum class DeviceType {
     EMULATOR,
-    ANY
+    ANY,
 }

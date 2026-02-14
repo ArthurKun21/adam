@@ -34,7 +34,7 @@ import java.time.Instant
 @Features(Feature.STAT_V2)
 public class StatFileRequest(
     private val remotePath: String,
-    private val supportedFeatures: List<Feature>
+    private val supportedFeatures: List<Feature>,
 ) : ComplexRequest<FileEntryV2>() {
     override suspend fun readElement(socket: Socket): FileEntryV2 {
         socket.writeSyncRequest(Const.Message.LSTAT_V2, remotePath)
@@ -56,7 +56,7 @@ public class StatFileRequest(
                 size = bytes.copyOfRange(40, 48).toULong(),
                 atime = Instant.ofEpochSecond(bytes.copyOfRange(48, 56).toLong()),
                 mtime = Instant.ofEpochSecond(bytes.copyOfRange(56, 64).toLong()),
-                ctime = Instant.ofEpochSecond(bytes.copyOfRange(64, 72).toLong())
+                ctime = Instant.ofEpochSecond(bytes.copyOfRange(64, 72).toLong()),
             )
         }
     }
@@ -76,4 +76,3 @@ public class StatFileRequest(
 
     override fun serialize(): ByteArray = createBaseRequest("sync:")
 }
-

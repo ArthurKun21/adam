@@ -77,10 +77,10 @@ class TestRunnerE2ETest {
                 TestRunnerRequest(
                     "com.example.test",
                     InstrumentOptions(
-                        clazz = listOf("com.example.AbstractFailingTest")
+                        clazz = listOf("com.example.AbstractFailingTest"),
                     ),
                     rule.supportedFeatures,
-                    this
+                    this,
                 ),
                 serial = rule.deviceSerial,
             )
@@ -113,7 +113,7 @@ class TestRunnerE2ETest {
                 TestRunnerRequest(
                     "com.example.test",
                     InstrumentOptions(
-                        clazz = listOf("com.example.AbstractFailingTest")
+                        clazz = listOf("com.example.AbstractFailingTest"),
                     ),
                     rule.supportedFeatures,
                     this,
@@ -128,19 +128,30 @@ class TestRunnerE2ETest {
             }
 
             assertThat(events).contains(TestRunStartedEvent(1))
-            assertThat(events).contains(TestStarted(TestIdentifier("com.example.AbstractFailingTest", "testAlwaysFailing")))
+            assertThat(
+                events,
+            ).contains(TestStarted(TestIdentifier("com.example.AbstractFailingTest", "testAlwaysFailing")))
 
-            assertThat(events.any {
-                it is TestFailed && it.id.className == "com.example.AbstractFailingTest" && it.id.testName == "testAlwaysFailing" && it.stackTrace.isNotEmpty()
-            }).isTrue()
+            assertThat(
+                events.any {
+                    it is TestFailed && it.id.className == "com.example.AbstractFailingTest" &&
+                        it.id.testName == "testAlwaysFailing" &&
+                        it.stackTrace.isNotEmpty()
+                },
+            ).isTrue()
 
-            assertThat(events.any {
-                it is TestEnded && it.id.className == "com.example.AbstractFailingTest" && it.id.testName == "testAlwaysFailing"
-            }).isTrue()
+            assertThat(
+                events.any {
+                    it is TestEnded && it.id.className == "com.example.AbstractFailingTest" &&
+                        it.id.testName == "testAlwaysFailing"
+                },
+            ).isTrue()
 
-            assertThat(events.any {
-                it is TestRunEnded && it.metrics.isEmpty() && it.elapsedTimeMillis > 0
-            })
+            assertThat(
+                events.any {
+                    it is TestRunEnded && it.metrics.isEmpty() && it.elapsedTimeMillis > 0
+                },
+            )
         }
     }
 
@@ -149,7 +160,7 @@ class TestRunnerE2ETest {
             rule.adb.execute(
                 PushFileRequest(apk, "/data/local/tmp/$apkFileName", coroutineContext = coroutineContext),
                 this,
-                serial = rule.deviceSerial
+                serial = rule.deviceSerial,
             )
 
         for (i in channel) {
@@ -158,7 +169,7 @@ class TestRunnerE2ETest {
 
         val result = rule.adb.execute(
             InstallRemotePackageRequest("/data/local/tmp/$apkFileName", true),
-            serial = rule.deviceSerial
+            serial = rule.deviceSerial,
         )
         println(result)
     }

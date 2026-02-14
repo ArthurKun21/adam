@@ -19,18 +19,19 @@ package com.malinskiy.adam.request.sync
 import com.malinskiy.adam.request.shell.v1.ShellCommandResult
 import com.malinskiy.adam.request.shell.v1.SyncShellCommandRequest
 
-
 public class ListFilesRequest(private val directory: String) : SyncShellCommandRequest<List<AndroidFile>>(
-    cmd = "ls -l $directory"
+    cmd = "ls -l $directory",
 ) {
-    private val lslRegex: Regex = ("^([bcdlsp-][-r][-w][-xsS][-r][-w][-xsS][-r][-w][-xstST])\\s+" + //permissions
-            "(?:\\d+\\s+)?" + //nlink
-            "(\\S+)\\s+" + //user
-            "(\\S+)\\s+" + //group
-            "([\\d\\s,]*)\\s+" + //size
-            "(\\d{4}-\\d\\d-\\d\\d)\\s+" + //date
-            "(\\d\\d:\\d\\d)\\s+" + //time
-            "(.*)$").toRegex() //
+    private val lslRegex: Regex = (
+        "^([bcdlsp-][-r][-w][-xsS][-r][-w][-xsS][-r][-w][-xstST])\\s+" + // permissions
+            "(?:\\d+\\s+)?" + // nlink
+            "(\\S+)\\s+" + // user
+            "(\\S+)\\s+" + // group
+            "([\\d\\s,]*)\\s+" + // size
+            "(\\d{4}-\\d\\d-\\d\\d)\\s+" + // date
+            "(\\d\\d:\\d\\d)\\s+" + // time
+            "(.*)$"
+        ).toRegex() //
 
     override fun convertResult(response: ShellCommandResult): List<AndroidFile> {
         return response.output
@@ -77,7 +78,7 @@ public class ListFilesRequest(private val directory: String) : SyncShellCommandR
                     name = name,
                     directory = directory,
                     type = type,
-                    link = link
+                    link = link,
                 )
             }
     }
@@ -116,5 +117,5 @@ public data class AndroidFile(
     public val directory: String,
     public val size: Long,
     public val type: AndroidFileType,
-    public val link: String? = null
+    public val link: String? = null,
 )

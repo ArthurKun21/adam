@@ -19,7 +19,8 @@ package com.malinskiy.adam.request.framebuffer
 public enum class ColorSpace {
     UNKNOWN,
     SRGB,
-    P3;
+    P3,
+    ;
 
     public fun getProfileName(): String? = when (this) {
         UNKNOWN -> null

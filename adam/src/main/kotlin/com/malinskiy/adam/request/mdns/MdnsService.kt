@@ -19,5 +19,5 @@ package com.malinskiy.adam.request.mdns
 public data class MdnsService(
     public val name: String,
     public val serviceType: String,
-    public val url: String
+    public val url: String,
 )

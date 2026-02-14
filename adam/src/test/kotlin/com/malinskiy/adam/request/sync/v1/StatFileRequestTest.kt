@@ -25,7 +25,6 @@ import org.junit.Rule
 import org.junit.Test
 import java.time.Instant
 
-
 class StatFileRequestTest {
     @get:Rule
     val server = AdbServerRule()

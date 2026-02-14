@@ -17,8 +17,8 @@
 package com.malinskiy.adam.log
 
 import logcat.LogPriority
-import logcat.logcat
 import logcat.asLog
+import logcat.logcat
 
 public object AdamLogging {
     public fun logger(func: () -> Unit): AdamLogger = AdamLogger()

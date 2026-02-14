@@ -27,6 +27,5 @@ class TargetTest {
 
         assertThat(UsbTarget.serialize()).isEqualTo("host-usb:")
         assertThat(LocalTarget.serialize()).isEqualTo("host-local:")
-
     }
 }

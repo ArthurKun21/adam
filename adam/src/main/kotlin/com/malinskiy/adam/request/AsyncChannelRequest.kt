@@ -27,7 +27,7 @@ import kotlinx.coroutines.channels.SendChannel
 public abstract class AsyncChannelRequest<T : Any?, I : Any?>(
     public val channel: ReceiveChannel<I>? = null,
     target: Target = NonSpecifiedTarget,
-    socketIdleTimeout: Long? = null
+    socketIdleTimeout: Long? = null,
 ) : Request(target, socketIdleTimeout) {
 
     /**

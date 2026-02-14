@@ -21,7 +21,9 @@ import com.malinskiy.adam.request.ComplexRequest
 import com.malinskiy.adam.request.SerialTarget
 import com.malinskiy.adam.transport.Socket
 
-public class ListPortForwardsRequest(serial: String) : ComplexRequest<List<PortForwardingRule>>(target = SerialTarget(serial)) {
+public class ListPortForwardsRequest(serial: String) : ComplexRequest<List<PortForwardingRule>>(
+    target = SerialTarget(serial),
+) {
     override suspend fun readElement(socket: Socket): List<PortForwardingRule> {
         return socket.readProtocolString().lines().mapNotNull { line ->
             if (line.isNotEmpty()) {
@@ -29,7 +31,7 @@ public class ListPortForwardsRequest(serial: String) : ComplexRequest<List<PortF
                 PortForwardingRule(
                     serial = split[0],
                     localSpec = LocalPortSpec.parse(split[1]),
-                    remoteSpec = RemotePortSpec.parse(split[2])
+                    remoteSpec = RemotePortSpec.parse(split[2]),
                 )
             } else {
                 null
@@ -39,4 +41,3 @@ public class ListPortForwardsRequest(serial: String) : ComplexRequest<List<PortF
 
     override fun serialize(): ByteArray = createBaseRequest("list-forward")
 }
-

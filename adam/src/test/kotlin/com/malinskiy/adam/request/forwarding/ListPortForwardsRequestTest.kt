@@ -46,8 +46,8 @@ class ListPortForwardsRequestTest {
                         xx local:/tmp/socket localfilesystem:namedsocket
                         xx local:/tmp/socket dev:/dev/chardev
                         xx local:/tmp/socket jdwp:1001
-                        
-                    """.trimIndent()
+
+                    """.trimIndent(),
                 )
 
                 input.discard()
@@ -58,9 +58,13 @@ class ListPortForwardsRequestTest {
                 PortForwardingRule("xx", LocalTcpPortSpec(80), RemoteTcpPortSpec(80)),
                 PortForwardingRule("xx", LocalUnixSocketPortSpec("/tmp/socket"), RemoteAbstractPortSpec("namedsocket")),
                 PortForwardingRule("xx", LocalUnixSocketPortSpec("/tmp/socket"), RemoteReservedPortSpec("namedsocket")),
-                PortForwardingRule("xx", LocalUnixSocketPortSpec("/tmp/socket"), RemoteFilesystemPortSpec("namedsocket")),
+                PortForwardingRule(
+                    "xx",
+                    LocalUnixSocketPortSpec("/tmp/socket"),
+                    RemoteFilesystemPortSpec("namedsocket"),
+                ),
                 PortForwardingRule("xx", LocalUnixSocketPortSpec("/tmp/socket"), RemoteDevPortSpec("/dev/chardev")),
-                PortForwardingRule("xx", LocalUnixSocketPortSpec("/tmp/socket"), JDWPPortSpec(1001))
+                PortForwardingRule("xx", LocalUnixSocketPortSpec("/tmp/socket"), JDWPPortSpec(1001)),
             )
 
             assertThat(output.first().serial).isEqualTo("xx")

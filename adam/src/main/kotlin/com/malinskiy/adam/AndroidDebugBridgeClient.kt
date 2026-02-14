@@ -39,7 +39,7 @@ import java.net.InetSocketAddress
 public class AndroidDebugBridgeClient(
     public val port: Int,
     public val host: InetAddress,
-    public val socketFactory: SocketFactory
+    public val socketFactory: SocketFactory,
 ) : Closeable {
     private val socketAddress: InetSocketAddress = InetSocketAddress(host, port)
 
@@ -47,12 +47,14 @@ public class AndroidDebugBridgeClient(
         val validationResponse = request.validate()
         if (!validationResponse.success) {
             val requestSimpleClassName = request.javaClass.simpleName
-            throw RequestValidationException("Request $requestSimpleClassName did not pass validation: ${validationResponse.message}")
+            throw RequestValidationException(
+                "Request $requestSimpleClassName did not pass validation: ${validationResponse.message}",
+            )
         }
 
         return socketFactory.tcp(
             socketAddress = socketAddress,
-            idleTimeout = request.socketIdleTimeout
+            idleTimeout = request.socketIdleTimeout,
         ).use { socket ->
             serial?.let {
                 SetDeviceRequest(it).handshake(socket)
@@ -61,16 +63,22 @@ public class AndroidDebugBridgeClient(
         }
     }
 
-    public fun <T : Any?, I : Any?> execute(request: AsyncChannelRequest<T, I>, scope: CoroutineScope, serial: String? = null): ReceiveChannel<T> {
+    public fun <T : Any?, I : Any?> execute(
+        request: AsyncChannelRequest<T, I>,
+        scope: CoroutineScope,
+        serial: String? = null,
+    ): ReceiveChannel<T> {
         val validationResponse = request.validate()
         if (!validationResponse.success) {
             val requestSimpleClassName = request.javaClass.simpleName
-            throw RequestValidationException("Request $requestSimpleClassName did not pass validation: ${validationResponse.message}")
+            throw RequestValidationException(
+                "Request $requestSimpleClassName did not pass validation: ${validationResponse.message}",
+            )
         }
         return scope.produce {
             socketFactory.tcp(
                 socketAddress = socketAddress,
-                idleTimeout = request.socketIdleTimeout
+                idleTimeout = request.socketIdleTimeout,
             ).use { socket ->
                 var backChannel = request.channel
                 var backChannelJob: Job? = null
@@ -118,7 +126,7 @@ public class AndroidDebugBridgeClient(
     public suspend fun execute(request: EmulatorCommandRequest): String {
         return socketFactory.tcp(
             socketAddress = request.address,
-            idleTimeout = request.idleTimeoutOverride
+            idleTimeout = request.idleTimeoutOverride,
         ).use { socket ->
             request.process(socket)
         }
@@ -128,7 +136,9 @@ public class AndroidDebugBridgeClient(
         val validationResponse = request.validate()
         if (!validationResponse.success) {
             val requestSimpleClassName = request.javaClass.simpleName
-            throw RequestValidationException("Request $requestSimpleClassName did not pass validation: ${validationResponse.message}")
+            throw RequestValidationException(
+                "Request $requestSimpleClassName did not pass validation: ${validationResponse.message}",
+            )
         }
 
         return request.execute(this, serial)

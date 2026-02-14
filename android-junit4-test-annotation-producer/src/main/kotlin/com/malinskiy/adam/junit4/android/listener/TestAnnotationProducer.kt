@@ -47,7 +47,10 @@ public class TestAnnotationProducer : RunListener() {
         super.testStarted(description)
         if (description?.isTest == true) {
             val annotations: Set<String> =
-                (description.annotations.toList() + description.testClass.annotations.toList()).mapNotNull { annotation ->
+                (
+                    description.annotations.toList() +
+                        description.testClass.annotations.toList()
+                    ).mapNotNull { annotation ->
                     val fqn = annotation.annotationClass.qualifiedName
                     val parameters =
                         annotation.annotationClass.memberProperties.joinToString("") {
@@ -60,7 +63,7 @@ public class TestAnnotationProducer : RunListener() {
             val bundle = Bundle(1)
             bundle.putStringArrayList(
                 "com.malinskiy.adam.junit4.android.listener.TestAnnotationProducer.v4",
-                ArrayList(annotations)
+                ArrayList(annotations),
             )
             InstrumentationRegistry.getInstrumentation().sendStatus(2, bundle)
         }

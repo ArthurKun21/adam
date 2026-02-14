@@ -18,7 +18,6 @@ package com.malinskiy.adam.request.framebuffer
 
 import java.awt.image.BufferedImage
 
-
 public data class RawImage(
     public val version: Int,
     public val bitsPerPixel: Int,
@@ -34,18 +33,19 @@ public data class RawImage(
     public val greenLength: Int,
     public val alphaOffset: Int,
     public val alphaLength: Int,
-    public val buffer: ByteArray
+    public val buffer: ByteArray,
 ) {
     public fun getARGB(index: Int): Int {
         return when (bitsPerPixel) {
             16 -> {
                 Color.RGB565_2BYTE.toARGB8888_INT(buffer[index], buffer[index + 1])
             }
+
             32 -> {
                 val value = (buffer[index].toInt() and 0x00FF) or
-                        (buffer[index + 1].toInt() and 0x00FF shl 8) or
-                        (buffer[index + 2].toInt() and 0x00FF shl 16) or
-                        (buffer[index + 3].toInt() and 0x00FF shl 24)
+                    (buffer[index + 1].toInt() and 0x00FF shl 8) or
+                    (buffer[index + 2].toInt() and 0x00FF shl 16) or
+                    (buffer[index + 3].toInt() and 0x00FF shl 24)
                 Color.ARGB_INT.toARGB8888_INT(
                     value = value,
                     redOffset = redOffset,
@@ -55,9 +55,10 @@ public data class RawImage(
                     blueOffset = blueOffset,
                     blueLength = blueLength,
                     alphaOffset = alphaOffset,
-                    alphaLength = alphaLength
+                    alphaLength = alphaLength,
                 )
             }
+
             else -> {
                 throw UnsupportedOperationException("RawImage.getARGB(int) only works in 16 and 32 bit mode.")
             }
@@ -72,6 +73,7 @@ public data class RawImage(
             null -> {
                 BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
             }
+
             else -> {
                 val colorModel = ColorModelFactory().get(profileName, BufferedImage.TYPE_INT_ARGB)
                 val raster = colorModel.createCompatibleWritableRaster(width, height)
@@ -89,4 +91,3 @@ public data class RawImage(
         return bufferedImage
     }
 }
-

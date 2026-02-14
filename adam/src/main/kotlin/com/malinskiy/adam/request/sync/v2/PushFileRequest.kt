@@ -37,7 +37,7 @@ public class PushFileRequest(
     public val supportedFeatures: List<Feature>,
     mode: String = "0777",
     public val dryRun: Boolean = false,
-    coroutineContext: CoroutineContext = Dispatchers.IO
+    coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : BasePushFileRequest(local, remotePath, mode, coroutineContext) {
     /**
      * We don't have support for any compression, so the only value is NONE

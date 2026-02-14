@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit
 
 public class EmulatorGrpcRule(
     public val mode: Mode = Mode.ASSERT,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : TestRule {
     public lateinit var grpc: EmulatorControllerGrpcKt.EmulatorControllerCoroutineStub
     private var channel: ManagedChannel? = null
@@ -55,8 +55,14 @@ public class EmulatorGrpcRule(
                 } else {
                     when (mode) {
                         Mode.SKIP -> return
-                        Mode.ASSUME -> throw AssumptionViolatedException("No access to emulator's gRPC port has been provided: host = $grpcHost, port = $grpcPort")
-                        Mode.ASSERT -> throw AssertionError("No access to emulator's gRPC port has been provided: host = $grpcHost, port = $grpcPort")
+
+                        Mode.ASSUME -> throw AssumptionViolatedException(
+                            "No access to emulator's gRPC port has been provided: host = $grpcHost, port = $grpcPort",
+                        )
+
+                        Mode.ASSERT -> throw AssertionError(
+                            "No access to emulator's gRPC port has been provided: host = $grpcHost, port = $grpcPort",
+                        )
                     }
                 }
 

@@ -24,7 +24,7 @@ public class PmListRequest(private val includePath: Boolean = false) : SyncShell
         append("pm list packages")
 
         if (includePath) append(" -f")
-    }.toString()
+    }.toString(),
 ) {
     override fun convertResult(response: ShellCommandResult): List<Package> {
         return response.output
@@ -38,11 +38,11 @@ public class PmListRequest(private val includePath: Boolean = false) : SyncShell
                         true -> {
                             Package(split[2], split[1])
                         }
+
                         false -> {
                             Package(split[1])
                         }
                     }
-
                 }
             }
     }
@@ -50,5 +50,5 @@ public class PmListRequest(private val includePath: Boolean = false) : SyncShell
 
 public data class Package(
     public val name: String,
-    public val path: String? = null
+    public val path: String? = null,
 )

@@ -51,7 +51,7 @@ public class PullRequest(
     private val source: String,
     private val destination: File,
     private val supportedFeatures: List<Feature>,
-    override val coroutineContext: CoroutineContext = Dispatchers.IO
+    override val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : MultiRequest<Boolean>(), CoroutineScope {
 
     /**
@@ -69,8 +69,8 @@ public class PullRequest(
                         }
 
                         remoteFileEntry.isRegularFile() ||
-                                remoteFileEntry.isBlockDevice() ||
-                                remoteFileEntry.isCharDevice() -> {
+                            remoteFileEntry.isBlockDevice() ||
+                            remoteFileEntry.isCharDevice() -> {
                             doPullFile(source, destination, remoteFileEntry.size().toLong(), serial)
                         }
 
@@ -78,16 +78,17 @@ public class PullRequest(
                             throw PushFailedException(
                                 "Source $source exists and is not a directory or a file: mode=${
                                     remoteFileEntry.mode.toString(
-                                        8
+                                        8,
                                     )
-                                }"
+                                }",
                             )
                         }
 
                         !remoteFileEntry.exists() -> {
                             throw PushFailedException("Source $source doesn't exist")
                         }
-                        //We exhausted all conditions above. This is just to make the compiler happy
+
+                        // We exhausted all conditions above. This is just to make the compiler happy
                         else -> false
                     }
                 }
@@ -102,8 +103,8 @@ public class PullRequest(
                         }
 
                         remoteFileEntry.isRegularFile() ||
-                                remoteFileEntry.isBlockDevice() ||
-                                remoteFileEntry.isCharDevice() -> {
+                            remoteFileEntry.isBlockDevice() ||
+                            remoteFileEntry.isCharDevice() -> {
                             val name = source.substringAfterLast(Const.ANDROID_FILE_SEPARATOR)
                             doPullFile(source, File(destination, name), remoteFileEntry.size().toLong(), serial)
                         }
@@ -112,16 +113,17 @@ public class PullRequest(
                             throw PushFailedException(
                                 "Source $source exists and is not a directory or a file: mode=${
                                     remoteFileEntry.mode.toString(
-                                        8
+                                        8,
                                     )
-                                }"
+                                }",
                             )
                         }
 
                         !remoteFileEntry.exists() -> {
                             throw PushFailedException("Source $source doesn't exist")
                         }
-                        //We exhausted all conditions above. This is just to make the compiler happy
+
+                        // We exhausted all conditions above. This is just to make the compiler happy
                         else -> false
                     }
                 }
@@ -138,17 +140,17 @@ public class PullRequest(
 
     private suspend fun AndroidDebugBridgeClient.pullFolder(
         destination: File,
-        serial: String?
+        serial: String?,
     ): Boolean {
-
         val (filesToPull, _) = BFFSearch<String, File>().execute(
             source,
-            destination
+            destination,
         ) { currentDir, newDirs, newFiles, _, destinationRoot ->
             val ls = execute(CompatListFileRequest(currentDir, supportedFeatures), serial)
             for (file in ls.filterNot { Const.SYNC_IGNORED_FILES.contains(it.name) }) {
                 when {
                     file.isDirectory() -> newDirs.add(currentDir + Const.ANDROID_FILE_SEPARATOR + file.name)
+
                     file.isRegularFile() && file.size() == 0L.toULong() -> {
                         val remotePath = currentDir + Const.ANDROID_FILE_SEPARATOR + file.name
                         val remoteRelativePath = remotePath.substringAfter(source)
@@ -168,8 +170,8 @@ public class PullRequest(
                                 remote = remotePath,
                                 mtime = file.mtime.epochSecond,
                                 mode = file.mode,
-                                size = file.size()
-                            )
+                                size = file.size(),
+                            ),
                         )
                     }
                 }
@@ -191,11 +193,11 @@ public class PullRequest(
         source: String,
         realDestination: File,
         size: Long,
-        serial: String?
+        serial: String?,
     ): Boolean {
         val channel = execute(
             CompatPullFileRequest(source, realDestination, supportedFeatures, this@PullRequest, size, coroutineContext),
-            serial
+            serial,
         )
         var progress = 0.0
         for (update in channel) {

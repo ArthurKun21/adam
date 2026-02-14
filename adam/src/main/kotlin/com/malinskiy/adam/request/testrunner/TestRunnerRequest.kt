@@ -59,7 +59,7 @@ public class TestRunnerRequest(
     private val outputLogPath: String? = null,
     private val protobuf: Boolean = false,
     private val dumpFile: File? = null,
-    socketIdleTimeout: Long? = Long.MAX_VALUE
+    socketIdleTimeout: Long? = Long.MAX_VALUE,
 ) : AsyncCompatShellCommandRequest<List<TestEvent>>(
     cmd = StringBuilder().apply {
         append("am instrument -w -r")

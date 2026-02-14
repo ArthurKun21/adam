@@ -31,7 +31,7 @@ public class PullFileRequest(
     private val remotePath: String,
     local: File,
     size: Long? = null,
-    coroutineContext: CoroutineContext = Dispatchers.IO
+    coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : BasePullFileRequest(remotePath, local, size, coroutineContext) {
     override suspend fun handshake(socket: Socket) {
         super.handshake(socket)

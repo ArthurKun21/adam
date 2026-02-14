@@ -75,9 +75,9 @@ class CmdE2ETest {
                     StreamingPackageInstallRequest(
                         pkg = testFile,
                         supportedFeatures = listOf(Feature.CMD),
-                        reinstall = false
+                        reinstall = false,
                     ),
-                    adb.deviceSerial
+                    adb.deviceSerial,
                 )
             }.let { println(it) }
 
@@ -99,7 +99,7 @@ class CmdE2ETest {
                         reinstall = false,
                         extraArgs = listOf("-g", "-r"),
                     ),
-                    adb.deviceSerial
+                    adb.deviceSerial,
                 )
             }.let { println(it) }
 
@@ -120,12 +120,12 @@ class CmdE2ETest {
                 ExecInRequest(
                     "cmd package install -S ${testFile.length()}",
                     channel,
-                    blockSizeChannel
+                    blockSizeChannel,
                 ),
-                adb.deviceSerial
+                adb.deviceSerial,
             )
 
-            //Takes some time until it shows in the pm list. Wait for 10 seconds max
+            // Takes some time until it shows in the pm list. Wait for 10 seconds max
             var packages: List<Package> = emptyList()
             for (i in 1..100) {
                 packages = client.execute(PmListRequest(), serial = adb.deviceSerial)
@@ -150,24 +150,24 @@ class CmdE2ETest {
                     AtomicInstallPackageRequest(
                         listOf(
                             SingleFileInstallationPackage(appFile),
-                            SingleFileInstallationPackage(testFile)
+                            SingleFileInstallationPackage(testFile),
                         ),
                         listOf(Feature.CMD),
-                        true
+                        true,
                     ),
-                    adb.deviceSerial
+                    adb.deviceSerial,
                 )
             } catch (e: RequestRejectedException) {
                 if (e.message?.contains("Unknown option --multi-package") == true) {
                     Assume.assumeTrue(
                         "Device doesn't support `--multi-package` option",
-                        false
+                        false,
                     )
                 }
                 throw e
             }
 
-            //Takes some time until it shows in the pm list. Wait for 10 seconds max
+            // Takes some time until it shows in the pm list. Wait for 10 seconds max
             var packages: List<Package> = emptyList()
             for (i in 1..100) {
                 packages = client.execute(PmListRequest(), serial = adb.deviceSerial)
@@ -194,25 +194,25 @@ class CmdE2ETest {
                     AtomicInstallPackageRequest(
                         listOf(
                             SingleFileInstallationPackage(appFile),
-                            SingleFileInstallationPackage(testFile)
+                            SingleFileInstallationPackage(testFile),
                         ),
                         listOf(Feature.CMD),
                         true,
-                        extraArgs = listOf("-r", "-g")
+                        extraArgs = listOf("-r", "-g"),
                     ),
-                    adb.deviceSerial
+                    adb.deviceSerial,
                 )
             } catch (e: RequestRejectedException) {
                 if (e.message?.contains("Unknown option --multi-package") == true) {
                     Assume.assumeTrue(
                         "Device doesn't support `--multi-package` option",
-                        false
+                        false,
                     )
                 }
                 throw e
             }
 
-            //Takes some time until it shows in the pm list. Wait for 10 seconds max
+            // Takes some time until it shows in the pm list. Wait for 10 seconds max
             var packages: List<Package> = emptyList()
             for (i in 1..100) {
                 packages = client.execute(PmListRequest(), serial = adb.deviceSerial)
@@ -238,12 +238,12 @@ class CmdE2ETest {
                 InstallSplitPackageRequest(
                     ApkSplitInstallationPackage(appFile1, appFile2),
                     listOf(Feature.CMD),
-                    true
+                    true,
                 ),
-                adb.deviceSerial
+                adb.deviceSerial,
             )
 
-            //Takes some time until it shows in the pm list. Wait for 10 seconds max
+            // Takes some time until it shows in the pm list. Wait for 10 seconds max
             var packages: List<Package> = emptyList()
             for (i in 1..100) {
                 packages = client.execute(PmListRequest(), serial = adb.deviceSerial)

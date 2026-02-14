@@ -51,10 +51,12 @@ class WriteIndividualPackageRequestTest {
         val request = WriteIndividualPackageRequest(
             supportedFeatures = listOf(Feature.CMD, Feature.ABB_EXEC),
             file = File(WriteIndividualPackageRequestTest::class.java.getResource("/fixture/sample-fake.apk").file),
-            session = "session-id"
+            session = "session-id",
         )
         assertThat(request.serialize().toRequestString())
-            .isEqualTo("0042abb_exec:package\u0000install-write\u0000-S\u0000614\u0000session-id\u0000sample-fake.apk\u0000-")
+            .isEqualTo(
+                "0042abb_exec:package\u0000install-write\u0000-S\u0000614\u0000session-id\u0000sample-fake.apk\u0000-",
+            )
     }
 
     @Test
@@ -62,7 +64,7 @@ class WriteIndividualPackageRequestTest {
         val request = WriteIndividualPackageRequest(
             supportedFeatures = emptyList(),
             file = File(WriteIndividualPackageRequestTest::class.java.getResource("/fixture/sample-fake.apk").file),
-            session = "session-id"
+            session = "session-id",
         )
         assertThat(request.serialize().toRequestString())
             .isEqualTo("0039exec:pm install-write -S 614 session-id sample-fake.apk -")
@@ -75,7 +77,7 @@ class WriteIndividualPackageRequestTest {
         val request = WriteIndividualPackageRequest(
             supportedFeatures = listOf(Feature.CMD),
             file = fixture,
-            session = "session-id"
+            session = "session-id",
         )
         val response = "Success".toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
         val actual = temp.newFileWithExtension("apk")
@@ -97,7 +99,7 @@ class WriteIndividualPackageRequestTest {
         val request = WriteIndividualPackageRequest(
             supportedFeatures = listOf(Feature.CMD),
             file = fixture,
-            session = "session-id"
+            session = "session-id",
         )
         val response = "Failure".toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
         val actual = temp.newFileWithExtension("apk")
@@ -115,7 +117,7 @@ class WriteIndividualPackageRequestTest {
         val request = WriteIndividualPackageRequest(
             supportedFeatures = listOf(Feature.CMD),
             file = File(WriteIndividualPackageRequestTest::class.java.getResource("/fixture/sample-fake.apk").file),
-            session = "session-id"
+            session = "session-id",
         )
         return request
     }

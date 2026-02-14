@@ -35,7 +35,10 @@ import kotlin.coroutines.CoroutineContext
  * @param coroutineContext it's your responsibility to cancel this context when needed
  */
 @OptIn(UnsafeAdbAccess::class)
-public class AdbRule(private val mode: Mode = Mode.ASSERT, private val coroutineContext: CoroutineContext = Dispatchers.IO) :
+public class AdbRule(
+    private val mode: Mode = Mode.ASSERT,
+    private val coroutineContext: CoroutineContext = Dispatchers.IO,
+) :
     TestRule {
     public lateinit var adb: SingleTargetAndroidDebugBridgeClient
 
@@ -61,7 +64,11 @@ public class AdbRule(private val mode: Mode = Mode.ASSERT, private val coroutine
                 } else {
                     when (mode) {
                         Mode.SKIP -> return
-                        Mode.ASSUME -> throw AssumptionViolatedException("No access to adb port or device serial has been provided")
+
+                        Mode.ASSUME -> throw AssumptionViolatedException(
+                            "No access to adb port or device serial has been provided",
+                        )
+
                         Mode.ASSERT -> throw AssertionError("No access to adb port or device serial has been provided")
                     }
                 }

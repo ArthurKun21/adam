@@ -52,7 +52,7 @@ public class AdamScreenCaptureProcessor : BasicScreenCaptureProcessor() {
         val bundle = Bundle(1)
         bundle.putString(
             "com.malinskiy.adam.junit4.android.screencapture.AdamScreenCaptureProcessor.v1",
-            absoluteScreenCapturePath.absolutePath
+            absoluteScreenCapturePath.absolutePath,
         )
         InstrumentationRegistry.getInstrumentation().sendStatus(2, bundle)
         return filename

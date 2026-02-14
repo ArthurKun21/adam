@@ -26,7 +26,7 @@ public open class AdbBinaryInteractor {
     public suspend fun execute(
         adbBinary: File?,
         androidHome: File?,
-        vararg cmd: String
+        vararg cmd: String,
     ): Boolean {
         val androidEnvHome: File? = try {
             System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT")

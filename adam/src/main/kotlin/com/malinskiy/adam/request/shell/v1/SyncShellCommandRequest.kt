@@ -33,7 +33,11 @@ public abstract class SyncShellCommandRequest<T : Any?>(public val cmd: String, 
     public abstract fun convertResult(response: ShellCommandResult): T
 
     private val responseTransformer = ShellResultResponseTransformer()
-    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = responseTransformer.process(bytes, offset, limit)
+    override suspend fun process(
+        bytes: ByteArray,
+        offset: Int,
+        limit: Int,
+    ): Unit = responseTransformer.process(bytes, offset, limit)
     override fun transform(): T = convertResult(responseTransformer.transform())
     override fun serialize(): ByteArray = createBaseRequest("shell:$cmd;echo ${EXIT_CODE_DELIMITER}$?")
 

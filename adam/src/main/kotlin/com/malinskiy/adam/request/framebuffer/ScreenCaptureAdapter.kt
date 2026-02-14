@@ -29,7 +29,7 @@ import java.nio.ByteBuffer
  */
 public abstract class ScreenCaptureAdapter<T>(
     private var buffer: ByteBuffer? = null,
-    protected val colorModelFactory: ColorModelFactory = ColorModelFactory()
+    protected val colorModelFactory: ColorModelFactory = ColorModelFactory(),
 ) {
     public suspend fun read(socket: Socket, size: Int): ByteBuffer {
         val localBuffer = buffer
@@ -61,6 +61,6 @@ public abstract class ScreenCaptureAdapter<T>(
         alphaOffset: Int,
         alphaLength: Int,
         colorSpace: ColorSpace? = null,
-        socket: Socket
+        socket: Socket,
     ): T
 }

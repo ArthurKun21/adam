@@ -28,13 +28,17 @@ import com.malinskiy.adam.request.transform.StringResponseTransformer
 public class SetDmVerityCheckingRequest(private val enabled: Boolean) : SynchronousRequest<String>() {
     private val transformer = StringResponseTransformer()
 
-    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = transformer.process(bytes, offset, limit)
+    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = transformer.process(
+        bytes,
+        offset,
+        limit,
+    )
 
     override fun serialize(): ByteArray = createBaseRequest(
         when (enabled) {
             true -> "enable-verity:"
             false -> "disable-verity:"
-        }
+        },
     )
 
     override fun transform(): String = transformer.transform()

@@ -26,7 +26,7 @@ import com.malinskiy.adam.transport.Socket
  */
 public class ConnectDeviceRequest(
     private val host: String,
-    private val port: Int = 5555
+    private val port: Int = 5555,
 ) : ComplexRequest<String>(target = HostTarget) {
 
     override fun serialize(): ByteArray = createBaseRequest("connect:$host:$port")

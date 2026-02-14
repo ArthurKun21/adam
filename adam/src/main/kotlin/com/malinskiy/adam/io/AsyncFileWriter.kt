@@ -30,7 +30,7 @@ import kotlin.coroutines.CoroutineContext
 
 public class AsyncFileWriter(
     file: File,
-    override val coroutineContext: CoroutineContext = Dispatchers.IO
+    override val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : CoroutineScope, SuspendCloseable {
     private val fileChannel by lazy {
         if (!file.exists()) {

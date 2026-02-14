@@ -42,7 +42,7 @@ public data class FileEntryV1(
     override val name: String? = null,
     override val mode: UInt,
     public val size: UInt,
-    override val mtime: Instant
+    override val mtime: Instant,
 ) : FileEntry() {
     override fun exists(): Boolean = !(size == 0.toUInt() && mode == 0.toUInt() && mtime.epochSecond == 0L)
 }
@@ -59,7 +59,7 @@ public data class FileEntryV2(
     public val atime: Instant,
     override val mtime: Instant,
     public val ctime: Instant,
-    override val name: String? = null
+    override val name: String? = null,
 ) : FileEntry() {
     override fun exists(): Boolean = !(size == 0.toULong() && mode == 0.toUInt() && mtime.epochSecond == 0L)
 }

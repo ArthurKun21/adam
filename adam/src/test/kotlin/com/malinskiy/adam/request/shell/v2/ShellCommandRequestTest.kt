@@ -45,7 +45,6 @@ class ShellCommandRequestTest {
                 respondShellV2Exit(17)
             }
 
-
             val output = client.execute(ShellCommandRequest("echo foo; echo bar >&2; exit 17"), serial = "serial")
             assertThat(output.output).isEqualTo("foo\n")
             assertThat(output.errorOutput).isEqualTo("bar\n")

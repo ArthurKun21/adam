@@ -28,7 +28,8 @@ public enum class Status(public val value: Int) {
     FAILURE(-2),
     IGNORED(-3),
     ASSUMPTION_FAILURE(-4),
-    UNKNOWN(6666);
+    UNKNOWN(6666),
+    ;
 
     public fun isTerminal(): Boolean = value < 0
 

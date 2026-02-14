@@ -28,9 +28,12 @@ import java.nio.ByteOrder
 
 internal const val DEFAULT_BUFFER_SIZE = 4088
 
-public val AdamDefaultPool: ByteBufferPool = ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = DEFAULT_BUFFER_SIZE)
-public val AdamMaxPacketPool: ByteBufferPool = ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = Const.MAX_PACKET_LENGTH)
-public val AdamMaxFilePacketPool: ByteBufferPool = ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = Const.MAX_FILE_PACKET_LENGTH)
+public val AdamDefaultPool: ByteBufferPool =
+    ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = DEFAULT_BUFFER_SIZE)
+public val AdamMaxPacketPool: ByteBufferPool =
+    ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = Const.MAX_PACKET_LENGTH)
+public val AdamMaxFilePacketPool: ByteBufferPool =
+    ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = Const.MAX_FILE_PACKET_LENGTH)
 
 public class ByteBufferPool(private val poolSize: Int, private val bufferSize: Int) {
     private val delegate: GenericObjectPool<ByteBuffer> by lazy {
