@@ -1,4 +1,4 @@
-package fga.buildlogic
+package adam.buildlogic
 
 import org.gradle.api.JavaVersion as GradleJavaVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget as KotlinJvmTarget
