@@ -39,7 +39,9 @@ jobs:
 
       - name: archive test results
         if: failure()
-        run: (cd adam/build/reports/tests/test; zip -r -X ../../../../../test-result.zip .)
+        run: |
+          cd adam/build/reports/tests/test
+          zip -r -X ../../../../../test-result.zip .
 
       - name: Save test output
         uses: actions/upload-artifact@v6
