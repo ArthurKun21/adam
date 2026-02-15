@@ -54,4 +54,3 @@ public class AdbServerRule : TestRule {
         server.session(block)
     }
 }
-

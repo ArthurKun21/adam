@@ -40,7 +40,6 @@ import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
-
 public class AndroidDebugBridgeServer : CoroutineScope {
     private val executionDispatcher by lazy {
         newFixedThreadPoolContext(4, "AndroidDebugBridgeServer")

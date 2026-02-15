@@ -23,7 +23,6 @@ import com.malinskiy.adam.server.stub.ServerReadChannel
 import com.malinskiy.adam.server.stub.ServerWriteChannel
 import java.io.File
 
-
 public class Session(public val input: ServerReadChannel, public val output: ServerWriteChannel) {
     public suspend fun expectCmd(expected: () -> String): OkayFailSubSession {
         val transportCmd = input.receiveCommand()
@@ -55,7 +54,7 @@ public class Session(public val input: ServerReadChannel, public val output: Ser
             when (success) {
                 true -> Const.Message.OKAY
                 false -> Const.Message.FAIL
-            }
+            },
         )
 
         if (!success && message != null) {
@@ -73,7 +72,7 @@ public class Session(public val input: ServerReadChannel, public val output: Ser
     }
 
     public suspend fun respondScreencaptureV2(replay: File) {
-        //Extended version
+        // Extended version
         output.writeIntLittleEndian(1)
 
         val sample = replay.readBytes()
@@ -83,7 +82,7 @@ public class Session(public val input: ServerReadChannel, public val output: Ser
     }
 
     public suspend fun respondScreencaptureV3(replay: File) {
-        //Extended version
+        // Extended version
         output.writeIntLittleEndian(2)
 
         val sample = replay.readBytes()
@@ -121,7 +120,7 @@ public class Session(public val input: ServerReadChannel, public val output: Ser
             when (success) {
                 true -> Const.Message.OKAY
                 false -> Const.Message.FAIL
-            }
+            },
         )
 
         if (success && port != null) {
@@ -182,7 +181,7 @@ public class Session(public val input: ServerReadChannel, public val output: Ser
         gid: Int,
         atime: Int,
         mtime: Int,
-        ctime: Int
+        ctime: Int,
     ) {
         output.respondStatV2(mode, size, error, dev, ino, nlink, uid, gid, atime, mtime, ctime)
     }
@@ -251,7 +250,7 @@ public class Session(public val input: ServerReadChannel, public val output: Ser
         gid: Int,
         atime: Int,
         mtime: Int,
-        ctime: Int
+        ctime: Int,
     ): DoneFailSubSession {
         output.respondListV2(name, mode, size, error, dev, ino, nlink, uid, gid, atime, mtime, ctime)
         return DoneFailSubSession(this)
@@ -278,7 +277,6 @@ public class Session(public val input: ServerReadChannel, public val output: Ser
     public suspend fun respondListPortForwards(response: String) {
         output.respondStringV1(response)
     }
-
 
     public suspend fun respondConnectDevice(response: String) {
         output.respondStringV1(response)

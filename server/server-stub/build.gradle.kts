@@ -1,7 +1,7 @@
 import adam.buildlogic.AdamPublishing
+import adam.buildlogic.configureAdamPom
 import adam.buildlogic.configureIntegrationTestSourceSet
 import adam.buildlogic.configureIntegrationTestTasks
-import adam.buildlogic.configureAdamPom
 import adam.buildlogic.integrationTestImplementation
 
 /*

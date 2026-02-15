@@ -24,6 +24,8 @@ import io.ktor.utils.io.readLine
 
 public class ConsoleReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel by delegate {
     public suspend fun receiveCommand(): String = delegate.readLine()!!
-    public suspend fun receiveAuth(): String = receiveCommand().apply { assertThat(this).startsWith("auth ") }.substringAfter("auth ")
+    public suspend fun receiveAuth(): String = receiveCommand().apply {
+        assertThat(this).startsWith("auth ")
+    }.substringAfter("auth ")
     public suspend fun receiveExit(): String = receiveCommand().apply { assertThat(this).isEqualTo("quit") }
 }

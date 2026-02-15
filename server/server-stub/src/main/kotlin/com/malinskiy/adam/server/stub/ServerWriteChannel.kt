@@ -22,9 +22,9 @@ import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.writeFully
 import io.ktor.utils.io.writeStringUtf8
 import java.nio.ByteBuffer
+import io.ktor.utils.io.writeByte as channelWriteByte
 import io.ktor.utils.io.writeInt as channelWriteInt
 import io.ktor.utils.io.writeLong as channelWriteLong
-import io.ktor.utils.io.writeByte as channelWriteByte
 
 public class ServerWriteChannel(private val delegate: ByteWriteChannel) : ByteWriteChannel by delegate {
     private suspend fun write(request: ByteArray, length: Int? = null) {
@@ -77,7 +77,7 @@ public class ServerWriteChannel(private val delegate: ByteWriteChannel) : ByteWr
         gid: Int,
         atime: Int,
         mtime: Int,
-        ctime: Int
+        ctime: Int,
     ) {
         respond(Const.Message.LSTAT_V2)
         writeIntLittleEndian(error)
@@ -132,7 +132,7 @@ public class ServerWriteChannel(private val delegate: ByteWriteChannel) : ByteWr
         gid: Int,
         atime: Int,
         mtime: Int,
-        ctime: Int
+        ctime: Int,
     ) {
         respond(Const.Message.DENT_V2)
         writeIntLittleEndian(error)

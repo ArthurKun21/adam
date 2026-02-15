@@ -1,7 +1,7 @@
 import adam.buildlogic.AdamPublishing
+import adam.buildlogic.configureAdamPom
 import adam.buildlogic.configureIntegrationTestSourceSet
 import adam.buildlogic.configureIntegrationTestTasks
-import adam.buildlogic.configureAdamPom
 import adam.buildlogic.integrationTestImplementation
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.remove

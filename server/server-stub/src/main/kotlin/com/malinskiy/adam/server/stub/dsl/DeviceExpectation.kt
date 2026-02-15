@@ -18,7 +18,7 @@ package com.malinskiy.adam.server.stub.dsl
 
 public data class DeviceExpectation(
     public val serialNo: String,
-    private val list: MutableList<suspend Session.() -> Unit> = mutableListOf()
+    private val list: MutableList<suspend Session.() -> Unit> = mutableListOf(),
 ) {
     public fun session(block: suspend Session.() -> Unit) {
         list.add(block)

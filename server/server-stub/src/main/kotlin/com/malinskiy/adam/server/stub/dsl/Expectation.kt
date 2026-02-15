@@ -35,11 +35,13 @@ public class Expectation {
         val transportCmd = session.input.receiveCommand()
         return if (transportCmd.startsWith("host:transport:")) {
             val serial = transportCmd.substringAfter("host:transport:")
-            handlers[serial]?.let { it.handle(session); true } ?: false
+            handlers[serial]?.let {
+                it.handle(session)
+                true
+            } ?: false
         } else {
             otherHandlers[transportCmd]?.invoke(session) ?: return false
             return true
         }
     }
 }
-

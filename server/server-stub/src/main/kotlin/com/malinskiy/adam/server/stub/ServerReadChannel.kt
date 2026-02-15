@@ -27,11 +27,11 @@ import io.ktor.util.cio.writeChannel
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.readFully
 import io.ktor.utils.io.writeFully
-import io.ktor.utils.io.readByte as channelReadByte
-import io.ktor.utils.io.readInt as channelReadInt
 import kotlinx.coroutines.Job
 import java.io.File
 import kotlin.coroutines.coroutineContext
+import io.ktor.utils.io.readByte as channelReadByte
+import io.ktor.utils.io.readInt as channelReadInt
 
 public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel by delegate {
 
@@ -60,9 +60,11 @@ public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteRead
     public suspend fun receiveStat(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
-        if (message != "STAT") throw RuntimeException(
-            "Unexpected protocol message $message"
-        )
+        if (message != "STAT") {
+            throw RuntimeException(
+                "Unexpected protocol message $message",
+            )
+        }
         val size = readIntLittleEndian()
         val request = ByteArray(size)
         readFully(request, 0, size)
@@ -72,9 +74,11 @@ public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteRead
     public suspend fun receiveStatV2(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
-        if (message != "LST2") throw RuntimeException(
-            "Unexpected protocol message $message"
-        )
+        if (message != "LST2") {
+            throw RuntimeException(
+                "Unexpected protocol message $message",
+            )
+        }
         val size = readIntLittleEndian()
         val request = ByteArray(size)
         readFully(request, 0, size)
@@ -84,9 +88,11 @@ public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteRead
     public suspend fun receiveList(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
-        if (message != "LIST") throw RuntimeException(
-            "Unexpected protocol message $message"
-        )
+        if (message != "LIST") {
+            throw RuntimeException(
+                "Unexpected protocol message $message",
+            )
+        }
         val size = readIntLittleEndian()
         val request = ByteArray(size)
         readFully(request, 0, size)
@@ -96,9 +102,11 @@ public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteRead
     public suspend fun receiveListV2(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
-        if (message != "LIS2") throw RuntimeException(
-            "Unexpected protocol message $message"
-        )
+        if (message != "LIS2") {
+            throw RuntimeException(
+                "Unexpected protocol message $message",
+            )
+        }
         val size = readIntLittleEndian()
         val request = ByteArray(size)
         readFully(request, 0, size)
@@ -108,9 +116,11 @@ public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteRead
     public suspend fun receiveSend(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
-        if (message != "SEND") throw RuntimeException(
-            "Unexpected protocol message $message"
-        )
+        if (message != "SEND") {
+            throw RuntimeException(
+                "Unexpected protocol message $message",
+            )
+        }
         val size = readIntLittleEndian()
         val request = ByteArray(size)
         readFully(request, 0, size)
@@ -120,17 +130,21 @@ public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteRead
     public suspend fun receiveSendV2(): Triple<String, Int, Int> {
         val protocolMessage = receiveProtocolMessage()
         var message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
-        if (message != "SND2") throw RuntimeException(
-            "Unexpected protocol message $message"
-        )
+        if (message != "SND2") {
+            throw RuntimeException(
+                "Unexpected protocol message $message",
+            )
+        }
         val size = readIntLittleEndian()
         val request = ByteArray(size)
         readFully(request, 0, size)
 
         message = String(receiveProtocolMessage(), Const.DEFAULT_TRANSPORT_ENCODING)
-        if (message != "SND2") throw RuntimeException(
-            "Unexpected protocol message $message"
-        )
+        if (message != "SND2") {
+            throw RuntimeException(
+                "Unexpected protocol message $message",
+            )
+        }
         val mode = readIntLittleEndian()
         val flags = readIntLittleEndian()
         return Triple(String(request, Const.DEFAULT_TRANSPORT_ENCODING), mode, flags)
@@ -145,9 +159,11 @@ public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteRead
     public suspend fun receiveRecv(): String {
         val protocolMessage = receiveProtocolMessage()
         val message = String(protocolMessage, Const.DEFAULT_TRANSPORT_ENCODING)
-        if (message != "RECV") throw RuntimeException(
-            "Unexpected protocol message $message"
-        )
+        if (message != "RECV") {
+            throw RuntimeException(
+                "Unexpected protocol message $message",
+            )
+        }
 
         val size = readIntLittleEndian()
         val request = ByteArray(size)
@@ -190,6 +206,7 @@ public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteRead
                         channel.flushAndClose()
                         return file
                     }
+
                     header.contentEquals(Const.Message.DATA) -> {
                         val available = headerBuffer.copyOfRange(4, 8).toInt()
                         if (available > Const.MAX_FILE_PACKET_LENGTH) {
@@ -198,6 +215,7 @@ public class ServerReadChannel(private val delegate: ByteReadChannel) : ByteRead
                         readFully(dataBuffer, 0, available)
                         channel.writeFully(dataBuffer, 0, available)
                     }
+
                     else -> throw RuntimeException("Something bad happened")
                 }
             }

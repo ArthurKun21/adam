@@ -32,7 +32,7 @@ import io.ktor.utils.io.writeByte as channelWriteByte
 
 public class StubSocket(
     public val readChannel: ByteReadChannel = ByteChannel(false),
-    public val writeChannel: ByteWriteChannel = ByteChannel(false)
+    public val writeChannel: ByteWriteChannel = ByteChannel(false),
 ) : Socket {
     override val isClosedForWrite: Boolean
         get() = writeChannel.isClosedForWrite

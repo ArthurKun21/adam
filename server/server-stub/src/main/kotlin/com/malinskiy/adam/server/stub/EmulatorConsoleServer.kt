@@ -49,7 +49,9 @@ public class EmulatorConsoleServer : CoroutineScope, Closeable {
     private val job = SupervisorJob()
     public var port: Int = 0
 
-    public suspend fun startAndListen(block: suspend (ConsoleReadChannel, ConsoleWriteChannel) -> Unit): Pair<AndroidDebugBridgeClient, JavaInetSocketAddress> {
+    public suspend fun startAndListen(
+        block: suspend (ConsoleReadChannel, ConsoleWriteChannel) -> Unit,
+    ): Pair<AndroidDebugBridgeClient, JavaInetSocketAddress> {
         val address = InetSocketAddress("127.0.0.1", port)
         val server = aSocket(SelectorManager(Dispatchers.IO)).tcp().bind(address)
         port = server.localAddress.toJavaAddress().port
