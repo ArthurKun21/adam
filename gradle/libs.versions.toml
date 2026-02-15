@@ -22,7 +22,7 @@ javax = "1.3.2"
 androidGradle = "9.0.0"
 testMonitor = "1.8.0"
 testRunner = "1.7.0"
-gradleVersionsPlugin = "0.53.0"
+
 vanniktechMavenPublish = "0.36.0"
 dokka = "2.1.0"
 
@@ -68,5 +68,4 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufGradle" }
 android-library = { id = "com.android.library", version.ref = "androidGradle" }
-gradle-versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
 vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktechMavenPublish" }
