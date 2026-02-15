@@ -1,5 +1,6 @@
 import adam.buildlogic.AdamPublishing
 import adam.buildlogic.configureIntegrationTestSourceSet
+import adam.buildlogic.configureIntegrationTestTasks
 import adam.buildlogic.configureAdamPom
 import adam.buildlogic.integrationTestImplementation
 
@@ -37,34 +38,18 @@ mavenPublishing {
 
 configureIntegrationTestSourceSet()
 
-val integrationTest = tasks.register<Test>("integrationTest") {
-    description = "Runs integration tests"
-    group = "verification"
+val integrationTestTasks = configureIntegrationTestTasks(
+    configureJacocoReport = { integrationTest ->
+        executionData(integrationTest)
+    },
+)
 
-    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
-    classpath = sourceSets["integrationTest"].runtimeClasspath
-    shouldRunAfter("test")
-
-    jacoco {
-        include("**")
-    }
-}
-integrationTest.configure {
-    outputs.upToDateWhen { false }
-}
-
-val jacocoIntegrationTestReport = tasks.register<JacocoReport>("jacocoIntegrationTestReport") {
-    description = "Generates code coverage report for integrationTest task"
-    group = "verification"
+val jacocoIntegrationTestReport = integrationTestTasks.jacocoIntegrationTestReport
+jacocoIntegrationTestReport.configure {
     reports {
         xml.required.set(true)
     }
-
-    executionData(integrationTest)
-    sourceSets(sourceSets.getByName("integrationTest"))
-    classDirectories.setFrom(sourceSets.getByName("main").output.classesDirs)
 }
-tasks.check { dependsOn(integrationTest, jacocoIntegrationTestReport) }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))

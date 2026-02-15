@@ -1,5 +1,6 @@
 import adam.buildlogic.AdamPublishing
 import adam.buildlogic.configureIntegrationTestSourceSet
+import adam.buildlogic.configureIntegrationTestTasks
 import adam.buildlogic.configureAdamPom
 import adam.buildlogic.integrationTestImplementation
 import com.google.protobuf.gradle.id
@@ -77,21 +78,23 @@ protobuf {
 
 configureIntegrationTestSourceSet()
 
-val integrationTest = tasks.register<Test>("integrationTest") {
-    description = "Runs integration tests"
-    group = "verification"
+val integrationTestTasks = configureIntegrationTestTasks(
+    configureIntegrationTest = { jacocoIntegrationTestReport ->
+        finalizedBy(jacocoIntegrationTestReport)
+    },
+    configureJacocoReport = { integrationTest ->
+        executionData(fileTree(layout.buildDirectory).include("jacoco/integrationTest.exec"))
+        mustRunAfter(integrationTest)
+    },
+)
 
-    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
-    classpath = sourceSets["integrationTest"].runtimeClasspath
-    shouldRunAfter("test")
+val integrationTest = integrationTestTasks.integrationTest
 
-    jacoco {
-        include("**")
+val jacocoIntegrationTestReport = integrationTestTasks.jacocoIntegrationTestReport
+jacocoIntegrationTestReport.configure {
+    reports {
+        xml.required.set(true)
     }
-}
-integrationTest.configure {
-    outputs.upToDateWhen { false }
-    finalizedBy("jacocoIntegrationTestReport")
 }
 
 // See https://github.com/jacoco/jacoco/issues/1357
@@ -107,20 +110,6 @@ val connectedAndroidTest = tasks.register<Test>("connectedAndroidTest") {
 
     dependsOn(integrationTest)
 }
-
-val jacocoIntegrationTestReport = tasks.register<JacocoReport>("jacocoIntegrationTestReport") {
-    description = "Generates code coverage report for integrationTest task"
-    group = "verification"
-    reports {
-        xml.required.set(true)
-    }
-
-    executionData(fileTree(layout.buildDirectory).include("jacoco/integrationTest.exec"))
-    sourceSets(sourceSets.getByName("integrationTest"))
-    classDirectories.setFrom(sourceSets.getByName("main").output.classesDirs)
-    mustRunAfter(integrationTest)
-}
-tasks.check { dependsOn(integrationTest, jacocoIntegrationTestReport) }
 
 val jacocoCombinedTestReport = tasks.register<JacocoReport>("jacocoCombinedTestReport") {
     description = "Generates code coverage report for all test tasks"
