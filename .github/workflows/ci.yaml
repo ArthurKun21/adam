@@ -11,6 +11,10 @@ env:
   JAVA_VERSION: 17
   JAVA_DISTRO: 'temurin'
 
+concurrency:
+  group: ${{ github.ref }}-build
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
