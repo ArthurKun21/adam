@@ -1,5 +1,7 @@
 import adam.buildlogic.AdamPublishing
+import adam.buildlogic.configureIntegrationTestSourceSet
 import adam.buildlogic.configureAdamPom
+import adam.buildlogic.integrationTestImplementation
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.remove
 
@@ -73,21 +75,7 @@ protobuf {
     }
 }
 
-sourceSets {
-    create("integrationTest") {
-        compileClasspath += sourceSets.main.get().output
-        runtimeClasspath += sourceSets.main.get().output
-    }
-}
-
-val integrationTestImplementation: Configuration by configurations.getting {
-    extendsFrom(configurations.implementation.get())
-}
-
-configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
-
-fun DependencyHandler.`integrationTestImplementation`(dependencyNotation: Any): Dependency? =
-    add("integrationTestImplementation", dependencyNotation)
+configureIntegrationTestSourceSet()
 
 val integrationTest = tasks.register<Test>("integrationTest") {
     description = "Runs integration tests"
