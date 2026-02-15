@@ -4,7 +4,7 @@ import org.gradle.accessors.dm.LibrariesForLibs
 
 plugins {
     id("com.android.library")
-    // id("adam.code.lint")
+    id("adam.code.lint")
 }
 
 kotlin {

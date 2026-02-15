@@ -3,7 +3,7 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
     kotlin("jvm")
-    // id("adam.code.lint")
+    id("adam.code.lint")
 }
 
 kotlin {

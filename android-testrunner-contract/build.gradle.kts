@@ -21,6 +21,7 @@ import adam.buildlogic.configureAdamPom
 plugins {
     id("java")
     alias(libs.plugins.vanniktech.maven.publish)
+    id("adam.code.lint")
 }
 
 mavenPublishing {
