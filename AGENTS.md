@@ -5,6 +5,8 @@
 - Build: `./gradlew build`
 - Lint: `./gradlew spotlessCheck` (fix: `./gradlew spotlessApply`)
 - Run all tests: `./gradlew test`
+- Run Ktor transport regression tests: `./gradlew :transport-ktor:test --tests "com.malinskiy.adam.transport.ktor.KtorSocketRegressionTest"`
+- Purpose: guards Ktor byte-array offset/limit API semantics so Adam `Socket` methods keep length-based behavior during Ktor upgrades.
 - Run single test: `./gradlew :adam:test --tests "com.malinskiy.adam.ClassName.testMethod"`
 - Integration tests: `./gradlew :adam:integrationTest`
 
