@@ -1,4 +1,5 @@
 import adam.buildlogic.ProjectConfig
+import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
     kotlin("jvm")
@@ -21,5 +22,13 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
             "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi",
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
         )
+    }
+}
+
+pluginManager.withPlugin("jacoco") {
+    tasks.withType<JacocoReport>().configureEach {
+        reports {
+            xml.required.set(true)
+        }
     }
 }

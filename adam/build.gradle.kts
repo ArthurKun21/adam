@@ -1,3 +1,5 @@
+import adam.buildlogic.AdamPublishing
+import adam.buildlogic.configureAdamPom
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.remove
 
@@ -27,30 +29,12 @@ plugins {
 }
 
 mavenPublishing {
-    coordinates("com.github.ArthurKun21", "adam", version.toString())
+    coordinates(AdamPublishing.GROUP, "adam", version.toString())
 
     pom {
         name.set("adam")
         description.set("Android Debug Bridge helper - core library")
-        url.set("https://github.com/ArthurKun21/adam")
-        licenses {
-            license {
-                name.set("The Apache License, Version 2.0")
-                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-            }
-        }
-        developers {
-            developer {
-                id.set("ArthurKun21")
-                name.set("Arthur")
-                email.set("16458204+ArthurKun21@users.noreply.github.com")
-            }
-        }
-        scm {
-            connection.set("scm:git:git://github.com/ArthurKun21/adam.git")
-            developerConnection.set("scm:git:ssh://github.com/ArthurKun21/adam.git")
-            url.set("https://github.com/ArthurKun21/adam")
-        }
+        configureAdamPom()
     }
 }
 
@@ -105,7 +89,6 @@ configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.runtimeO
 fun DependencyHandler.`integrationTestImplementation`(dependencyNotation: Any): Dependency? =
     add("integrationTestImplementation", dependencyNotation)
 
-
 val integrationTest = tasks.register<Test>("integrationTest") {
     description = "Runs integration tests"
     group = "verification"
@@ -159,12 +142,6 @@ val jacocoCombinedTestReport = tasks.register<JacocoReport>("jacocoCombinedTestR
     sourceSets(sourceSets.getByName("integrationTest"), sourceSets.getByName("test"))
     classDirectories.setFrom(sourceSets.getByName("main").output.classesDirs)
     mustRunAfter(tasks["test"], integrationTest)
-}
-
-tasks.jacocoTestReport {
-    reports {
-        xml.required.set(true)
-    }
 }
 
 dokka {

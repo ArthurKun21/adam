@@ -1,6 +1,6 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.gradle.api.publish.PublishingExtension
-import java.util.*
+import java.util.Locale
 
 plugins {
     alias(libs.plugins.gradle.versions)

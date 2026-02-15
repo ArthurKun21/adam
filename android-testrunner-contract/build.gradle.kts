@@ -1,4 +1,6 @@
+import adam.buildlogic.AdamPublishing
 import adam.buildlogic.ProjectConfig
+import adam.buildlogic.configureAdamPom
 
 /*
  * Copyright (C) 2021 Anton Malinskiy
@@ -22,30 +24,12 @@ plugins {
 }
 
 mavenPublishing {
-    coordinates("com.github.ArthurKun21", "android-testrunner-contract", version.toString())
+    coordinates(AdamPublishing.GROUP, "android-testrunner-contract", version.toString())
 
     pom {
         name.set("android-testrunner-contract")
         description.set("Android Debug Bridge helper - Test runner contract")
-        url.set("https://github.com/ArthurKun21/adam")
-        licenses {
-            license {
-                name.set("The Apache License, Version 2.0")
-                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-            }
-        }
-        developers {
-            developer {
-                id.set("ArthurKun21")
-                name.set("Arthur")
-                email.set("16458204+ArthurKun21@users.noreply.github.com")
-            }
-        }
-        scm {
-            connection.set("scm:git:git://github.com/ArthurKun21/adam.git")
-            developerConnection.set("scm:git:ssh://github.com/ArthurKun21/adam.git")
-            url.set("https://github.com/ArthurKun21/adam")
-        }
+        configureAdamPom()
     }
 }
 
@@ -54,10 +38,8 @@ java {
     targetCompatibility = ProjectConfig.JavaVersion
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
         jvmTarget.set(ProjectConfig.JvmTarget)
     }
 }
-
-
