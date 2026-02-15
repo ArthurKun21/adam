@@ -24,25 +24,28 @@ public class ChanneledLogcatRequest(
     buffers: List<LogcatBuffer> = emptyList(),
     pid: Long? = null,
     lastReboot: Boolean? = null,
-    filters: List<LogcatFilterSpec> = emptyList()
+    filters: List<LogcatFilterSpec> = emptyList(),
 ) : ChanneledShellCommandRequest(
     cmd = "logcat" +
-            (since?.let {
+        (
+            since?.let {
                 " -T ${since.text}"
-            } ?: "") +
-            " ${modes.joinToString(separator = " ") { "-v $it" }}" +
-            if (buffers.isNotEmpty()) {
-                " ${buffers.joinToString(separator = " ") { "-b $it" }}"
-            } else {
-                ""
-            } +
-            "${pid?.let { " --pid=$it" } ?: ""}" +
-            "${lastReboot?.let { " -L" } ?: ""}" +
-            " ${filters.joinToString(separator = " ") { "${it.tag}:${it.level.name}" }}"
-                .trimEnd(),
+            } ?: ""
+            ) +
+        " ${modes.joinToString(separator = " ") { "-v $it" }}" +
+        if (buffers.isNotEmpty()) {
+            " ${buffers.joinToString(separator = " ") { "-b $it" }}"
+        } else {
+            ""
+        } +
+        "${pid?.let { " --pid=$it" } ?: ""}" +
+        "${lastReboot?.let { " -L" } ?: ""}" +
+        " ${filters.joinToString(separator = " ") { "${it.tag}:${it.level.name}" }}"
+            .trimEnd(),
     socketIdleTimeout = Long.MAX_VALUE,
 )
 
+@Suppress("ktlint:standard:enum-entry-name-case")
 public enum class LogcatReadMode {
     brief,
     long,
@@ -53,58 +56,59 @@ public enum class LogcatReadMode {
     threadtime,
     time,
 
-    //Show log buffer event descriptions. This modifier affects event log buffer messages only, and has no effect on the other non-binary buffers. The event descriptions come from the event-log-tags database.
+    // Show log buffer event descriptions. This modifier affects event log buffer messages only, and has no effect on the other non-binary buffers. The event descriptions come from the event-log-tags database.
     descriptive,
 
-    //Show each priority level with a different color
+    // Show each priority level with a different color
     color,
 
-    //Display time in seconds starting from Jan 1, 1970
+    // Display time in seconds starting from Jan 1, 1970
     epoch,
 
-    //Display time in CPU seconds starting from the last boot
+    // Display time in CPU seconds starting from the last boot
     monotonic,
 
-    //Ensure that any binary logging content is escaped
+    // Ensure that any binary logging content is escaped
     printable,
 
-    //If permitted by access controls, display the UID or Android ID of the logged process
+    // If permitted by access controls, display the UID or Android ID of the logged process
     uid,
 
-    //Display the time with precision down to microseconds
+    // Display the time with precision down to microseconds
     usec,
 
-    //Display time as UTC
+    // Display time as UTC
     UTC,
 
-    //Add the year to the displayed time
+    // Add the year to the displayed time
     year,
 
-    //Add the local time zone to the displayed time
-    zone
+    // Add the local time zone to the displayed time
+    zone,
 }
 
+@Suppress("ktlint:standard:enum-entry-name-case")
 public enum class LogcatBuffer {
-    //View the buffer that contains radio/telephony related messages
+    // View the buffer that contains radio/telephony related messages
     radio,
 
-    //View the interpreted binary system event buffer messages
+    // View the interpreted binary system event buffer messages
     events,
 
-    //View the main log buffer (default) does not contain system and crash log messages
+    // View the main log buffer (default) does not contain system and crash log messages
     main,
 
-    //View the system log buffer (default)
+    // View the system log buffer (default)
     system,
 
-    //View the crash log buffer (default)
+    // View the crash log buffer (default)
     crash,
 
-    //View all buffers
+    // View all buffers
     all,
 
-    //Reports main, system, and crash buffers
-    default
+    // Reports main, system, and crash buffers
+    default,
 }
 
 public enum class LogcatVerbosityLevel {
@@ -114,9 +118,13 @@ public enum class LogcatVerbosityLevel {
     W,
     E,
     F,
-    S
+    S,
 }
 
 public data class LogcatFilterSpec(public val tag: String, public val level: LogcatVerbosityLevel)
 
-public val SupressAll: LogcatFilterSpec = LogcatFilterSpec("*", LogcatVerbosityLevel.S)
+public val suppressAll: LogcatFilterSpec = LogcatFilterSpec("*", LogcatVerbosityLevel.S)
+
+@Deprecated("Use suppressAll", ReplaceWith("suppressAll"))
+@Suppress("ktlint:standard:property-naming")
+public val SupressAll: LogcatFilterSpec = suppressAll

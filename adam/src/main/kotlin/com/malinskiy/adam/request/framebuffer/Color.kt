@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("ktlint:standard:class-naming", "ktlint:standard:function-naming")
+
 package com.malinskiy.adam.request.framebuffer
 
 import kotlin.math.roundToInt
@@ -43,7 +45,7 @@ public object Color {
             blueOffset: Int,
             blueLength: Int,
             alphaOffset: Int,
-            alphaLength: Int
+            alphaLength: Int,
         ): Int {
             val r = value.ushr(redOffset) and getMask(redLength) shl 8 - redLength
             val g = value.ushr(greenOffset) and getMask(greenLength) shl 8 - greenLength
@@ -62,7 +64,7 @@ public object Color {
             blueOffset: Int,
             blueLength: Int,
             alphaOffset: Int,
-            alphaLength: Int
+            alphaLength: Int,
         ): ByteArray {
             val r = (value.ushr(redOffset) and getMask(redLength)) xshl (8 - redLength)
             val g = (value.ushr(greenOffset) and getMask(greenLength)) xshl (8 - greenLength)
@@ -76,7 +78,7 @@ public object Color {
                 return byteArrayOf(
                     (r * alphaMultiplier).roundToInt().toByte(),
                     (g * alphaMultiplier).roundToInt().toByte(),
-                    (b * alphaMultiplier).roundToInt().toByte()
+                    (b * alphaMultiplier).roundToInt().toByte(),
                 )
             }
         }

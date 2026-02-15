@@ -55,36 +55,50 @@ class PullE2ETest {
         }
     }
 
-
     @Test
     fun testPull() {
         runBlocking {
             adbRule.adb.execute(ShellCommandRequest("mkdir -p /data/local/tmp/testdir/X"), adbRule.deviceSerial)
             adbRule.adb.execute(ShellCommandRequest("mkdir -p /data/local/tmp/testdir/Y/Z"), adbRule.deviceSerial)
-            adbRule.adb.execute(ShellCommandRequest("echo Xcafebabe > /data/local/tmp/testdir/X/testfilex"), adbRule.deviceSerial)
-            adbRule.adb.execute(ShellCommandRequest("echo Ycafebabe > /data/local/tmp/testdir/Y/testfiley"), adbRule.deviceSerial)
-            adbRule.adb.execute(ShellCommandRequest("echo Zcafebabe > /data/local/tmp/testdir/Y/Z/testfilez"), adbRule.deviceSerial)
-            //Testing non-latin filenames
-            adbRule.adb.execute(ShellCommandRequest("echo кафебаба > /data/local/tmp/testdir/тестовыйфайл"), adbRule.deviceSerial)
+            adbRule.adb.execute(
+                ShellCommandRequest("echo Xcafebabe > /data/local/tmp/testdir/X/testfilex"),
+                adbRule.deviceSerial,
+            )
+            adbRule.adb.execute(
+                ShellCommandRequest("echo Ycafebabe > /data/local/tmp/testdir/Y/testfiley"),
+                adbRule.deviceSerial,
+            )
+            adbRule.adb.execute(
+                ShellCommandRequest("echo Zcafebabe > /data/local/tmp/testdir/Y/Z/testfilez"),
+                adbRule.deviceSerial,
+            )
+            // Testing non-latin filenames
+            adbRule.adb.execute(
+                ShellCommandRequest("echo кафебаба > /data/local/tmp/testdir/тестовыйфайл"),
+                adbRule.deviceSerial,
+            )
 
             val dst = temp.newFolder()
             val execute =
-                adbRule.adb.execute(PullRequest("/data/local/tmp/testdir", dst, adbRule.supportedFeatures), adbRule.deviceSerial)
+                adbRule.adb.execute(
+                    PullRequest("/data/local/tmp/testdir", dst, adbRule.supportedFeatures),
+                    adbRule.deviceSerial,
+                )
 
-            //Should create a subdir since dst already exists
+            // Should create a subdir since dst already exists
             val testdir = File(dst, "testdir")
 
-            val X = File(testdir, "X")
-            val Y = File(testdir, "Y")
-            val Z = File(Y, "Z")
-            val x = File(X, "testfilex")
-            val y = File(Y, "testfiley")
-            val z = File(Z, "testfilez")
+            val xDir = File(testdir, "X")
+            val yDir = File(testdir, "Y")
+            val zDir = File(yDir, "Z")
+            val x = File(xDir, "testfilex")
+            val y = File(yDir, "testfiley")
+            val z = File(zDir, "testfilez")
             val q = File(testdir, "тестовыйфайл")
 
-            assertThat(X).isDirectory()
-            assertThat(Y).isDirectory()
-            assertThat(Z).isDirectory()
+            assertThat(xDir).isDirectory()
+            assertThat(yDir).isDirectory()
+            assertThat(zDir).isDirectory()
 
             assertThat(x).isFile()
             assertThat(y).isFile()
@@ -102,28 +116,43 @@ class PullE2ETest {
         runBlocking {
             adbRule.adb.execute(ShellCommandRequest("mkdir -p /data/local/tmp/testdir/X"), adbRule.deviceSerial)
             adbRule.adb.execute(ShellCommandRequest("mkdir -p /data/local/tmp/testdir/Y/Z"), adbRule.deviceSerial)
-            adbRule.adb.execute(ShellCommandRequest("echo Xcafebabe > /data/local/tmp/testdir/X/testfilex"), adbRule.deviceSerial)
-            adbRule.adb.execute(ShellCommandRequest("echo Ycafebabe > /data/local/tmp/testdir/Y/testfiley"), adbRule.deviceSerial)
-            adbRule.adb.execute(ShellCommandRequest("echo Zcafebabe > /data/local/tmp/testdir/Y/Z/testfilez"), adbRule.deviceSerial)
-            //Testing non-latin filenames
-            adbRule.adb.execute(ShellCommandRequest("echo кафебаба > /data/local/tmp/testdir/тестовыйфайл"), adbRule.deviceSerial)
+            adbRule.adb.execute(
+                ShellCommandRequest("echo Xcafebabe > /data/local/tmp/testdir/X/testfilex"),
+                adbRule.deviceSerial,
+            )
+            adbRule.adb.execute(
+                ShellCommandRequest("echo Ycafebabe > /data/local/tmp/testdir/Y/testfiley"),
+                adbRule.deviceSerial,
+            )
+            adbRule.adb.execute(
+                ShellCommandRequest("echo Zcafebabe > /data/local/tmp/testdir/Y/Z/testfilez"),
+                adbRule.deviceSerial,
+            )
+            // Testing non-latin filenames
+            adbRule.adb.execute(
+                ShellCommandRequest("echo кафебаба > /data/local/tmp/testdir/тестовыйфайл"),
+                adbRule.deviceSerial,
+            )
 
             val dst = temp.newFolder()
             dst.delete()
             val execute =
-                adbRule.adb.execute(PullRequest("/data/local/tmp/testdir", dst, adbRule.supportedFeatures), adbRule.deviceSerial)
+                adbRule.adb.execute(
+                    PullRequest("/data/local/tmp/testdir", dst, adbRule.supportedFeatures),
+                    adbRule.deviceSerial,
+                )
 
-            val X = File(dst, "X")
-            val Y = File(dst, "Y")
-            val Z = File(Y, "Z")
-            val x = File(X, "testfilex")
-            val y = File(Y, "testfiley")
-            val z = File(Z, "testfilez")
+            val xDir = File(dst, "X")
+            val yDir = File(dst, "Y")
+            val zDir = File(yDir, "Z")
+            val x = File(xDir, "testfilex")
+            val y = File(yDir, "testfiley")
+            val z = File(zDir, "testfilez")
             val q = File(dst, "тестовыйфайл")
 
-            assertThat(X).isDirectory()
-            assertThat(Y).isDirectory()
-            assertThat(Z).isDirectory()
+            assertThat(xDir).isDirectory()
+            assertThat(yDir).isDirectory()
+            assertThat(zDir).isDirectory()
 
             assertThat(x).isFile()
             assertThat(y).isFile()
@@ -140,13 +169,16 @@ class PullE2ETest {
     fun testPullFileIntoADestinationFolder() {
         runBlocking {
             adbRule.adb.execute(ShellCommandRequest("mkdir -p /data/local/tmp/testdir/X"), adbRule.deviceSerial)
-            adbRule.adb.execute(ShellCommandRequest("echo Xcafebabe > /data/local/tmp/testdir/X/testfilex"), adbRule.deviceSerial)
+            adbRule.adb.execute(
+                ShellCommandRequest("echo Xcafebabe > /data/local/tmp/testdir/X/testfilex"),
+                adbRule.deviceSerial,
+            )
 
             val dst = temp.newFolder()
             val execute =
                 adbRule.adb.execute(
                     PullRequest("/data/local/tmp/testdir/X/testfilex", dst, adbRule.supportedFeatures),
-                    adbRule.deviceSerial
+                    adbRule.deviceSerial,
                 )
 
             val x = File(dst, "testfilex")
@@ -162,18 +194,21 @@ class PullE2ETest {
         runBlocking {
             adbRule.adb.execute(ShellCommandRequest("mkdir -p /data/local/tmp/testdir/X"), adbRule.deviceSerial)
             adbRule.adb.execute(ShellCommandRequest("touch /data/local/tmp/testdir/X/testfilex"), adbRule.deviceSerial)
-            adbRule.adb.execute(ShellCommandRequest("echo Xcafebabe > /data/local/tmp/testdir/X/testfiley"), adbRule.deviceSerial)
+            adbRule.adb.execute(
+                ShellCommandRequest("echo Xcafebabe > /data/local/tmp/testdir/X/testfiley"),
+                adbRule.deviceSerial,
+            )
 
             val dst = temp.newFolder()
             val execute =
                 adbRule.adb.execute(
                     PullRequest("/data/local/tmp/testdir/X", dst, adbRule.supportedFeatures),
-                    adbRule.deviceSerial
+                    adbRule.deviceSerial,
                 )
 
-            val X = File(dst, "X")
-            val x = File(X, "testfilex")
-            val y = File(X, "testfiley")
+            val xDir = File(dst, "X")
+            val x = File(xDir, "testfilex")
+            val y = File(xDir, "testfiley")
 
             assertThat(x).isFile()
             assertThat(y).isFile()

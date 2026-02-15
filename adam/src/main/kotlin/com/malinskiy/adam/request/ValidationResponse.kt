@@ -22,19 +22,26 @@ import java.util.*
 
 public data class ValidationResponse(
     public val success: Boolean,
-    public val message: String?
+    public val message: String?,
 ) {
     public companion object {
         public val Success: ValidationResponse = ValidationResponse(true, null)
 
         public fun missingFeature(feature: Feature): String = "${feature.name} is not supported by device"
-        public fun missingEitherFeature(vararg feature: Feature): String = "Supported features must include either of ${feature.joinToString()}"
-        public fun oneOfFilesShouldBe(extension: String): String = "At least one of the files has to be an ${extension.uppercase(Locale.ENGLISH)} file"
+        public fun missingEitherFeature(vararg feature: Feature): String {
+            return "Supported features must include either of ${feature.joinToString()}"
+        }
+
+        public fun oneOfFilesShouldBe(extension: String): String {
+            return "At least one of the files has to be an ${extension.uppercase(Locale.ENGLISH)} file"
+        }
         public fun packageShouldExist(file: File): String = "Package ${file.absolutePath} doesn't exist"
         public fun packageShouldBeRegularFile(file: File): String = "Package ${file.absolutePath} is not a regular file"
         public fun packageShouldBeSupportedExtension(file: File, supported: Set<String>): String =
             "Unsupported package extension ${file.extension}. Should be on of ${supported.joinToString()}}"
 
-        public fun pathShouldNotBeLong(): String = "Remote path should be less that ${Const.MAX_REMOTE_PATH_LENGTH} bytes"
+        public fun pathShouldNotBeLong(): String {
+            return "Remote path should be less that ${Const.MAX_REMOTE_PATH_LENGTH} bytes"
+        }
     }
 }

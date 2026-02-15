@@ -22,11 +22,11 @@ import io.vertx.core.streams.ReadStream
 import kotlin.math.min
 
 public class VariableSizeRecordParser(
-    private val stream: ReadStream<Buffer>? = null
+    private val stream: ReadStream<Buffer>? = null,
 ) : Handler<Buffer>, ReadStream<Buffer> {
     // Empty and unmodifiable
-    private val EMPTY_BUFFER: Buffer = Buffer.buffer()
-    private var buff: Buffer = EMPTY_BUFFER
+    private val emptyBuffer: Buffer = Buffer.buffer()
+    private var buff: Buffer = emptyBuffer
     private val bufferLock = Any()
     private var pos = 0 // Current position in buffer
     private var start = 0 // Position of beginning of current record
@@ -101,7 +101,7 @@ public class VariableSizeRecordParser(
             } while (true)
             val length = buff.length()
             if (start == length) {
-                buff = EMPTY_BUFFER
+                buff = emptyBuffer
             } else if (start > 0) {
                 buff = buff.getBuffer(start, length)
             }
@@ -133,19 +133,26 @@ public class VariableSizeRecordParser(
         endHandler?.handle(null)
     }
 
-    override fun exceptionHandler(handler: Handler<Throwable>?): VariableSizeRecordParser = apply { exceptionHandler = handler }
+    override fun exceptionHandler(handler: Handler<Throwable>?): VariableSizeRecordParser = apply {
+        exceptionHandler =
+            handler
+    }
 
     override fun handler(handler: Handler<Buffer>?): ReadStream<Buffer> {
         eventHandler = handler
         if (stream != null) {
             if (handler != null) {
-                stream.endHandler(Handler {
-                    streamEnded = true
-                    handleParsing()
-                })
-                stream.exceptionHandler(Handler { err: Throwable ->
-                    exceptionHandler?.handle(err)
-                })
+                stream.endHandler(
+                    Handler {
+                        streamEnded = true
+                        handleParsing()
+                    },
+                )
+                stream.exceptionHandler(
+                    Handler { err: Throwable ->
+                        exceptionHandler?.handle(err)
+                    },
+                )
                 stream.handler(this)
             } else {
                 stream.handler(null)

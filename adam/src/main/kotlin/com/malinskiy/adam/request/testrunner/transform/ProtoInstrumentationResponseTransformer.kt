@@ -19,9 +19,23 @@ package com.malinskiy.adam.request.transform
 import com.android.commands.am.InstrumentationData
 import com.google.protobuf.InvalidProtocolBufferException
 import com.malinskiy.adam.Const
-import com.malinskiy.adam.extension.*
-import com.malinskiy.adam.request.testrunner.*
-import com.malinskiy.adam.request.testrunner.model.*
+import com.malinskiy.adam.extension.compatLimit
+import com.malinskiy.adam.extension.compatPosition
+import com.malinskiy.adam.request.testrunner.ProgressiveResponseTransformer
+import com.malinskiy.adam.request.testrunner.SessionResultCode
+import com.malinskiy.adam.request.testrunner.StatusKey
+import com.malinskiy.adam.request.testrunner.model.Status
+import com.malinskiy.adam.request.testrunner.model.TestAssumptionFailed
+import com.malinskiy.adam.request.testrunner.model.TestEnded
+import com.malinskiy.adam.request.testrunner.model.TestEvent
+import com.malinskiy.adam.request.testrunner.model.TestFailed
+import com.malinskiy.adam.request.testrunner.model.TestIdentifier
+import com.malinskiy.adam.request.testrunner.model.TestIgnored
+import com.malinskiy.adam.request.testrunner.model.TestRunEnded
+import com.malinskiy.adam.request.testrunner.model.TestRunFailed
+import com.malinskiy.adam.request.testrunner.model.TestRunStartedEvent
+import com.malinskiy.adam.request.testrunner.model.TestStarted
+import com.malinskiy.adam.request.testrunner.model.TestStatusAggregator
 import java.io.File
 import java.io.RandomAccessFile
 import java.nio.MappedByteBuffer
@@ -67,7 +81,10 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
             for (status in session.testStatusList ?: emptyList()) {
                 if (state == NotStarted) {
                     val testCount =
-                        status.results?.entriesList?.filter { entry -> entry.key?.let { it == StatusKey.NUMTESTS.value } ?: false }
+                        status.results?.entriesList?.filter { entry ->
+                            entry.key?.let { it == StatusKey.NUMTESTS.value }
+                                ?: false
+                        }
                             ?.mapNotNull { it.valueInt }
                             ?.firstOrNull()
                             ?: 0
@@ -86,10 +103,21 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
                     if (entry.key != null) {
                         when (StatusKey.of(entry.key)) {
                             StatusKey.TEST -> testMethodName = entry.valueString ?: testClassName
+
                             StatusKey.CLASS -> testClassName = entry.valueString ?: testMethodName
+
                             StatusKey.STACK -> stackTrace = entry.valueString ?: stackTrace
-                            StatusKey.CURRENT -> Unit //Test index
-                            StatusKey.NUMTESTS, StatusKey.ERROR, StatusKey.SHORTMSG, StatusKey.STREAM, StatusKey.ID -> Unit
+
+                            StatusKey.CURRENT -> Unit
+
+                            // Test index
+                            StatusKey.NUMTESTS,
+                            StatusKey.ERROR,
+                            StatusKey.SHORTMSG,
+                            StatusKey.STREAM,
+                            StatusKey.ID,
+                            -> Unit
+
                             StatusKey.UNKNOWN -> testMetrics[entry.key] = entry.valueToString()
                         }
                     }
@@ -101,7 +129,10 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
                         testClassName = previousTestStatus.key.className
                         testMethodName = previousTestStatus.key.testName
                         resultCodeOverride = previousTestStatus.value.statusCode
-                    } ?: run { testClassName = ""; testMethodName = "" }
+                    } ?: run {
+                        testClassName = ""
+                        testMethodName = ""
+                    }
                 }
 
                 if (testClassName.isNotBlank() && testMethodName.isNotBlank()) {
@@ -112,8 +143,8 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
                             resultCodeOverride ?: Status.valueOf(status.resultCode),
                             status.logcat,
                             stackTrace,
-                            testMetrics
-                        )
+                            testMetrics,
+                        ),
                     )
                 }
             }
@@ -139,6 +170,7 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
                             }
                         }
                     }
+
                     InstrumentationData.SessionStatusCode.SESSION_ABORTED -> {
                         val errorText = session.sessionStatus.errorText ?: ""
                         val lastTest = testStatuses.entries.lastOrNull()
@@ -152,6 +184,7 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
 
                         events.add(TestRunFailed(errorText))
                     }
+
                     else -> Unit
                 }
 
@@ -162,7 +195,9 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
 
                 if (sessionOutput != null) {
                     val matchResult = timeRegex.find(sessionOutput)
-                    val elapsedTime = matchResult?.groups?.get(1)?.let { it.value.toFloatOrNull() }?.let { (it * 1000).toLong() } ?: 0L
+                    val elapsedTime =
+                        matchResult?.groups?.get(1)?.let { it.value.toFloatOrNull() }?.let { (it * 1000).toLong() }
+                            ?: 0L
                     events.add(TestRunEnded(elapsedTime, testRunMetrics))
                 }
             }
@@ -179,7 +214,7 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
 
             return events
         } catch (e: InvalidProtocolBufferException) {
-            //wait for more input
+            // wait for more input
             buffer.compatPosition(buffer.limit())
             return null
         }
@@ -197,7 +232,7 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
         resultCode: Status,
         logcat: String?,
         stackTrace: String,
-        testMetrics: Map<String, String>
+        testMetrics: Map<String, String>,
     ): List<TestEvent> {
         val id = TestIdentifier(className, methodName)
         var events = mutableListOf<TestEvent>()
@@ -217,13 +252,16 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
             Status.ERROR, Status.FAILURE -> {
                 events.add(TestFailed(id, stackTrace))
             }
+
             Status.IGNORED -> {
                 events.add(TestIgnored(id))
                 statusAggregator.logcatBuilder.clear()
             }
+
             Status.ASSUMPTION_FAILURE -> {
                 events.add(TestAssumptionFailed(id, stackTrace))
             }
+
             Status.SUCCESS, Status.START, Status.IN_PROGRESS, Status.UNKNOWN -> Unit
         }
 
