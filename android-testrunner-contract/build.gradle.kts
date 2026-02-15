@@ -1,5 +1,4 @@
 import adam.buildlogic.AdamPublishing
-import adam.buildlogic.ProjectConfig
 import adam.buildlogic.configureAdamPom
 
 /*
@@ -19,9 +18,8 @@ import adam.buildlogic.configureAdamPom
  */
 
 plugins {
-    id("java")
+    id("adam.java")
     alias(libs.plugins.vanniktech.maven.publish)
-    id("adam.code.lint")
 }
 
 mavenPublishing {
@@ -31,16 +29,5 @@ mavenPublishing {
         name.set("android-testrunner-contract")
         description.set("Android Debug Bridge helper - Test runner contract")
         configureAdamPom()
-    }
-}
-
-java {
-    sourceCompatibility = ProjectConfig.JavaVersion
-    targetCompatibility = ProjectConfig.JavaVersion
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    compilerOptions {
-        jvmTarget.set(ProjectConfig.JvmTarget)
     }
 }
