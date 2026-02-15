@@ -51,4 +51,8 @@ dependencies {
     implementation(project(":adam"))
     implementation(libs.ktor.network)
     implementation(libs.logcat)
+
+    testImplementation(libs.junit4)
+    testImplementation(libs.assertk)
+    testImplementation(libs.coroutines.core)
 }
