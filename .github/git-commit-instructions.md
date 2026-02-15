@@ -50,6 +50,10 @@
 
 * `docs: clarify parameter usage in DataStore class`
 
+### Updating Github Workflows
+
+* `ci: add workflow for automated release on tag`
+
 ---
 
 ## Dependency Changes
