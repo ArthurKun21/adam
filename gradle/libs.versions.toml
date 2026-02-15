@@ -1,5 +1,4 @@
 [versions]
-adam = "0.5.7"
 kotlin = "2.3.10"
 coroutines = "1.10.2"
 annotations = "26.0.2"

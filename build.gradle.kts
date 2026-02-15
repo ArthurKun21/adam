@@ -7,7 +7,7 @@ plugins {
 
 version = providers.environmentVariable("RELEASE_TAG")
     .map { it.removePrefix("v") }
-    .getOrElse(libs.versions.adam.get())
+    .getOrElse("0.1.0")
 
 subprojects {
     version = rootProject.version
