@@ -5,6 +5,17 @@ on:
       - master
       - dev
   pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - '.github/**.md'
+      - '.idea/**'
+      - 'jitpack.yml'
+      - '**/.gitignore'
+      - '.vscode/**'
+      - '**/.editorconfig'
+      - 'docs/**'
+      - 'LICENSE'
+      - 'NOTICE'
   workflow_dispatch:
 
 env:
