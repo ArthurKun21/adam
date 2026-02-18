@@ -35,15 +35,15 @@ public class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T
 
             val protocolVersion = order(ByteOrder.LITTLE_ENDIAN).int
             val headerSize = when (protocolVersion) {
+                // bpp, size, width, height, 4*(length, offset)
                 1 -> 12
 
-                // bpp, size, width, height, 4*(length, offset)
+                // bpp, colorSpace, size, width, height, 4*(length, offset)
                 2 -> 13
 
-                // bpp, colorSpace, size, width, height, 4*(length, offset)
+                // compatibility mode: size, width, height. used previously to denote framebuffer depth
                 16 -> 3
 
-                // compatibility mode: size, width, height. used previously to denote framebuffer depth
                 /**
                  * See https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/master/daemon/framebuffer_service.cpp#42
                  * for a possible new value for DDMS_RAWIMAGE_VERSION
