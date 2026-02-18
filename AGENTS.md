@@ -6,16 +6,20 @@
 - Assemble only: `./gradlew assemble`
 - Lint: `./gradlew spotlessApply`
 - Run all tests: `./gradlew test`
-- Run Ktor transport regression tests: `./gradlew :transport-ktor:test --tests "com.malinskiy.adam.transport.ktor.KtorSocketRegressionTest"`
-  - Purpose: guards Ktor byte-array offset/limit API semantics so Adam `Socket` methods keep length-based behavior during Ktor upgrades.
 - Run single test: `./gradlew :adam:test --tests "com.malinskiy.adam.ClassName.testMethod"`
+- Run single test in other modules: `./gradlew :transport-ktor:test --tests "com.malinskiy.adam.transport.ktor.KtorSocketRegressionTest"`
+- Ktor transport regression tests: `./gradlew :transport-ktor:test --tests "com.malinskiy.adam.transport.ktor.KtorSocketRegressionTest"`
+  - Guards Ktor byte-array offset/limit API semantics
 - Integration tests: `./gradlew :adam:integrationTest`
-- Coverage report: `./gradlew jacocoTestReport` (unit), `./gradlew :adam:jacocoIntegrationTestReport` (integration)
+- Coverage reports: `./gradlew jacocoTestReport` (unit), `./gradlew :adam:jacocoIntegrationTestReport` (integration)
+- Combined coverage: `./gradlew :adam:jacocoCombinedTestReport`
 - Generate docs: `./gradlew :adam:dokkaGeneratePublicationHtml` (output: `docs/api/`)
 
 ## Architecture
 
-Kotlin coroutine-based ADB (Android Debug Bridge) client library. Modules:
+Kotlin coroutine-based ADB (Android Debug Bridge) client library.
+
+### Modules
 
 - **adam** — Core ADB client (requests, transport, protobuf/gRPC). Main package: `com.malinskiy.adam`
 - **transport-ktor** — Ktor-based transport implementation
@@ -24,7 +28,14 @@ Kotlin coroutine-based ADB (Android Debug Bridge) client library. Modules:
 - **android-testrunner-contract** — Android test runner contract interfaces
 - **androidx-screencapture** — AndroidX screen capture helpers
 - **server/** — Server stubs for testing (`server-stub`, `server-stub-junit4`, `server-stub-junit5`)
-- **buildSrc** — Convention plugins (`adam.jvm`, `adam.code.lint`, `adam.android.library`) and build logic (`ProjectConfig`, `IntegrationTestConfig`, `MavenPomConfig`, `ProjectExtensions`)
+- **buildSrc** — Convention plugins and build logic
+
+### Key Types
+
+- `AndroidDebugBridgeClient` — Main entry point for ADB communication
+- `Request` — Base class for all ADB requests; subclasses: `ComplexRequest<T>`, `AsyncChannelRequest<T, I>`, `MultiRequest<T>`
+- `Socket` — Interface for transport layer (implemented by `KtorSocket`)
+- `Target` — Request targeting (HostTarget, DeviceTarget, etc.)
 
 ## Key Dependencies
 
@@ -33,19 +44,57 @@ Kotlin coroutine-based ADB (Android Debug Bridge) client library. Modules:
 - Vert.x 5.0.7 (core, kotlin, coroutines)
 - Protobuf 4.33.5 (javalite) + gRPC 1.79.0
 - Android Gradle Plugin 9.0.0 (compileSdk 36, minSdk 24, targetSdk 36)
+- JVM target: 17
 
 ## Code Style
 
-- Kotlin, JVM target 17. Explicit API mode for library modules. No star imports (star import threshold 999). Max line length 120.
-- Formatting: ktlint (IntelliJ IDEA style) via Spotless (`com.diffplug.spotless`). Trailing commas allowed.
-- Tests use JUnit 4 + assertk + kotlinx.coroutines (`runBlocking`). Server stubs from `:server:server-stub-junit4`.
-- Apache 2.0 license header required on all source files.
-- 4-space indent, UTF-8, trailing whitespace trimmed, final newline required.
-- Publishing: Vanniktech Maven Publish plugin to GitHub Packages (`com.github.ArthurKun21` group).
+### Formatting
 
-## CI
+- Kotlin, JVM target 17
+- ktlint (IntelliJ IDEA style) via Spotless (`com.diffplug.spotless`)
+- 4-space indent, UTF-8, max line length 120
+- Trailing commas allowed
+- Trailing whitespace trimmed, final newline required
+- Explicit API mode enabled for library modules (`kotlin.explicitApi()`)
 
-- GitHub Actions (`ci.yaml`): runs on push to `dev` and PRs.
-- Java 17 (Temurin distribution).
-- Unit tests + Ktor transport tests + JaCoCo coverage.
-- Integration tests on Android emulator (API levels 24, 34, 35) with AVD caching.
+### Imports
+
+- No star imports (threshold set to 999 to force explicit imports)
+- Import aliases for disambiguation: `import io.ktor.network.sockets.Socket as RealKtorSocket`
+
+### Naming Conventions
+
+- Classes: PascalCase (e.g., `AndroidDebugBridgeClient`, `ListDevicesRequest`)
+- Functions/properties: camelCase (e.g., `execute`, `readElement`, `socketIdleTimeout`)
+- Constants: `UPPER_SNAKE_CASE` in companion objects or objects
+- Extension functions: placed in `extension/` package (e.g., `Socket.kt` extensions)
+- Exception classes: suffix `Exception` (e.g., `RequestRejectedException`, `PushFailedException`)
+
+### Types
+
+- Use `public` modifier explicitly (explicit API mode)
+- Prefer `suspend` functions for async operations
+- Use `Result` or throw exceptions for error handling
+- Prefer `ByteBuffer` and `ByteArray` for binary data
+- Use Kotlin nullable types (`?`) for optional values
+
+### Error Handling
+
+- Custom exceptions extend `RuntimeException` (e.g., `RequestRejectedException`, `RequestValidationException`)
+- Request validation uses `ValidationResponse` data class
+- Socket operations catch exceptions during cleanup and log them
+
+### Logging
+
+- Use `AdamLogging.logger {}` to create a logger
+- Log levels: `debug`, `info`, `warn`, `error`, `trace`
+- Pattern: `log.debug(e) { "message" }`
+
+## Testing
+
+- JUnit 4 with `@Test`, `@Rule`
+- assertk for assertions: `assertThat(value).isEqualTo(expected)`
+- `runBlocking { }` for coroutine tests
+- Server stubs from `:server:server-stub-junit4` for mocking ADB server
+- Test naming: `test<Description>` (e.g., `testReturnsProperContent`)
+- Integration tests in `src/integrationTest/kotlin/`
