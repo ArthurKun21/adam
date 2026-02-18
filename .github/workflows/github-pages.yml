@@ -5,6 +5,15 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 env:
   JAVA_VERSION: 17
   JAVA_DISTRO: 'temurin'
@@ -14,19 +23,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      
+
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRO }}
-        
+
       - name: Generate dokka files
-        run: ./gradlew :adam:dokkaGenerate
-      - uses: helaili/jekyll-action@2.0.4
-        env:
-          JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
+        run: ./gradlew :adam:dokkaGeneratePublicationHtml
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
         with:
-          jekyll_src: docs
-          target_branch: gh-pages
-          gem_src: docs
+          path: docs/api
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
