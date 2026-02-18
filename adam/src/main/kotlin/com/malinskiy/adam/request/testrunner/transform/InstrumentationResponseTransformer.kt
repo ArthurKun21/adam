@@ -1,5 +1,5 @@
 /*
-  * Copyright (C) 2021 Anton Malinskiy
+ * Copyright (C) 2021 Anton Malinskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import com.malinskiy.adam.request.testrunner.TestStarted
 import com.malinskiy.adam.request.testrunner.model.Status
 import com.malinskiy.adam.request.testrunner.model.TokenType
 
-class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<TestEvent>?> {
-    var buffer = StringBuffer()
+public class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<TestEvent>?> {
+    public var buffer: StringBuffer = StringBuffer()
 
     private var startReported = false
     private var finishReported = false
@@ -61,8 +61,8 @@ class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<T
         val tokenPosition = buffer.indexOfAny(
             listOf(
                 TokenType.INSTRUMENTATION_STATUS_CODE.name,
-                TokenType.INSTRUMENTATION_CODE.name
-            )
+                TokenType.INSTRUMENTATION_CODE.name,
+            ),
         )
 
         if (tokenPosition == -1) {
@@ -105,14 +105,17 @@ class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<T
             last.startsWith(TokenType.INSTRUMENTATION_STATUS_CODE.name) -> {
                 parseStatusCode(last, atom.subList(0, atom.size - 1))
             }
+
             last.startsWith(TokenType.INSTRUMENTATION_CODE.name) -> {
                 finished = true
                 parseInstrumentationCode(last, atom)
             }
+
             last.startsWith(TokenType.INSTRUMENTATION_FAILED.name) -> {
                 finished = true
                 null
             }
+
             else -> null
         }
     }
@@ -150,6 +153,7 @@ class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<T
                 }
                 testsExecuted += 1
             }
+
             Status.START -> {
                 val className = parameters["class"]
                 val testName = parameters["test"]
@@ -157,9 +161,11 @@ class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<T
                     events.add(TestStarted(TestIdentifier(className, testName)))
                 }
             }
+
             Status.IN_PROGRESS -> {
                 testMetrics.putAll(parameters.filterKeys { !KNOWN_KEYS.contains(it) })
             }
+
             Status.ERROR, Status.FAILURE -> {
                 val className = parameters["class"]
                 val testName = parameters["test"]
@@ -177,6 +183,7 @@ class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<T
                 }
                 testsExecuted += 1
             }
+
             Status.IGNORED -> {
                 val className = parameters["class"]
                 val testName = parameters["test"]
@@ -188,6 +195,7 @@ class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<T
                 }
                 testsExecuted += 1
             }
+
             Status.ASSUMPTION_FAILURE -> {
                 val className = parameters["class"]
                 val testName = parameters["test"]
@@ -200,6 +208,7 @@ class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<T
                 }
                 testsExecuted += 1
             }
+
             Status.UNKNOWN -> TODO()
         }
 
@@ -217,7 +226,7 @@ class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<T
      */
     private fun parseInstrumentationCode(
         last: String,
-        atom: List<String>
+        atom: List<String>,
     ): List<TestEvent>? {
         val value = last.substring(TokenType.INSTRUMENTATION_CODE.name.length + 1).trim()
         val code = value.toIntOrNull()
@@ -238,6 +247,7 @@ class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<T
                 finishReported = true
                 listOf(TestRunEnded(time, metrics))
             }
+
             else -> {
                 finishReported = true
                 var shortMessage: String? = null
@@ -247,18 +257,23 @@ class InstrumentationResponseTransformer : ProgressiveResponseTransformer<List<T
                         line.startsWith("INSTRUMENTATION_RESULT: shortMsg=") -> {
                             shortMessage = line.substring(33)
                         }
+
                         line.startsWith("Time: ") -> {
                             time = line.substring(6).toDoubleOrNull()?.times(1000)?.toLong() ?: 0L
                         }
                     }
                 }
-                listOf(TestRunFailed(shortMessage ?: "Unexpected INSTRUMENTATION_CODE: $code"), TestRunEnded(time, emptyMap()))
+                listOf(
+                    TestRunFailed(shortMessage ?: "Unexpected INSTRUMENTATION_CODE: $code"),
+                    TestRunEnded(time, emptyMap()),
+                )
             }
         }
     }
 
-    companion object {
-        val KNOWN_KEYS = setOf("test", "class", "stack", "numtests", "Error", "shortMsg", "stream", "current", "id")
+    public companion object {
+        public val KNOWN_KEYS: Set<String> =
+            setOf("test", "class", "stack", "numtests", "Error", "shortMsg", "stream", "current", "id")
     }
 }
 
@@ -276,4 +291,3 @@ private fun List<String>.toMap(delimiter: String = "INSTRUMENTATION_STATUS: "): 
         Pair(trimmed.substring(0, delimiterIndex), trimmed.substring(delimiterIndex + 1, trimmed.length))
     }.toMap()
 }
-

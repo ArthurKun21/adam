@@ -1,11 +1,20 @@
-![Maven Central](https://img.shields.io/maven-central/v/com.malinskiy.adam/adam)
-![Codecov](https://img.shields.io/codecov/c/github/Malinskiy/adam)
-![Documentation](https://img.shields.io/badge/docs-documentation-green?link=https://malinskiy.github.io/adam/)
-
 # adam
+
 Android Debug Bridge helper written in Kotlin
 
+## Links
+
+### Original project
+
+![Maven Central](https://img.shields.io/maven-central/v/com.malinskiy.adam/adam)
+![Documentation](https://img.shields.io/badge/docs-documentation-green?link=https://malinskiy.github.io/adam/)
+
+### JitPack and GitHub Packages
+
+[![Release](https://jitpack.io/v/ArthurKun21/adam.svg)](https://jitpack.io/#ArthurKun21/adam)
+
 ## Motivation
+
 The only way to get access to the adb programmatically from java world currently is to use the ddmlib java project. Unfortunately it has several limitations, namely:
 
 1. Sub-optimal resources usage

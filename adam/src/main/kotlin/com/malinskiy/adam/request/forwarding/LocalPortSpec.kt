@@ -18,11 +18,11 @@ package com.malinskiy.adam.request.forwarding
 
 import com.malinskiy.adam.exception.UnsupportedForwardingSpecException
 
-sealed class LocalPortSpec {
-    abstract fun toSpec(): String
+public sealed class LocalPortSpec {
+    public abstract fun toSpec(): String
 
-    companion object {
-        fun parse(value: String): LocalPortSpec {
+    public companion object {
+        public fun parse(value: String): LocalPortSpec {
             val split = value.split(':')
             val type = split[0]
             return when (type) {
@@ -37,10 +37,10 @@ sealed class LocalPortSpec {
 /**
  * Default value 0 will allocate a random port that will be returned by the request
  */
-data class LocalTcpPortSpec(val port: Int = 0) : LocalPortSpec() {
-    override fun toSpec() = "tcp:$port"
+public data class LocalTcpPortSpec(public val port: Int = 0) : LocalPortSpec() {
+    override fun toSpec(): String = "tcp:$port"
 }
 
-data class LocalUnixSocketPortSpec(val path: String) : LocalPortSpec() {
-    override fun toSpec() = "local:$path"
+public data class LocalUnixSocketPortSpec(public val path: String) : LocalPortSpec() {
+    override fun toSpec(): String = "local:$path"
 }

@@ -106,7 +106,6 @@ class PushFileRequestTest {
                 }
             }.join()
 
-
             assertThat(receiveFile.readBytes()).isEqualTo(fixture.readBytes())
         }
     }

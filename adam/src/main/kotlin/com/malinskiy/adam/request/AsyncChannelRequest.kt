@@ -24,25 +24,25 @@ import kotlinx.coroutines.channels.SendChannel
  * Read and write are called in sequence, hence you have to give the control flow back if you want
  * cooperative multitasking to happen
  */
-abstract class AsyncChannelRequest<T : Any?, I : Any?>(
-    val channel: ReceiveChannel<I>? = null,
+public abstract class AsyncChannelRequest<T : Any?, I : Any?>(
+    public val channel: ReceiveChannel<I>? = null,
     target: Target = NonSpecifiedTarget,
-    socketIdleTimeout: Long? = null
+    socketIdleTimeout: Long? = null,
 ) : Request(target, socketIdleTimeout) {
 
     /**
      * Called after the initial OKAY confirmation
      */
-    abstract suspend fun readElement(socket: Socket, sendChannel: SendChannel<T>): Boolean
+    public abstract suspend fun readElement(socket: Socket, sendChannel: SendChannel<T>): Boolean
 
     /**
      * Called after each readElement
      */
-    abstract suspend fun writeElement(element: I, socket: Socket)
+    public abstract suspend fun writeElement(element: I, socket: Socket)
 
     /**
      * Optionally send a message
      * The transport connection is not available at this point
      */
-    open suspend fun close(channel: SendChannel<T>) = Unit
+    public open suspend fun close(channel: SendChannel<T>): Unit = Unit
 }

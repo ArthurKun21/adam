@@ -31,12 +31,12 @@ import kotlin.coroutines.CoroutineContext
  * @param coroutineContext if you don't specify your context then you'll have no control over the `wait for file to finish writing`: closing the channel doesn't close the underlying resources
  */
 @Features(Feature.SENDRECV_V2)
-class PullFileRequest(
+public class PullFileRequest(
     private val remotePath: String,
     local: File,
     private val supportedFeatures: List<Feature>,
     size: Long? = null,
-    coroutineContext: CoroutineContext = Dispatchers.IO
+    coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : BasePullFileRequest(remotePath, local, size, coroutineContext) {
     /**
      * We don't have support for any compression, so the only value is NONE

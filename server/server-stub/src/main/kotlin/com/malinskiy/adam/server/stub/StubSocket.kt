@@ -17,41 +17,60 @@
 package com.malinskiy.adam.server.stub
 
 import com.malinskiy.adam.transport.Socket
-import io.ktor.utils.io.ByteChannelSequentialJVM
+import io.ktor.utils.io.ByteChannel
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.cancel
-import io.ktor.utils.io.close
-import io.ktor.utils.io.core.internal.ChunkBuffer
-import io.ktor.utils.io.readIntLittleEndian
-import io.ktor.utils.io.writeByte
-import io.ktor.utils.io.writeIntLittleEndian
+import io.ktor.utils.io.readAvailable
+import io.ktor.utils.io.readFully
+import io.ktor.utils.io.readInt
+import io.ktor.utils.io.writeFully
+import io.ktor.utils.io.writeInt
 import java.nio.ByteBuffer
+import io.ktor.utils.io.readByte as channelReadByte
+import io.ktor.utils.io.writeByte as channelWriteByte
 
-class StubSocket(
-    val readChannel: ByteReadChannel = ByteChannelSequentialJVM(ChunkBuffer.Empty, false),
-    val writeChannel: ByteWriteChannel = ByteChannelSequentialJVM(ChunkBuffer.Empty, false)
+public class StubSocket(
+    public val readChannel: ByteReadChannel = ByteChannel(false),
+    public val writeChannel: ByteWriteChannel = ByteChannel(false),
 ) : Socket {
     override val isClosedForWrite: Boolean
         get() = writeChannel.isClosedForWrite
     override val isClosedForRead: Boolean
         get() = readChannel.isClosedForRead
 
-    constructor(content: ByteArray) : this(readChannel = ByteReadChannel(content))
+    public constructor(content: ByteArray) : this(readChannel = ByteReadChannel(content))
 
-    override suspend fun readFully(buffer: ByteBuffer): Int = readChannel.readFully(buffer)
-    override suspend fun readFully(buffer: ByteArray, offset: Int, limit: Int) = readChannel.readFully(buffer, offset, limit)
-    override suspend fun writeFully(byteBuffer: ByteBuffer) = writeChannel.writeFully(byteBuffer)
-    override suspend fun writeFully(byteArray: ByteArray, offset: Int, limit: Int) = writeChannel.writeFully(byteArray, offset, limit)
-    override suspend fun readAvailable(buffer: ByteArray, offset: Int, limit: Int): Int = readChannel.readAvailable(buffer, offset, limit)
-    override suspend fun readByte(): Byte = readChannel.readByte()
-    override suspend fun readIntLittleEndian(): Int = readChannel.readIntLittleEndian()
-    override suspend fun writeByte(value: Int) = writeChannel.writeByte(value)
-    override suspend fun writeIntLittleEndian(value: Int) = writeChannel.writeIntLittleEndian(value)
+    override suspend fun readFully(buffer: ByteBuffer): Int {
+        val count = buffer.remaining()
+        readChannel.readFully(buffer)
+        return count
+    }
+
+    override suspend fun readFully(buffer: ByteArray, offset: Int, limit: Int) {
+        readChannel.readFully(buffer, offset, offset + limit)
+    }
+
+    override suspend fun writeFully(byteBuffer: ByteBuffer) {
+        writeChannel.writeFully(byteBuffer)
+    }
+
+    override suspend fun writeFully(byteArray: ByteArray, offset: Int, limit: Int) {
+        writeChannel.writeFully(byteArray, offset, offset + limit)
+    }
+
+    override suspend fun readAvailable(buffer: ByteArray, offset: Int, limit: Int): Int {
+        return readChannel.readAvailable(buffer, offset, limit)
+    }
+
+    override suspend fun readByte(): Byte = readChannel.channelReadByte()
+    override suspend fun readIntLittleEndian(): Int = Integer.reverseBytes(readChannel.readInt())
+    override suspend fun writeByte(value: Int): Unit = writeChannel.channelWriteByte(value.toByte())
+    override suspend fun writeIntLittleEndian(value: Int): Unit = writeChannel.writeInt(Integer.reverseBytes(value))
 
     override suspend fun close() {
         try {
-            writeChannel.close()
+            writeChannel.flushAndClose()
             readChannel.cancel()
         } catch (e: Exception) {
             println("Exception during cleanup. Ignoring")

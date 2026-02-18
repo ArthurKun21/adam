@@ -26,7 +26,7 @@ class AsyncLogcatRequestTest {
     @Test
     fun testModeArguments() {
         val cmd = ChanneledLogcatRequest(
-            modes = listOf(LogcatReadMode.long, LogcatReadMode.epoch)
+            modes = listOf(LogcatReadMode.long, LogcatReadMode.epoch),
         ).serialize()
 
         assertThat(String(cmd, Const.DEFAULT_TRANSPORT_ENCODING))
@@ -36,7 +36,7 @@ class AsyncLogcatRequestTest {
     @Test
     fun testBuffers() {
         val cmd = ChanneledLogcatRequest(
-            buffers = listOf(LogcatBuffer.crash, LogcatBuffer.radio)
+            buffers = listOf(LogcatBuffer.crash, LogcatBuffer.radio),
         ).serialize()
 
         assertThat(String(cmd, Const.DEFAULT_TRANSPORT_ENCODING))
@@ -85,9 +85,9 @@ class AsyncLogcatRequestTest {
                 SupressAll,
                 LogcatFilterSpec(
                     "SOMETAG",
-                    LogcatVerbosityLevel.E
-                )
-            )
+                    LogcatVerbosityLevel.E,
+                ),
+            ),
         ).serialize()
 
         assertThat(String(cmd, Const.DEFAULT_TRANSPORT_ENCODING))

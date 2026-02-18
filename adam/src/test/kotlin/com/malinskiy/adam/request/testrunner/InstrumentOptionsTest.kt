@@ -41,21 +41,21 @@ class InstrumentOptionsTest {
             functional = true,
             log = true,
             performance = true,
-            unit = true
+            unit = true,
         )
 
         assertThat(options.toString()).isEqualTo(
             " -e package com.example " +
-                    "-e class com.example.TestClass " +
-                    "-e func true " +
-                    "-e unit true " +
-                    "-e size medium " +
-                    "-e perf true " +
-                    "-e debug true " +
-                    "-e log true " +
-                    "-e emma true " +
-                    "-e coverageFile /sdcard/codecov " +
-                    "-e test test"
+                "-e class com.example.TestClass " +
+                "-e func true " +
+                "-e unit true " +
+                "-e size medium " +
+                "-e perf true " +
+                "-e debug true " +
+                "-e log true " +
+                "-e emma true " +
+                "-e coverageFile /sdcard/codecov " +
+                "-e test test",
         )
     }
 
@@ -72,7 +72,7 @@ class InstrumentOptionsTest {
             functional = true,
             log = true,
             performance = true,
-            unit = true
+            unit = true,
         )
 
         assertThat(options.pkg).containsExactly("com.example")
@@ -93,13 +93,13 @@ class InstrumentOptionsTest {
         val options = InstrumentOptions(
             overrides = mapOf(
                 "param1" to "value1",
-                "param2" to "value2"
-            )
+                "param2" to "value2",
+            ),
         )
 
         assertThat(options.toString()).isEqualTo(
             " -e param1 value1" +
-                    " -e param2 value2"
+                " -e param2 value2",
         )
     }
 }

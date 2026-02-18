@@ -22,9 +22,9 @@ import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.request.HostTarget
 import com.malinskiy.adam.transport.Socket
 
-class FetchHostFeaturesRequest : ComplexRequest<List<Feature>>(target = HostTarget) {
+public class FetchHostFeaturesRequest : ComplexRequest<List<Feature>>(target = HostTarget) {
 
-    override fun serialize() = createBaseRequest("host-features")
+    override fun serialize(): ByteArray = createBaseRequest("host-features")
 
     override suspend fun readElement(socket: Socket): List<Feature> {
         return socket.readProtocolString().split(',').mapNotNull { Feature.of(it) }

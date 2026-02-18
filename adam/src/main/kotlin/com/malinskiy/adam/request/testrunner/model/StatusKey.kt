@@ -16,7 +16,7 @@
 
 package com.malinskiy.adam.request.testrunner.model
 
-enum class StatusKey(val value: String) {
+public enum class StatusKey(public val value: String) {
     TEST("test"),
     CLASS("class"),
     STACK("stack"),
@@ -26,10 +26,11 @@ enum class StatusKey(val value: String) {
     STREAM("stream"),
     CURRENT("current"),
     ID("id"),
-    UNKNOWN("");
+    UNKNOWN(""),
+    ;
 
-    companion object {
-        fun of(value: String?) = when (value) {
+    public companion object {
+        public fun of(value: String?): StatusKey = when (value) {
             "test" -> TEST
             "class" -> CLASS
             "stack" -> STACK

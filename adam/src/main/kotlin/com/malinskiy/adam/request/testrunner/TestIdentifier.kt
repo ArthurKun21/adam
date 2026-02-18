@@ -16,7 +16,7 @@
 
 package com.malinskiy.adam.request.testrunner
 
-data class TestIdentifier(
-    val className: String,
-    val testName: String
+public data class TestIdentifier(
+    public val className: String,
+    public val testName: String,
 )

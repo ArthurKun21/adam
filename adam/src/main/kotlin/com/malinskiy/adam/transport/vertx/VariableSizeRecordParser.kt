@@ -16,20 +16,18 @@
 
 package com.malinskiy.adam.transport.vertx
 
-import io.netty.buffer.Unpooled
 import io.vertx.core.Handler
 import io.vertx.core.buffer.Buffer
-import io.vertx.core.impl.Arguments
 import io.vertx.core.streams.ReadStream
 import kotlin.math.min
 
-class VariableSizeRecordParser(
-    private val stream: ReadStream<Buffer>? = null
+public class VariableSizeRecordParser(
+    private val stream: ReadStream<Buffer>? = null,
 ) : Handler<Buffer>, ReadStream<Buffer> {
     // Empty and unmodifiable
-    private val EMPTY_BUFFER = Buffer.buffer(Unpooled.EMPTY_BUFFER)
-    private var buff = EMPTY_BUFFER
-    private val bufferLock = Object()
+    private val emptyBuffer: Buffer = Buffer.buffer()
+    private var buff: Buffer = emptyBuffer
+    private val bufferLock = Any()
     private var pos = 0 // Current position in buffer
     private var start = 0 // Position of beginning of current record
     private var requestedAtMost = 0
@@ -40,7 +38,7 @@ class VariableSizeRecordParser(
     private var exceptionHandler: Handler<Throwable>? = null
     private var streamEnded = false
     private val drained
-        get() = streamEnded && (buff.byteBuf.writerIndex() == 0)
+        get() = streamEnded && (buff.length() == 0)
 
     /**
      * This method is called to provide the parser with data.toChannel
@@ -62,8 +60,8 @@ class VariableSizeRecordParser(
         }
     }
 
-    fun request(size: Int) {
-        Arguments.require(size > 0, "Size must be > 0")
+    public fun request(size: Int) {
+        require(size > 0) { "Size must be > 0" }
         requestedAtMost = size
         handleParsing()
     }
@@ -103,7 +101,7 @@ class VariableSizeRecordParser(
             } while (true)
             val length = buff.length()
             if (start == length) {
-                buff = EMPTY_BUFFER
+                buff = emptyBuffer
             } else if (start > 0) {
                 buff = buff.getBuffer(start, length)
             }
@@ -135,19 +133,26 @@ class VariableSizeRecordParser(
         endHandler?.handle(null)
     }
 
-    override fun exceptionHandler(handler: Handler<Throwable>?) = apply { exceptionHandler = handler }
+    override fun exceptionHandler(handler: Handler<Throwable>?): VariableSizeRecordParser = apply {
+        exceptionHandler =
+            handler
+    }
 
     override fun handler(handler: Handler<Buffer>?): ReadStream<Buffer> {
         eventHandler = handler
         if (stream != null) {
             if (handler != null) {
-                stream.endHandler(Handler {
-                    streamEnded = true
-                    handleParsing()
-                })
-                stream.exceptionHandler(Handler { err: Throwable ->
-                    exceptionHandler?.handle(err)
-                })
+                stream.endHandler(
+                    Handler {
+                        streamEnded = true
+                        handleParsing()
+                    },
+                )
+                stream.exceptionHandler(
+                    Handler { err: Throwable ->
+                        exceptionHandler?.handle(err)
+                    },
+                )
                 stream.handler(this)
             } else {
                 stream.handler(null)
@@ -158,10 +163,10 @@ class VariableSizeRecordParser(
         return this
     }
 
-    override fun pause() = apply { demand = 0L }
+    override fun pause(): VariableSizeRecordParser = apply { demand = 0L }
 
     override fun fetch(amount: Long): ReadStream<Buffer> {
-        Arguments.require(amount > 0, "Fetch amount must be > 0")
+        require(amount > 0) { "Fetch amount must be > 0" }
         demand += amount
         if (demand < 0L) {
             demand = Long.MAX_VALUE
@@ -170,7 +175,7 @@ class VariableSizeRecordParser(
         return this
     }
 
-    override fun resume() = apply { fetch(Long.MAX_VALUE) }
+    override fun resume(): VariableSizeRecordParser = apply { fetch(Long.MAX_VALUE) }
 
-    override fun endHandler(handler: Handler<Void?>?) = apply { endHandler = handler }
+    override fun endHandler(handler: Handler<Void?>?): VariableSizeRecordParser = apply { endHandler = handler }
 }

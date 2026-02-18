@@ -16,4 +16,4 @@
 
 package com.malinskiy.adam.request.pkg.multi
 
-data class CreateSessionResponse(val id: String, val output: String)
+public data class CreateSessionResponse(public val id: String, public val output: String)

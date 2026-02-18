@@ -18,8 +18,8 @@ package com.malinskiy.adam.request.testrunner.model
 
 import com.malinskiy.adam.Const
 
-data class TestStatusAggregator(
-    var statusCode: Status,
-    val logcatBuilder: StringBuilder = StringBuilder(Const.MAX_PROTOBUF_LOGCAT_LENGTH),
-    val metrics: MutableMap<String, String> = mutableMapOf()
+public data class TestStatusAggregator(
+    public var statusCode: Status,
+    public val logcatBuilder: StringBuilder = StringBuilder(Const.MAX_PROTOBUF_LOGCAT_LENGTH),
+    public val metrics: MutableMap<String, String> = mutableMapOf(),
 )

@@ -37,7 +37,7 @@ class ManualTest {
         runBlocking {
             val execute = adbRule.adb.execute(
                 request = AsyncDeviceMonitorRequest(),
-                scope = this
+                scope = this,
             )
             for (i in 1..100) {
                 println(execute.receive())

@@ -36,7 +36,9 @@ class RemoveReversePortForwardRequestTest {
     fun testDummy() {
         runBlocking {
             assertThat(RemoveReversePortForwardRequest(RemoteTcpPortSpec(8080)).transform()).isEqualTo(Unit)
-            assertThat(RemoveReversePortForwardRequest(RemoteTcpPortSpec(8080)).process(ByteArray(1), 0, 1)).isEqualTo(Unit)
+            assertThat(
+                RemoveReversePortForwardRequest(RemoteTcpPortSpec(8080)).process(ByteArray(1), 0, 1),
+            ).isEqualTo(Unit)
         }
     }
 }

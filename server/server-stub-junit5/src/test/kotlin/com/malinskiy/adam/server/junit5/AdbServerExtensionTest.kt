@@ -27,15 +27,15 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(AdbServerExtension::class)
-class AdbServerExtensionTest {
+public class AdbServerExtensionTest {
     @AdbClient
-    lateinit var client: AndroidDebugBridgeClient
+    public lateinit var client: AndroidDebugBridgeClient
 
     @AdbServer
-    lateinit var server: AndroidDebugBridgeServer
+    public lateinit var server: AndroidDebugBridgeServer
 
     @Test
-    fun testX() {
+    public fun testX() {
         server.session {
             expectAdbServerVersion()
                 .accept()
@@ -49,7 +49,7 @@ class AdbServerExtensionTest {
     }
 
     @Test
-    fun testMultisession() {
+    public fun testMultisession() {
         runBlocking {
             server.multipleSessions {
                 serial("emulator-5554") {

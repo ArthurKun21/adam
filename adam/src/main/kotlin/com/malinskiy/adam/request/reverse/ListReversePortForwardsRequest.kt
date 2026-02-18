@@ -26,7 +26,9 @@ import com.malinskiy.adam.transport.Socket
 /**
  * Doesn't work with SerialTarget, have to use the serial as a parameter for the execute method
  */
-class ListReversePortForwardsRequest : ComplexRequest<List<ReversePortForwardingRule>>(target = NonSpecifiedTarget) {
+public class ListReversePortForwardsRequest : ComplexRequest<List<ReversePortForwardingRule>>(
+    target = NonSpecifiedTarget,
+) {
     override suspend fun readElement(socket: Socket): List<ReversePortForwardingRule> {
         return socket.readProtocolString().lines().mapNotNull { line ->
             if (line.isNotEmpty()) {
@@ -34,7 +36,7 @@ class ListReversePortForwardsRequest : ComplexRequest<List<ReversePortForwarding
                 ReversePortForwardingRule(
                     serial = split[0],
                     localSpec = RemotePortSpec.parse(split[1]),
-                    remoteSpec = LocalPortSpec.parse(split[2])
+                    remoteSpec = LocalPortSpec.parse(split[2]),
                 )
             } else {
                 null
@@ -42,6 +44,5 @@ class ListReversePortForwardsRequest : ComplexRequest<List<ReversePortForwarding
         }
     }
 
-    override fun serialize() = createBaseRequest("reverse:list-forward")
+    override fun serialize(): ByteArray = createBaseRequest("reverse:list-forward")
 }
-

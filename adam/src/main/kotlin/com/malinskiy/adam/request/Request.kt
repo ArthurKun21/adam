@@ -30,18 +30,18 @@ import java.io.UnsupportedEncodingException
  *
  * @param socketIdleTimeout override for socket idle timeout
  */
-abstract class Request(
-    val target: Target = HostTarget,
-    val socketIdleTimeout: Long? = null
+public abstract class Request(
+    public val target: Target = HostTarget,
+    public val socketIdleTimeout: Long? = null,
 ) {
 
     /**
      * Some requests require a device serial to be passed to the request itself by means of <host-prefix>
      * @see https://android.googlesource.com/platform/system/core/+/refs/heads/master/adb/SERVICES.TXT
      */
-    abstract fun serialize(): ByteArray
+    public abstract fun serialize(): ByteArray
 
-    open suspend fun handshake(socket: Socket) {
+    public open suspend fun handshake(socket: Socket) {
         val request = serialize()
         socket.write(request)
         val response = socket.readTransportResponse()
@@ -61,16 +61,16 @@ abstract class Request(
         val result = String.format("%04X%s", fullRequest.length, fullRequest)
             .toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
 
-        //Need to set proper length in case there are multi-byte characters
+        // Need to set proper length in case there are multi-byte characters
         val actualLength = result.size - 4
         String.format("%04X", actualLength).toByteArray(Const.DEFAULT_TRANSPORT_ENCODING).copyInto(result, 0, 0, 4)
 
         return result
     }
 
-    open fun validate(): ValidationResponse = ValidationResponse.Success
+    public open fun validate(): ValidationResponse = ValidationResponse.Success
 
-    companion object {
+    public companion object {
         private val log = AdamLogging.logger {}
     }
 }

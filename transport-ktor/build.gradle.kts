@@ -1,3 +1,6 @@
+import adam.buildlogic.AdamPublishing
+import adam.buildlogic.configureAdamPom
+
 /*
  * Copyright (C) 2021 Anton Malinskiy
  *
@@ -16,10 +19,25 @@
 
 plugins {
     id("adam.jvm")
+    alias(libs.plugins.vanniktech.maven.publish)
+}
+
+mavenPublishing {
+    coordinates(AdamPublishing.GROUP, "transport-ktor", version.toString())
+
+    pom {
+        name.set("transport-ktor")
+        description.set("Android Debug Bridge helper - Ktor transport")
+        configureAdamPom()
+    }
 }
 
 dependencies {
     implementation(project(":adam"))
     implementation(libs.ktor.network)
-    implementation(libs.logging)
+    implementation(libs.logcat)
+
+    testImplementation(libs.junit4)
+    testImplementation(libs.assertk)
+    testImplementation(libs.coroutines.core)
 }

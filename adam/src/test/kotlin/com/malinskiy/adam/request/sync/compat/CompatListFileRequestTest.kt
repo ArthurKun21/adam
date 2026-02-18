@@ -46,12 +46,13 @@ class CompatListFileRequestTest {
                     420,
                     123,
                     1589042331,
-                    "some-file"
+                    "some-file",
                 ).done()
             }
 
             val list = client.execute(
-                CompatListFileRequest("/sdcard/", emptyList()), "serial"
+                CompatListFileRequest("/sdcard/", emptyList()),
+                "serial",
             )
 
             assertThat(list).containsExactly(
@@ -59,8 +60,8 @@ class CompatListFileRequestTest {
                     name = "some-file",
                     mode = 123.toUInt(),
                     mtime = Instant.ofEpochSecond(1589042331),
-                    size = 420.toUInt()
-                )
+                    size = 420.toUInt(),
+                ),
             )
         }
     }
@@ -84,12 +85,13 @@ class CompatListFileRequestTest {
                 gid = 1000,
                 atime = 1589042331,
                 mtime = 1589042332,
-                ctime = 1589042333
+                ctime = 1589042333,
             ).done()
         }
 
         val list = client.execute(
-            CompatListFileRequest("/sdcard/", listOf(Feature.LS_V2)), "serial"
+            CompatListFileRequest("/sdcard/", listOf(Feature.LS_V2)),
+            "serial",
         )
 
         assertThat(list).containsExactly(
@@ -105,8 +107,8 @@ class CompatListFileRequestTest {
                 gid = 1000.toUInt(),
                 atime = Instant.ofEpochSecond(1589042331),
                 mtime = Instant.ofEpochSecond(1589042332),
-                ctime = Instant.ofEpochSecond(1589042333)
-            )
+                ctime = Instant.ofEpochSecond(1589042333),
+            ),
         )
     }
 }

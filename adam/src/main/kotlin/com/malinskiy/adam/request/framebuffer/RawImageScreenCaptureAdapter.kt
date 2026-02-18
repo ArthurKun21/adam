@@ -19,7 +19,9 @@ package com.malinskiy.adam.request.framebuffer
 import com.malinskiy.adam.transport.Socket
 import java.nio.ByteBuffer
 
-class RawImageScreenCaptureAdapter(buffer: ByteBuffer? = null) : ScreenCaptureAdapter<RawImage>(buffer = buffer) {
+public class RawImageScreenCaptureAdapter(buffer: ByteBuffer? = null) : ScreenCaptureAdapter<RawImage>(
+    buffer = buffer,
+) {
 
     override suspend fun process(
         version: Int,
@@ -36,7 +38,7 @@ class RawImageScreenCaptureAdapter(buffer: ByteBuffer? = null) : ScreenCaptureAd
         alphaOffset: Int,
         alphaLength: Int,
         colorSpace: ColorSpace?,
-        socket: Socket
+        socket: Socket,
     ): RawImage {
         val imageBuffer = read(socket, size)
 
@@ -55,7 +57,7 @@ class RawImageScreenCaptureAdapter(buffer: ByteBuffer? = null) : ScreenCaptureAd
             blueLength = blueLength,
             alphaOffset = alphaOffset,
             alphaLength = alphaLength,
-            buffer = imageBuffer.array()
+            buffer = imageBuffer.array(),
         )
     }
 }

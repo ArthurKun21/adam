@@ -54,13 +54,14 @@ class ListFileRequestTest {
                 gid = 1000,
                 atime = 1589042331,
                 mtime = 1589042332,
-                ctime = 1589042333
+                ctime = 1589042333,
             )
             output.respondDone()
         }
 
         val list = client.execute(
-            ListFileRequest("/sdcard/", listOf(Feature.LS_V2)), "serial"
+            ListFileRequest("/sdcard/", listOf(Feature.LS_V2)),
+            "serial",
         )
 
         assertThat(list).containsExactly(
@@ -76,8 +77,8 @@ class ListFileRequestTest {
                 gid = 1000.toUInt(),
                 atime = Instant.ofEpochSecond(1589042331),
                 mtime = Instant.ofEpochSecond(1589042332),
-                ctime = Instant.ofEpochSecond(1589042333)
-            )
+                ctime = Instant.ofEpochSecond(1589042333),
+            ),
         )
 
         assertThat(list.first().name).isEqualTo("some-file")

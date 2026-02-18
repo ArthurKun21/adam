@@ -18,22 +18,22 @@ package com.malinskiy.adam.transport
 
 import java.nio.ByteBuffer
 
-interface Socket : SuspendCloseable {
-    val isClosedForWrite: Boolean
-    val isClosedForRead: Boolean
+public interface Socket : SuspendCloseable {
+    public val isClosedForWrite: Boolean
+    public val isClosedForRead: Boolean
 
-    suspend fun writeFully(byteBuffer: ByteBuffer)
-    suspend fun writeFully(byteArray: ByteArray, offset: Int, limit: Int)
+    public suspend fun writeFully(byteBuffer: ByteBuffer)
+    public suspend fun writeFully(byteArray: ByteArray, offset: Int, limit: Int)
 
-    suspend fun readAvailable(buffer: ByteArray, offset: Int, limit: Int): Int
-    suspend fun readFully(buffer: ByteBuffer): Int
-    suspend fun readFully(buffer: ByteArray, offset: Int, limit: Int)
+    public suspend fun readAvailable(buffer: ByteArray, offset: Int, limit: Int): Int
+    public suspend fun readFully(buffer: ByteBuffer): Int
+    public suspend fun readFully(buffer: ByteArray, offset: Int, limit: Int)
 
-    suspend fun readByte(): Byte
-    suspend fun writeByte(value: Int)
+    public suspend fun readByte(): Byte
+    public suspend fun writeByte(value: Int)
 
-    suspend fun readIntLittleEndian(): Int
-    suspend fun writeIntLittleEndian(value: Int)
+    public suspend fun readIntLittleEndian(): Int
+    public suspend fun writeIntLittleEndian(value: Int)
 
-    suspend fun writeFully(byteArray: ByteArray) = writeFully(byteArray, 0, byteArray.size)
+    public suspend fun writeFully(byteArray: ByteArray): Unit = writeFully(byteArray, 0, byteArray.size)
 }

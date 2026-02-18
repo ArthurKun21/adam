@@ -93,16 +93,19 @@ class AndroidDebugBridgeClientTest {
     @Test(expected = RequestValidationException::class)
     fun testRequestValidation() {
         runBlocking {
-            client.execute(object : ComplexRequest<String>() {
-                override fun validate() = ValidationResponse(false, "Fake")
-                override suspend fun readElement(socket: Socket): String {
-                    TODO("Not yet implemented")
-                }
+            client.execute(
+                object : ComplexRequest<String>() {
+                    override fun validate() = ValidationResponse(false, "Fake")
+                    override suspend fun readElement(socket: Socket): String {
+                        TODO("Not yet implemented")
+                    }
 
-                override fun serialize(): ByteArray {
-                    TODO("Not yet implemented")
-                }
-            }, serial = "serial")
+                    override fun serialize(): ByteArray {
+                        TODO("Not yet implemented")
+                    }
+                },
+                serial = "serial",
+            )
         }
     }
 }

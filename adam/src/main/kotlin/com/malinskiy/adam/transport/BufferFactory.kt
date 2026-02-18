@@ -28,11 +28,14 @@ import java.nio.ByteOrder
 
 internal const val DEFAULT_BUFFER_SIZE = 4088
 
-val AdamDefaultPool: ByteBufferPool = ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = DEFAULT_BUFFER_SIZE)
-val AdamMaxPacketPool: ByteBufferPool = ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = Const.MAX_PACKET_LENGTH)
-val AdamMaxFilePacketPool: ByteBufferPool = ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = Const.MAX_FILE_PACKET_LENGTH)
+public val AdamDefaultPool: ByteBufferPool =
+    ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = DEFAULT_BUFFER_SIZE)
+public val AdamMaxPacketPool: ByteBufferPool =
+    ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = Const.MAX_PACKET_LENGTH)
+public val AdamMaxFilePacketPool: ByteBufferPool =
+    ByteBufferPool(poolSize = Const.DEFAULT_BUFFER_SIZE, bufferSize = Const.MAX_FILE_PACKET_LENGTH)
 
-class ByteBufferPool(private val poolSize: Int, private val bufferSize: Int) {
+public class ByteBufferPool(private val poolSize: Int, private val bufferSize: Int) {
     private val delegate: GenericObjectPool<ByteBuffer> by lazy {
         val config = GenericObjectPoolConfig<ByteBuffer>().apply {
             maxTotal = poolSize
@@ -41,12 +44,12 @@ class ByteBufferPool(private val poolSize: Int, private val bufferSize: Int) {
         GenericObjectPool(ByteBufferObjectFactory(bufferSize), config)
     }
 
-    fun borrow(): ByteBuffer = delegate.borrowObject()
+    public fun borrow(): ByteBuffer = delegate.borrowObject()
 
-    fun recycle(buffer: ByteBuffer) = delegate.returnObject(buffer)
+    public fun recycle(buffer: ByteBuffer): Unit = delegate.returnObject(buffer)
 }
 
-class ByteBufferObjectFactory(private val bufferSize: Int) : PooledObjectFactory<ByteBuffer> {
+public class ByteBufferObjectFactory(private val bufferSize: Int) : PooledObjectFactory<ByteBuffer> {
     override fun activateObject(p: PooledObject<ByteBuffer>?) {
         p?.`object`?.apply {
             compatClear()
@@ -79,7 +82,7 @@ class ByteBufferObjectFactory(private val bufferSize: Int) : PooledObjectFactory
     }
 }
 
-inline fun <R> withDefaultBuffer(block: ByteBuffer.() -> R): R {
+public inline fun <R> withDefaultBuffer(block: ByteBuffer.() -> R): R {
     val instance = AdamDefaultPool.borrow()
     return try {
         block(instance)
@@ -88,7 +91,7 @@ inline fun <R> withDefaultBuffer(block: ByteBuffer.() -> R): R {
     }
 }
 
-inline fun <R> withMaxPacketBuffer(block: ByteBuffer.() -> R): R {
+public inline fun <R> withMaxPacketBuffer(block: ByteBuffer.() -> R): R {
     val instance = AdamMaxPacketPool.borrow()
     return try {
         block(instance)
@@ -97,7 +100,7 @@ inline fun <R> withMaxPacketBuffer(block: ByteBuffer.() -> R): R {
     }
 }
 
-inline fun <R> withMaxFilePacketBuffer(block: ByteBuffer.() -> R): R {
+public inline fun <R> withMaxFilePacketBuffer(block: ByteBuffer.() -> R): R {
     val instance = AdamMaxFilePacketPool.borrow()
     return try {
         block(instance)

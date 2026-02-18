@@ -18,7 +18,7 @@ package com.malinskiy.adam.server.stub
 
 import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.AndroidDebugBridgeClientFactory
-import io.ktor.network.selector.ActorSelectorManager
+import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.InetSocketAddress
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
@@ -27,7 +27,6 @@ import io.ktor.network.sockets.toJavaAddress
 import io.ktor.util.network.port
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.ByteWriteChannel
-import io.ktor.utils.io.close
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -40,7 +39,7 @@ import java.io.Closeable
 import kotlin.coroutines.CoroutineContext
 import java.net.InetSocketAddress as JavaInetSocketAddress
 
-class EmulatorConsoleServer : CoroutineScope, Closeable {
+public class EmulatorConsoleServer : CoroutineScope, Closeable {
     private val executionDispatcher by lazy {
         newFixedThreadPoolContext(4, "EmulatorConsoleServer")
     }
@@ -48,11 +47,13 @@ class EmulatorConsoleServer : CoroutineScope, Closeable {
         get() = executionDispatcher
 
     private val job = SupervisorJob()
-    var port: Int = 0
+    public var port: Int = 0
 
-    suspend fun startAndListen(block: suspend (ConsoleReadChannel, ConsoleWriteChannel) -> Unit): Pair<AndroidDebugBridgeClient, JavaInetSocketAddress> {
+    public suspend fun startAndListen(
+        block: suspend (ConsoleReadChannel, ConsoleWriteChannel) -> Unit,
+    ): Pair<AndroidDebugBridgeClient, JavaInetSocketAddress> {
         val address = InetSocketAddress("127.0.0.1", port)
-        val server = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp().bind(address)
+        val server = aSocket(SelectorManager(Dispatchers.IO)).tcp().bind(address)
         port = server.localAddress.toJavaAddress().port
 
         async(context = job) {
@@ -66,7 +67,7 @@ class EmulatorConsoleServer : CoroutineScope, Closeable {
                 } catch (e: Throwable) {
                     e.printStackTrace()
                 } finally {
-                    output.close()
+                    output.flushAndClose()
                     socket.close()
                 }
             }
@@ -75,7 +76,7 @@ class EmulatorConsoleServer : CoroutineScope, Closeable {
         return Pair(AndroidDebugBridgeClientFactory().build(), JavaInetSocketAddress(address.hostname, port))
     }
 
-    override fun close() = runBlocking {
+    override fun close(): Unit = runBlocking {
         job.cancelAndJoin()
     }
 }

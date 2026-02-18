@@ -24,7 +24,6 @@ import com.malinskiy.adam.exception.PullFailedException
 import com.malinskiy.adam.exception.UnsupportedSyncProtocolException
 import com.malinskiy.adam.server.junit4.AdbServerRule
 import io.ktor.utils.io.discard
-import io.ktor.utils.io.writeIntLittleEndian
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
@@ -45,7 +44,12 @@ class PullFileRequestTest {
 
     @Test
     fun testSerialize() {
-        assertThat(String(PullFileRequest("/sdcard/testfile", File("/tmp/testfile")).serialize(), Const.DEFAULT_TRANSPORT_ENCODING))
+        assertThat(
+            String(
+                PullFileRequest("/sdcard/testfile", File("/tmp/testfile")).serialize(),
+                Const.DEFAULT_TRANSPORT_ENCODING,
+            ),
+        )
             .isEqualTo("0005sync:")
     }
 

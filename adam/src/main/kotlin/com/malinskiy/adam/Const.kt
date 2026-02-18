@@ -16,44 +16,58 @@
 
 package com.malinskiy.adam
 
-object Const {
-    const val MAX_REMOTE_PATH_LENGTH = 1024
-    const val DEFAULT_BUFFER_SIZE = 1024
-    val DEFAULT_TRANSPORT_ENCODING = Charsets.UTF_8
-    const val DEFAULT_ADB_HOST = "127.0.0.1"
-    const val DEFAULT_ADB_PORT = 5037
+public object Const {
+    public const val MAX_REMOTE_PATH_LENGTH: Int = 1024
+    public const val DEFAULT_BUFFER_SIZE: Int = 1024
+    public val DEFAULT_TRANSPORT_ENCODING: java.nio.charset.Charset = Charsets.UTF_8
+    public const val DEFAULT_ADB_HOST: String = "127.0.0.1"
+    public const val DEFAULT_ADB_PORT: Int = 5037
 
-    const val SERVER_PORT_ENV_VAR = "ANDROID_ADB_SERVER_PORT"
-    const val MAX_PACKET_LENGTH = 16384
-    const val MAX_FILE_PACKET_LENGTH = 64 * 1024
+    public const val SERVER_PORT_ENV_VAR: String = "ANDROID_ADB_SERVER_PORT"
+    public const val MAX_PACKET_LENGTH: Int = 16384
+    public const val MAX_FILE_PACKET_LENGTH: Int = 64 * 1024
 
-    const val MAX_PROTOBUF_LOGCAT_LENGTH = 10_000
-    const val MAX_PROTOBUF_PACKET_LENGTH = 10 * 1024 * 1024L //10Mb
-    const val TEST_LOGCAT_METRIC = "com.malinskiy.adam.logcat"
+    public const val MAX_PROTOBUF_LOGCAT_LENGTH: Int = 10_000
+    public const val MAX_PROTOBUF_PACKET_LENGTH: Long = 10 * 1024 * 1024L // 10Mb
+    public const val TEST_LOGCAT_METRIC: String = "com.malinskiy.adam.logcat"
 
-    const val ANDROID_FILE_SEPARATOR = "/"
-    val SYNC_IGNORED_FILES = setOf(".", "..")
+    public const val ANDROID_FILE_SEPARATOR: String = "/"
+    public val SYNC_IGNORED_FILES: Set<String> = setOf(".", "..")
 
-    object Message {
-        val OKAY = byteArrayOf('O'.code.toByte(), 'K'.code.toByte(), 'A'.code.toByte(), 'Y'.code.toByte())
-        val FAIL = byteArrayOf('F'.code.toByte(), 'A'.code.toByte(), 'I'.code.toByte(), 'L'.code.toByte())
+    public object Message {
+        public val OKAY: ByteArray =
+            byteArrayOf('O'.code.toByte(), 'K'.code.toByte(), 'A'.code.toByte(), 'Y'.code.toByte())
+        public val FAIL: ByteArray =
+            byteArrayOf('F'.code.toByte(), 'A'.code.toByte(), 'I'.code.toByte(), 'L'.code.toByte())
 
-        val DATA = byteArrayOf('D'.code.toByte(), 'A'.code.toByte(), 'T'.code.toByte(), 'A'.code.toByte())
-        val DONE = byteArrayOf('D'.code.toByte(), 'O'.code.toByte(), 'N'.code.toByte(), 'E'.code.toByte())
+        public val DATA: ByteArray =
+            byteArrayOf('D'.code.toByte(), 'A'.code.toByte(), 'T'.code.toByte(), 'A'.code.toByte())
+        public val DONE: ByteArray =
+            byteArrayOf('D'.code.toByte(), 'O'.code.toByte(), 'N'.code.toByte(), 'E'.code.toByte())
 
-        val LSTAT_V1 = byteArrayOf('S'.code.toByte(), 'T'.code.toByte(), 'A'.code.toByte(), 'T'.code.toByte())
-        val LIST_V1 = byteArrayOf('L'.code.toByte(), 'I'.code.toByte(), 'S'.code.toByte(), 'T'.code.toByte())
-        val DENT_V1 = byteArrayOf('D'.code.toByte(), 'E'.code.toByte(), 'N'.code.toByte(), 'T'.code.toByte())
-        val SEND_V1 = byteArrayOf('S'.code.toByte(), 'E'.code.toByte(), 'N'.code.toByte(), 'D'.code.toByte())
-        val RECV_V1 = byteArrayOf('R'.code.toByte(), 'E'.code.toByte(), 'C'.code.toByte(), 'V'.code.toByte())
+        public val LSTAT_V1: ByteArray =
+            byteArrayOf('S'.code.toByte(), 'T'.code.toByte(), 'A'.code.toByte(), 'T'.code.toByte())
+        public val LIST_V1: ByteArray =
+            byteArrayOf('L'.code.toByte(), 'I'.code.toByte(), 'S'.code.toByte(), 'T'.code.toByte())
+        public val DENT_V1: ByteArray =
+            byteArrayOf('D'.code.toByte(), 'E'.code.toByte(), 'N'.code.toByte(), 'T'.code.toByte())
+        public val SEND_V1: ByteArray =
+            byteArrayOf('S'.code.toByte(), 'E'.code.toByte(), 'N'.code.toByte(), 'D'.code.toByte())
+        public val RECV_V1: ByteArray =
+            byteArrayOf('R'.code.toByte(), 'E'.code.toByte(), 'C'.code.toByte(), 'V'.code.toByte())
 
-        val LIST_V2 = byteArrayOf('L'.code.toByte(), 'I'.code.toByte(), 'S'.code.toByte(), '2'.code.toByte())
-        val DENT_V2 = byteArrayOf('D'.code.toByte(), 'N'.code.toByte(), 'T'.code.toByte(), '2'.code.toByte())
-        val LSTAT_V2 = byteArrayOf('L'.code.toByte(), 'S'.code.toByte(), 'T'.code.toByte(), '2'.code.toByte())
-        val RECV_V2 = byteArrayOf('R'.code.toByte(), 'C'.code.toByte(), 'V'.code.toByte(), '2'.code.toByte())
-        val SEND_V2 = byteArrayOf('S'.code.toByte(), 'N'.code.toByte(), 'D'.code.toByte(), '2'.code.toByte())
+        public val LIST_V2: ByteArray =
+            byteArrayOf('L'.code.toByte(), 'I'.code.toByte(), 'S'.code.toByte(), '2'.code.toByte())
+        public val DENT_V2: ByteArray =
+            byteArrayOf('D'.code.toByte(), 'N'.code.toByte(), 'T'.code.toByte(), '2'.code.toByte())
+        public val LSTAT_V2: ByteArray =
+            byteArrayOf('L'.code.toByte(), 'S'.code.toByte(), 'T'.code.toByte(), '2'.code.toByte())
+        public val RECV_V2: ByteArray =
+            byteArrayOf('R'.code.toByte(), 'C'.code.toByte(), 'V'.code.toByte(), '2'.code.toByte())
+        public val SEND_V2: ByteArray =
+            byteArrayOf('S'.code.toByte(), 'N'.code.toByte(), 'D'.code.toByte(), '2'.code.toByte())
 
-        val DONEDONE =
+        public val DONEDONE: ByteArray =
             byteArrayOf(
                 'D'.code.toByte(),
                 'O'.code.toByte(),
@@ -62,9 +76,9 @@ object Const {
                 'D'.code.toByte(),
                 'O'.code.toByte(),
                 'N'.code.toByte(),
-                'E'.code.toByte()
+                'E'.code.toByte(),
             )
-        val FAILFAIL =
+        public val FAILFAIL: ByteArray =
             byteArrayOf(
                 'F'.code.toByte(),
                 'A'.code.toByte(),
@@ -73,18 +87,18 @@ object Const {
                 'F'.code.toByte(),
                 'A'.code.toByte(),
                 'I'.code.toByte(),
-                'L'.code.toByte()
+                'L'.code.toByte(),
             )
     }
 
-    object FileType {
-        val S_IFMT = "170000".toUInt(8)
-        val S_IFIFO = "10000".toUInt(8)
-        val S_IFCHR = "20000".toUInt(8)
-        val S_IFDIR = "40000".toUInt(8)
-        val S_IFBLK = "60000".toUInt(8)
-        val S_IFREG = "100000".toUInt(8)
-        val S_IFLNK = "120000".toUInt(8)
-        val S_IFSOCK = "140000".toUInt(8)
+    public object FileType {
+        public val S_IFMT: UInt = "170000".toUInt(8)
+        public val S_IFIFO: UInt = "10000".toUInt(8)
+        public val S_IFCHR: UInt = "20000".toUInt(8)
+        public val S_IFDIR: UInt = "40000".toUInt(8)
+        public val S_IFBLK: UInt = "60000".toUInt(8)
+        public val S_IFREG: UInt = "100000".toUInt(8)
+        public val S_IFLNK: UInt = "120000".toUInt(8)
+        public val S_IFSOCK: UInt = "140000".toUInt(8)
     }
 }

@@ -1,3 +1,6 @@
+import adam.buildlogic.AdamPublishing
+import adam.buildlogic.configureAdamPom
+
 /*
  * Copyright (C) 2021 Anton Malinskiy
  *
@@ -17,15 +20,18 @@
 plugins {
     id("adam.jvm")
     id("jacoco")
+    alias(libs.plugins.vanniktech.maven.publish)
 }
 
+mavenPublishing {
+    coordinates(AdamPublishing.GROUP, "server-stub-junit4", version.toString())
 
-tasks.jacocoTestReport {
-    reports {
-        xml.required.set(true)
+    pom {
+        name.set("server-stub-junit4")
+        description.set("Android Debug Bridge helper - Server stub JUnit4")
+        configureAdamPom()
     }
 }
-
 
 dependencies {
     api(project(":server:server-stub"))

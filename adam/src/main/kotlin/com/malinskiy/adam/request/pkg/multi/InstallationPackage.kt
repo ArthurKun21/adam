@@ -18,13 +18,13 @@ package com.malinskiy.adam.request.pkg.multi
 
 import java.io.File
 
-sealed class InstallationPackage
+public sealed class InstallationPackage
 
-data class SingleFileInstallationPackage(val file: File) : InstallationPackage()
+public data class SingleFileInstallationPackage(public val file: File) : InstallationPackage()
 
 /**
  * Android 21+
  */
-data class ApkSplitInstallationPackage(val fileList: List<File>) : InstallationPackage() {
-    constructor(vararg files: File) : this(files.toList())
+public data class ApkSplitInstallationPackage(public val fileList: List<File>) : InstallationPackage() {
+    public constructor(vararg files: File) : this(files.toList())
 }

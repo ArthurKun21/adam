@@ -35,19 +35,19 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Reads file using passed coroutineContext and pushes updates of predefined structure using channel
  */
-class AsyncFileReader(
+public class AsyncFileReader(
     file: File,
     private val start: Long = 0,
     private val offset: Int = 0,
     private val length: Int = Const.MAX_FILE_PACKET_LENGTH,
-    override val coroutineContext: CoroutineContext = Dispatchers.IO
+    override val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : CoroutineScope, SuspendCloseable {
     private val fileChannel = file.inputStream().buffered()
     private val bufferChannel: Channel<ByteBuffer> = Channel(capacity = 2)
     private var job: Job? = null
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    fun start() {
+    public fun start() {
         job = launch {
             fileChannel.use { readChannel ->
                 readChannel.skip(start)
@@ -59,6 +59,7 @@ class AsyncFileReader(
                             AdamMaxFilePacketPool.recycle(byteBuffer)
                             shouldClose = true
                         }
+
                         else -> {
                             byteBuffer.compatLimit(read + offset)
                             bufferChannel.send(byteBuffer)
@@ -70,7 +71,7 @@ class AsyncFileReader(
         }
     }
 
-    suspend fun <T> read(block: suspend (ByteBuffer?) -> T): T {
+    public suspend fun <T> read(block: suspend (ByteBuffer?) -> T): T {
         return block(bufferChannel.receiveCatching().getOrNull())
     }
 
@@ -80,7 +81,7 @@ class AsyncFileReader(
     }
 }
 
-suspend fun AsyncFileReader.copyTo(socket: Socket) {
+public suspend fun AsyncFileReader.copyTo(socket: Socket) {
     while (true) {
         val closed = read {
             try {
@@ -95,7 +96,7 @@ suspend fun AsyncFileReader.copyTo(socket: Socket) {
     }
 }
 
-suspend fun <T> AsyncFileReader.copyTo(transformer: ResponseTransformer<T>) {
+public suspend fun <T> AsyncFileReader.copyTo(transformer: ResponseTransformer<T>) {
     while (true) {
         val closed = read {
             try {

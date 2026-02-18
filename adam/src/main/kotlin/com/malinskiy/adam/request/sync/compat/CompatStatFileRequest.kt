@@ -23,16 +23,17 @@ import com.malinskiy.adam.request.sync.model.FileEntry
 import com.malinskiy.adam.request.sync.v1.StatFileRequest
 import com.malinskiy.adam.request.sync.v2.StatFileRequest as StatV2FileRequest
 
-class CompatStatFileRequest(
+public class CompatStatFileRequest(
     private val source: String,
-    private val supportedFeatures: List<Feature>
+    private val supportedFeatures: List<Feature>,
 ) : MultiRequest<FileEntry>() {
     override suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?): FileEntry {
         return when {
             supportedFeatures.contains(Feature.STAT_V2) -> androidDebugBridgeClient.execute(
                 StatV2FileRequest(source, supportedFeatures),
-                serial
+                serial,
             )
+
             else -> androidDebugBridgeClient.execute(StatFileRequest(source), serial)
         }
     }

@@ -19,12 +19,12 @@ package com.malinskiy.adam.request.pkg
 import com.malinskiy.adam.request.shell.v1.ShellCommandResult
 import com.malinskiy.adam.request.shell.v1.SyncShellCommandRequest
 
-class PmListRequest(private val includePath: Boolean = false) : SyncShellCommandRequest<List<Package>>(
+public class PmListRequest(private val includePath: Boolean = false) : SyncShellCommandRequest<List<Package>>(
     cmd = StringBuilder().apply {
         append("pm list packages")
 
         if (includePath) append(" -f")
-    }.toString()
+    }.toString(),
 ) {
     override fun convertResult(response: ShellCommandResult): List<Package> {
         return response.output
@@ -38,17 +38,17 @@ class PmListRequest(private val includePath: Boolean = false) : SyncShellCommand
                         true -> {
                             Package(split[2], split[1])
                         }
+
                         false -> {
                             Package(split[1])
                         }
                     }
-
                 }
             }
     }
 }
 
-data class Package(
-    val name: String,
-    val path: String? = null
+public data class Package(
+    public val name: String,
+    public val path: String? = null,
 )

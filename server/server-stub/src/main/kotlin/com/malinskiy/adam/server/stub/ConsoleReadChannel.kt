@@ -20,10 +20,12 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.startsWith
 import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.readUTF8Line
+import io.ktor.utils.io.readLine
 
-class ConsoleReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel by delegate {
-    suspend fun receiveCommand() = delegate.readUTF8Line()!!
-    suspend fun receiveAuth() = receiveCommand().apply { assertThat(this).startsWith("auth ") }.substringAfter("auth ")
-    suspend fun receiveExit() = receiveCommand().apply { assertThat(this).isEqualTo("quit") }
+public class ConsoleReadChannel(private val delegate: ByteReadChannel) : ByteReadChannel by delegate {
+    public suspend fun receiveCommand(): String = delegate.readLine()!!
+    public suspend fun receiveAuth(): String = receiveCommand().apply {
+        assertThat(this).startsWith("auth ")
+    }.substringAfter("auth ")
+    public suspend fun receiveExit(): String = receiveCommand().apply { assertThat(this).isEqualTo("quit") }
 }

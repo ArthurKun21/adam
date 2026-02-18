@@ -27,12 +27,12 @@ import com.malinskiy.adam.transport.Socket
  * @param host target device that will be disconnected. if null then disconnects all devices
  * @param port target device's port. can be null in case of locally connected devices, i.e. physical phones and emulators
  */
-class DisconnectDeviceRequest(
+public class DisconnectDeviceRequest(
     private val host: String? = null,
-    private val port: Int? = 5555
+    private val port: Int? = 5555,
 ) : ComplexRequest<String>(target = HostTarget) {
 
-    override fun serialize() = createBaseRequest(
+    override fun serialize(): ByteArray = createBaseRequest(
         "disconnect:${
             if (host == null) {
                 ""
@@ -41,8 +41,8 @@ class DisconnectDeviceRequest(
             } else {
                 "$host"
             }
-        }"
+        }",
     )
 
-    override suspend fun readElement(socket: Socket) = socket.readProtocolString()
+    override suspend fun readElement(socket: Socket): String = socket.readProtocolString()
 }

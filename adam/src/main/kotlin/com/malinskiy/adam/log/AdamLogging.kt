@@ -16,9 +16,72 @@
 
 package com.malinskiy.adam.log
 
-import mu.KLogger
-import mu.KotlinLogging
+import logcat.LogPriority
+import logcat.asLog
+import logcat.logcat
 
-object AdamLogging {
-    fun logger(func: () -> Unit): KLogger = KotlinLogging.logger(func)
+public object AdamLogging {
+    public fun logger(func: () -> Unit): AdamLogger = AdamLogger()
+}
+
+public class AdamLogger {
+    public inline fun debug(throwable: Throwable? = null, crossinline message: () -> String) {
+        logcat(LogPriority.DEBUG) {
+            buildString {
+                throwable?.let {
+                    append(it.asLog())
+                    append("\n")
+                }
+                append(message())
+            }
+        }
+    }
+
+    public inline fun info(throwable: Throwable? = null, crossinline message: () -> String) {
+        logcat(LogPriority.INFO) {
+            buildString {
+                throwable?.let {
+                    append(it.asLog())
+                    append("\n")
+                }
+                append(message())
+            }
+        }
+    }
+
+    public inline fun warn(throwable: Throwable? = null, crossinline message: () -> String) {
+        logcat(LogPriority.WARN) {
+            buildString {
+                throwable?.let {
+                    append(it.asLog())
+                    append("\n")
+                }
+                append(message())
+            }
+        }
+    }
+
+    public inline fun error(throwable: Throwable? = null, crossinline message: () -> String) {
+        logcat(LogPriority.ERROR) {
+            buildString {
+                throwable?.let {
+                    append(it.asLog())
+                    append("\n")
+                }
+                append(message())
+            }
+        }
+    }
+
+    public inline fun trace(throwable: Throwable? = null, crossinline message: () -> String) {
+        logcat(LogPriority.VERBOSE) {
+            buildString {
+                throwable?.let {
+                    append(it.asLog())
+                    append("\n")
+                }
+                append(message())
+            }
+        }
+    }
 }

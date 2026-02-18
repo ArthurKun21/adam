@@ -1,3 +1,6 @@
+import adam.buildlogic.AdamPublishing
+import adam.buildlogic.configureAdamPom
+
 /*
  * Copyright (C) 2021 Anton Malinskiy
  *
@@ -16,8 +19,17 @@
 
 plugins {
     id("adam.android.library")
-    id("maven-publish")
-    id("org.jetbrains.dokka")
+    alias(libs.plugins.vanniktech.maven.publish)
+}
+
+mavenPublishing {
+    coordinates(AdamPublishing.GROUP, "android-junit4-test-annotation-producer", version.toString())
+
+    pom {
+        name.set("android-junit4-test-annotation-producer")
+        description.set("Android Debug Bridge helper - Test annotation producer")
+        configureAdamPom()
+    }
 }
 
 android {

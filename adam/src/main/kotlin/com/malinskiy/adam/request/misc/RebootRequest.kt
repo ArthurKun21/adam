@@ -18,18 +18,18 @@ package com.malinskiy.adam.request.misc
 
 import com.malinskiy.adam.request.SynchronousRequest
 
-class RebootRequest(private val mode: RebootMode = RebootMode.DEFAULT) : SynchronousRequest<Unit>() {
-    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int) = Unit
+public class RebootRequest(private val mode: RebootMode = RebootMode.DEFAULT) : SynchronousRequest<Unit>() {
+    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = Unit
 
-    override fun serialize() = createBaseRequest("reboot:${mode.value}")
+    override fun serialize(): ByteArray = createBaseRequest("reboot:${mode.value}")
 
-    override fun transform() = Unit
+    override fun transform(): Unit = Unit
 }
 
-enum class RebootMode(val value: String) {
+public enum class RebootMode(public val value: String) {
     DEFAULT(""),
     RECOVERY("recovery"),
     BOOTLOADER("bootloader"),
     SIDELOAD("sideload"),
-    SIDELOAD_AUTO_REBOOT("sideload-auto-reboot")
+    SIDELOAD_AUTO_REBOOT("sideload-auto-reboot"),
 }

@@ -16,4 +16,4 @@
 
 package com.malinskiy.adam.exception
 
-class PullFailedException(message: String) : RuntimeException(message)
+public class PullFailedException(message: String) : RuntimeException(message)

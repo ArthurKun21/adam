@@ -16,7 +16,7 @@
 
 package com.malinskiy.adam.transport
 
-class TransportResponse(
-    val okay: Boolean,
-    val message: String?
+public class TransportResponse(
+    public val okay: Boolean,
+    public val message: String?,
 )

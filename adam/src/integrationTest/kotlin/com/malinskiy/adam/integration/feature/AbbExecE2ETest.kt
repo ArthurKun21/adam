@@ -69,9 +69,9 @@ class AbbExecE2ETest {
                     StreamingPackageInstallRequest(
                         pkg = testFile,
                         supportedFeatures = listOf(Feature.ABB_EXEC),
-                        reinstall = false
+                        reinstall = false,
                     ),
-                    adb.deviceSerial
+                    adb.deviceSerial,
                 )
             }.let { println(it) }
 
@@ -90,15 +90,15 @@ class AbbExecE2ETest {
                 AtomicInstallPackageRequest(
                     listOf(
                         SingleFileInstallationPackage(appFile),
-                        SingleFileInstallationPackage(testFile)
+                        SingleFileInstallationPackage(testFile),
                     ),
                     listOf(Feature.ABB_EXEC),
-                    true
+                    true,
                 ),
-                adb.deviceSerial
+                adb.deviceSerial,
             )
 
-            //Takes some time until it shows in the pm list. Wait for 10 seconds max
+            // Takes some time until it shows in the pm list. Wait for 10 seconds max
             var packages: List<Package> = emptyList()
             for (i in 1..100) {
                 packages = client.execute(PmListRequest(), serial = adb.deviceSerial)
@@ -124,12 +124,12 @@ class AbbExecE2ETest {
                 InstallSplitPackageRequest(
                     ApkSplitInstallationPackage(appFile1, appFile2),
                     listOf(Feature.ABB_EXEC),
-                    true
+                    true,
                 ),
-                adb.deviceSerial
+                adb.deviceSerial,
             )
 
-            //Takes some time until it shows in the pm list. Wait for 10 seconds max
+            // Takes some time until it shows in the pm list. Wait for 10 seconds max
             var packages: List<Package> = emptyList()
             for (i in 1..100) {
                 packages = client.execute(PmListRequest(), serial = adb.deviceSerial)

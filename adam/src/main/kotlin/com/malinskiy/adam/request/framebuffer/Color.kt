@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
+@file:Suppress("ktlint:standard:class-naming", "ktlint:standard:function-naming")
+
 package com.malinskiy.adam.request.framebuffer
 
 import kotlin.math.roundToInt
 
-object Color {
-    object RGB565_2BYTE {
-        fun toARGB8888_INT(first: Byte, second: Byte): Int {
+public object Color {
+    public object RGB565_2BYTE {
+        public fun toARGB8888_INT(first: Byte, second: Byte): Int {
             var value = first.toInt() and 0x00FF
             value = value or (second.toInt() shl 8 and 0x0FF00)
             // Multiply by 255/31 to convert from 5 bits (31 max) to 8 bits (255)
@@ -33,8 +35,8 @@ object Color {
         }
     }
 
-    object ARGB_INT {
-        fun toARGB8888_INT(
+    public object ARGB_INT {
+        public fun toARGB8888_INT(
             value: Int,
             redOffset: Int,
             redLength: Int,
@@ -43,7 +45,7 @@ object Color {
             blueOffset: Int,
             blueLength: Int,
             alphaOffset: Int,
-            alphaLength: Int
+            alphaLength: Int,
         ): Int {
             val r = value.ushr(redOffset) and getMask(redLength) shl 8 - redLength
             val g = value.ushr(greenOffset) and getMask(greenLength) shl 8 - greenLength
@@ -53,7 +55,7 @@ object Color {
             return a shl 24 or (r shl 16) or (g shl 8) or b
         }
 
-        fun toBGR_3BYTE(
+        public fun toBGR_3BYTE(
             value: Int,
             redOffset: Int,
             redLength: Int,
@@ -62,7 +64,7 @@ object Color {
             blueOffset: Int,
             blueLength: Int,
             alphaOffset: Int,
-            alphaLength: Int
+            alphaLength: Int,
         ): ByteArray {
             val r = (value.ushr(redOffset) and getMask(redLength)) xshl (8 - redLength)
             val g = (value.ushr(greenOffset) and getMask(greenLength)) xshl (8 - greenLength)
@@ -76,7 +78,7 @@ object Color {
                 return byteArrayOf(
                     (r * alphaMultiplier).roundToInt().toByte(),
                     (g * alphaMultiplier).roundToInt().toByte(),
-                    (b * alphaMultiplier).roundToInt().toByte()
+                    (b * alphaMultiplier).roundToInt().toByte(),
                 )
             }
         }

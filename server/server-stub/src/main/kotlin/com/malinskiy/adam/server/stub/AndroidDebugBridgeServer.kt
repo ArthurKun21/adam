@@ -20,7 +20,7 @@ import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.AndroidDebugBridgeClientFactory
 import com.malinskiy.adam.server.stub.dsl.Expectation
 import com.malinskiy.adam.server.stub.dsl.Session
-import io.ktor.network.selector.ActorSelectorManager
+import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.InetSocketAddress
 import io.ktor.network.sockets.ServerSocket
 import io.ktor.network.sockets.aSocket
@@ -30,7 +30,6 @@ import io.ktor.network.sockets.toJavaAddress
 import io.ktor.util.network.port
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.ByteWriteChannel
-import io.ktor.utils.io.close
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -38,45 +37,45 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.newFixedThreadPoolContext
+import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
-
-class AndroidDebugBridgeServer : CoroutineScope {
+public class AndroidDebugBridgeServer : CoroutineScope {
     private val executionDispatcher by lazy {
         newFixedThreadPoolContext(4, "AndroidDebugBridgeServer")
     }
     override val coroutineContext: CoroutineContext
         get() = executionDispatcher
 
-    val client: AndroidDebugBridgeClient by lazy {
+    public val client: AndroidDebugBridgeClient by lazy {
         AndroidDebugBridgeClientFactory().apply {
             port = this@AndroidDebugBridgeServer.port
         }.build()
     }
 
     private val job = SupervisorJob()
-    var port: Int = 0
+    public var port: Int = 0
 
-    lateinit var server: ServerSocket
-    lateinit var selector: ActorSelectorManager
+    public lateinit var server: ServerSocket
+    public lateinit var selector: SelectorManager
 
-    fun start(): AndroidDebugBridgeClient {
+    public fun start(): AndroidDebugBridgeClient {
         val address = InetSocketAddress("127.0.0.1", port)
-        selector = ActorSelectorManager(Dispatchers.IO)
-        server = aSocket(selector).tcp().bind(address)
+        selector = SelectorManager(Dispatchers.IO)
+        server = runBlocking { aSocket(selector).tcp().bind(address) }
         port = server.localAddress.toJavaAddress().port
 
         return client
     }
 
-    fun session(block: suspend Session.() -> Unit) {
+    public fun session(block: suspend Session.() -> Unit) {
         listen { input, output ->
             val session = Session(input, output)
             block(session)
         }
     }
 
-    fun multipleSessions(block: suspend Expectation.() -> Unit) {
+    public fun multipleSessions(block: suspend Expectation.() -> Unit) {
         async(context = job) {
             val expectation = Expectation()
             block(expectation)
@@ -94,14 +93,14 @@ class AndroidDebugBridgeServer : CoroutineScope {
                 } catch (e: Throwable) {
                     e.printStackTrace()
                 } finally {
-                    output.close()
+                    output.flushAndClose()
                     socket.close()
                 }
             }
         }
     }
 
-    fun listen(block: suspend (input: ServerReadChannel, output: ServerWriteChannel) -> Unit) {
+    public fun listen(block: suspend (input: ServerReadChannel, output: ServerWriteChannel) -> Unit) {
         async(context = job) {
             try {
                 val socket = server.accept()
@@ -113,7 +112,7 @@ class AndroidDebugBridgeServer : CoroutineScope {
                 } catch (e: Throwable) {
                     e.printStackTrace()
                 } finally {
-                    output.close()
+                    output.flushAndClose()
                     socket.close()
                 }
             } catch (e: Exception) {
@@ -122,7 +121,7 @@ class AndroidDebugBridgeServer : CoroutineScope {
         }
     }
 
-    suspend fun dispose() {
+    public suspend fun dispose() {
         if (job.isActive) {
             job.complete()
             job.children.iterator().forEach {

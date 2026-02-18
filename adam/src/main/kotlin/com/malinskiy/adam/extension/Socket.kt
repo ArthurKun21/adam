@@ -35,7 +35,11 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Copies up to limit bytes into transformer using buffer. If limit is null - copy until EOF
  */
-suspend fun <T> Socket.copyTo(transformer: ResponseTransformer<T>, buffer: ByteArray, limit: Long? = null): Long {
+public suspend fun <T> Socket.copyTo(
+    transformer: ResponseTransformer<T>,
+    buffer: ByteArray,
+    limit: Long? = null,
+): Long {
     var processed = 0L
     loop@ while (true) {
         val toRead = when {
@@ -53,6 +57,7 @@ suspend fun <T> Socket.copyTo(transformer: ResponseTransformer<T>, buffer: ByteA
         val available = readAvailable(buffer, 0, toRead)
         when {
             processed == limit -> break@loop
+
             available < 0 -> {
                 break@loop
             }
@@ -76,11 +81,18 @@ suspend fun <T> Socket.copyTo(transformer: ResponseTransformer<T>, buffer: ByteA
  * TODO: rewrite
  * Assumes buffer hasArray == true
  */
-suspend fun <T> Socket.copyTo(transformer: ResponseTransformer<T>, buffer: ByteBuffer) = copyTo(transformer, buffer.array())
-suspend fun <T> Socket.copyTo(transformer: ResponseTransformer<T>, buffer: ByteBuffer, limit: Long? = null) =
+public suspend fun <T> Socket.copyTo(
+    transformer: ResponseTransformer<T>,
+    buffer: ByteBuffer,
+): Long = copyTo(transformer, buffer.array())
+public suspend fun <T> Socket.copyTo(
+    transformer: ResponseTransformer<T>,
+    buffer: ByteBuffer,
+    limit: Long? = null,
+): Long =
     copyTo(transformer, buffer.array(), limit)
 
-suspend fun Socket.readOptionalProtocolString(): String? {
+public suspend fun Socket.readOptionalProtocolString(): String? {
     val responseLength = withDefaultBuffer {
         val transformer = StringResponseTransformer()
         copyTo(transformer, this, limit = 4L)
@@ -101,7 +113,7 @@ suspend fun Socket.readOptionalProtocolString(): String? {
 /**
  * @throws RequestRejectedException
  */
-suspend fun Socket.readProtocolString(): String {
+public suspend fun Socket.readProtocolString(): String {
     withMaxPacketBuffer {
         val transformer = StringResponseTransformer()
         val copied = copyTo(transformer, this, limit = 4L)
@@ -109,7 +121,8 @@ suspend fun Socket.readProtocolString(): String {
         if (copied != 4L) {
             throw RequestRejectedException("Unexpected string length: $length")
         }
-        val messageLength = length.toIntOrNull(16) ?: throw RequestRejectedException("Unexpected string length: $length")
+        val messageLength =
+            length.toIntOrNull(16) ?: throw RequestRejectedException("Unexpected string length: $length")
 
         compatClear()
         compatLimit(messageLength)
@@ -127,7 +140,7 @@ private fun ByteBuffer.isOkay(): Boolean {
     return true
 }
 
-suspend fun Socket.readStatus(): String {
+public suspend fun Socket.readStatus(): String {
     withDefaultBuffer {
         val transformer = StringResponseTransformer()
         copyTo(transformer, this)
@@ -135,11 +148,11 @@ suspend fun Socket.readStatus(): String {
     }
 }
 
-suspend fun Socket.write(request: ByteArray, length: Int? = null) {
+public suspend fun Socket.write(request: ByteArray, length: Int? = null) {
     writeFully(request, 0, length ?: request.size)
 }
 
-suspend fun Socket.writeFile(file: File, coroutineContext: CoroutineContext) {
+public suspend fun Socket.writeFile(file: File, coroutineContext: CoroutineContext) {
     AsyncFileReader(file, coroutineContext = coroutineContext).use { reader ->
         reader.start()
         while (true) {
@@ -159,7 +172,7 @@ suspend fun Socket.writeFile(file: File, coroutineContext: CoroutineContext) {
     }
 }
 
-suspend fun Socket.writeSyncRequest(type: ByteArray, remotePath: String) {
+public suspend fun Socket.writeSyncRequest(type: ByteArray, remotePath: String) {
     val path = remotePath.toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
     val size = path.size.toByteArray().reversedArray()
 
@@ -172,7 +185,7 @@ suspend fun Socket.writeSyncRequest(type: ByteArray, remotePath: String) {
     }
 }
 
-suspend fun Socket.writeSyncV2Request(type: ByteArray, remotePath: String, flags: Int, mode: Int? = null) {
+public suspend fun Socket.writeSyncV2Request(type: ByteArray, remotePath: String, flags: Int, mode: Int? = null) {
     val path = remotePath.toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
 
     withDefaultBuffer {
@@ -194,7 +207,7 @@ suspend fun Socket.writeSyncV2Request(type: ByteArray, remotePath: String, flags
     }
 }
 
-suspend fun Socket.readTransportResponse(): TransportResponse {
+public suspend fun Socket.readTransportResponse(): TransportResponse {
     val ok = withDefaultBuffer {
         compatLimit(4)
         readFully(this)

@@ -16,8 +16,8 @@
 
 package com.malinskiy.adam.request
 
-sealed class Target {
-    abstract fun serialize(): String
+public sealed class Target {
+    public abstract fun serialize(): String
 }
 
 /**
@@ -25,8 +25,8 @@ sealed class Target {
  * interpreted as 'any single device or emulator connected to/running on
  * the host'.
  */
-object HostTarget : Target() {
-    override fun serialize() = "host:"
+public object HostTarget : Target() {
+    override fun serialize(): String = "host:"
 }
 
 /**
@@ -34,26 +34,26 @@ object HostTarget : Target() {
  * prefix can be used to indicate that the client is asking the ADB server
  * for information related to a specific device.
  */
-class SerialTarget(private val serial: String) : Target() {
-    override fun serialize() = "host-serial:$serial:"
+public class SerialTarget(private val serial: String) : Target() {
+    override fun serialize(): String = "host-serial:$serial:"
 }
 
 /**
  * A variant of host-serial used to target the single USB device connected
  * to the host. This will fail if there is none or more than one.
  */
-object UsbTarget : Target() {
-    override fun serialize() = "host-usb:"
+public object UsbTarget : Target() {
+    override fun serialize(): String = "host-usb:"
 }
 
 /**
  * A variant of host-serial used to target the single emulator instance
  * running on the host. This will fail if there is none or more than one.
  */
-object LocalTarget : Target() {
-    override fun serialize() = "host-local:"
+public object LocalTarget : Target() {
+    override fun serialize(): String = "host-local:"
 }
 
-object NonSpecifiedTarget : Target() {
-    override fun serialize() = ""
+public object NonSpecifiedTarget : Target() {
+    override fun serialize(): String = ""
 }

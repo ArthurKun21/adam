@@ -30,9 +30,9 @@ import kotlin.coroutines.CoroutineContext
 /**
  * pre-KitKat
  */
-class LegacySideloadRequest(
+public class LegacySideloadRequest(
     private val pkg: File,
-    val coroutineContext: CoroutineContext = Dispatchers.IO
+    public val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : ComplexRequest<Boolean>() {
     override fun validate(): ValidationResponse {
         val message =
@@ -47,7 +47,7 @@ class LegacySideloadRequest(
         return ValidationResponse(message == null, message)
     }
 
-    override fun serialize() = createBaseRequest("sideload:${pkg.length()}")
+    override fun serialize(): ByteArray = createBaseRequest("sideload:${pkg.length()}")
 
     override suspend fun readElement(socket: Socket): Boolean {
         AsyncFileReader(pkg, coroutineContext = coroutineContext).use { reader ->

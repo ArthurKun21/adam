@@ -48,7 +48,7 @@ class ReversePortForwardRequestTest {
         val bytes = ReversePortForwardRequest(
             RemoteTcpPortSpec(80),
             LocalTcpPortSpec(80),
-            mode = PortForwardingMode.NO_REBIND
+            mode = PortForwardingMode.NO_REBIND,
         ).serialize()
 
         assertThat(String(bytes, Const.DEFAULT_TRANSPORT_ENCODING))
@@ -64,7 +64,10 @@ class ReversePortForwardRequestTest {
                 respondPortForward(true, 7070)
             }
 
-            val output = client.execute(ReversePortForwardRequest(RemoteTcpPortSpec(8080), LocalTcpPortSpec(0)), "serial")
+            val output = client.execute(
+                ReversePortForwardRequest(RemoteTcpPortSpec(8080), LocalTcpPortSpec(0)),
+                "serial",
+            )
             assertThat(output).isEqualTo(7070)
         }
     }

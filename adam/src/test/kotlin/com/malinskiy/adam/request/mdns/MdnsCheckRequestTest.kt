@@ -51,7 +51,6 @@ class MdnsCheckRequestTest {
             StubSocket(response).use { socket ->
                 val value = MdnsCheckRequest().readElement(socket)
                 assertThat(value).isEqualTo(MdnsStatus(false, null))
-
             }
         }
     }

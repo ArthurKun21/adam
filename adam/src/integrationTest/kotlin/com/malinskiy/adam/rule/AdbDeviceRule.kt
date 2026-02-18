@@ -55,11 +55,11 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
             override fun evaluate() {
                 runBlocking {
                     withTimeoutOrNull(initTimeout.toMillis()) {
-                        //First we start the adb if it is not running
+                        // First we start the adb if it is not running
                         startAdb()
 
-                        //Wait for compatible device
-                        //boot + supported features
+                        // Wait for compatible device
+                        // boot + supported features
                         val device = waitForDevice()
                         deviceSerial = device.serial
                     } ?: Assume.assumeTrue("Timeout waiting for device", false)
@@ -80,7 +80,7 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
                         DeviceType.EMULATOR -> {
                             Assume.assumeTrue(
                                 "No device of type $deviceType found",
-                                device.serial.startsWith("emulator-")
+                                device.serial.startsWith("emulator-"),
                             )
                         }
 
@@ -92,13 +92,13 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
                         Assume.assumeTrue(
                             "No compatible device found for features $requiredFeatures",
                             requiredFeatures.isEmpty() ||
-                                    supportedFeatures.containsAll(requiredFeatures.asList())
+                                supportedFeatures.containsAll(requiredFeatures.asList()),
                         )
                     }
 
                     lineSeparator = adb.execute(
                         ShellCommandRequest("echo"),
-                        device.serial
+                        device.serial,
                     ).output
 
                     return device

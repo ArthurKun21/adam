@@ -48,7 +48,7 @@ class ListDevicesRequestTest {
                         "emulator-5570" to "authorizing",
                         "emulator-5572" to "connecting",
                         "emulator-5574" to "wtf",
-                    )
+                    ),
                 )
             }
 
@@ -64,7 +64,7 @@ class ListDevicesRequestTest {
                 Device("emulator-5568", DeviceState.UNAUTHORIZED),
                 Device("emulator-5570", DeviceState.AUTHORIZING),
                 Device("emulator-5572", DeviceState.CONNECTING),
-                Device("emulator-5574", DeviceState.UNKNOWN)
+                Device("emulator-5574", DeviceState.UNKNOWN),
             )
         }
     }

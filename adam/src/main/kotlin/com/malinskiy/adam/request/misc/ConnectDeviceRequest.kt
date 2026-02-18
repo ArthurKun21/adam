@@ -24,12 +24,12 @@ import com.malinskiy.adam.transport.Socket
 /**
  * Connects a remote device
  */
-class ConnectDeviceRequest(
+public class ConnectDeviceRequest(
     private val host: String,
-    private val port: Int = 5555
+    private val port: Int = 5555,
 ) : ComplexRequest<String>(target = HostTarget) {
 
-    override fun serialize() = createBaseRequest("connect:$host:$port")
+    override fun serialize(): ByteArray = createBaseRequest("connect:$host:$port")
 
-    override suspend fun readElement(socket: Socket) = socket.readProtocolString()
+    override suspend fun readElement(socket: Socket): String = socket.readProtocolString()
 }

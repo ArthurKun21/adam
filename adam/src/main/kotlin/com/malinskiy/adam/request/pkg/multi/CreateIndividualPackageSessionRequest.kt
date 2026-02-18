@@ -24,12 +24,12 @@ import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.request.abb.AbbExecRequest
 import com.malinskiy.adam.transport.Socket
 
-class CreateIndividualPackageSessionRequest(
+public class CreateIndividualPackageSessionRequest(
     private val pkg: InstallationPackage,
     private val pkgList: List<InstallationPackage>,
     private val supportedFeatures: List<Feature>,
     private val reinstall: Boolean,
-    private val extraArgs: List<String> = emptyList()
+    private val extraArgs: List<String> = emptyList(),
 ) : ComplexRequest<CreateSessionResponse>() {
 
     override fun serialize(): ByteArray {
@@ -38,10 +38,12 @@ class CreateIndividualPackageSessionRequest(
             add(
                 when {
                     supportedFeatures.contains(Feature.ABB_EXEC) -> "package"
+
                     supportedFeatures.contains(Feature.CMD) -> "exec:cmd package"
-                    //User is responsible for checking if pm supports install-write in this case
+
+                    // User is responsible for checking if pm supports install-write in this case
                     else -> "exec:pm"
-                }
+                },
             )
 
             add("install-create")

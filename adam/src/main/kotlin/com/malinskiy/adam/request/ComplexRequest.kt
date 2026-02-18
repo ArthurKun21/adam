@@ -22,16 +22,16 @@ import com.malinskiy.adam.transport.Socket
  * This type of request starts with single serialized request
  * and then proceed to do several reads and writes that have dynamic size
  */
-abstract class ComplexRequest<T : Any?>(target: Target = NonSpecifiedTarget, socketIdleTimeout: Long? = null) :
+public abstract class ComplexRequest<T : Any?>(target: Target = NonSpecifiedTarget, socketIdleTimeout: Long? = null) :
     Request(target, socketIdleTimeout) {
     /**
      * Some requests ignore the initial OKAY/FAIL response and instead stream the actual response
      * To implement these we allow overriding this method
      */
-    open suspend fun process(socket: Socket): T {
+    public open suspend fun process(socket: Socket): T {
         handshake(socket)
         return readElement(socket)
     }
 
-    abstract suspend fun readElement(socket: Socket): T
+    public abstract suspend fun readElement(socket: Socket): T
 }

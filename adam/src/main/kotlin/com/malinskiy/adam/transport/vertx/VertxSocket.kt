@@ -32,7 +32,7 @@ import io.vertx.core.net.SocketAddress
 import io.vertx.core.net.impl.NetSocketImpl
 import io.vertx.core.streams.ReadStream
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -45,9 +45,13 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 
-class VertxSocket(private val socketAddress: SocketAddress, private val options: NetClientOptions) : CoroutineVerticle(), Socket {
-    var id: String? = null
-    var netClient: NetClient? = null
+public class VertxSocket(
+    private val socketAddress: SocketAddress,
+    private val options: NetClientOptions,
+) : CoroutineVerticle(), Socket {
+
+    public var id: String? = null
+    public var netClient: NetClient? = null
     private lateinit var socket: NetSocketImpl
     private lateinit var recordParser: VariableSizeRecordParser
     private lateinit var readChannel: ReceiveChannel<Buffer>
@@ -60,7 +64,7 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
         netClient = client
         val connect = client.connect(socketAddress)
         state.change(State.CREATED, State.SYN_SENT) { "Socket connection error" }
-        socket = connect.await() as NetSocketImpl
+        socket = connect.coAwait() as NetSocketImpl
 
         state.change(State.SYN_SENT, State.ESTABLISHED) { "Socket connection error" }
         canRead.flip(false) { "Socket connection error: canRead was true, expected false" }
@@ -95,18 +99,18 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
     override suspend fun writeFully(byteBuffer: ByteBuffer) {
         if (isClosedForWrite) throw IllegalStateException("Socket write error: socket is not connected ${state.get()}")
         val appendBytes = Buffer.buffer().appendBytes(byteBuffer.array(), byteBuffer.position(), byteBuffer.remaining())
-        socket.write(appendBytes).await()
+        socket.write(appendBytes).coAwait()
     }
 
-    suspend fun writeFully(buffer: Buffer) {
+    public suspend fun writeFully(buffer: Buffer) {
         if (isClosedForWrite) throw IllegalStateException("Socket write error: socket is not connected ${state.get()}")
-        socket.write(buffer).await()
+        socket.write(buffer).coAwait()
     }
 
     override suspend fun writeFully(byteArray: ByteArray, offset: Int, limit: Int) {
         if (isClosedForWrite) throw IllegalStateException("Socket write error: socket is not connected ${state.get()}")
         val appendBytes = Buffer.buffer().appendBytes(byteArray, offset, limit)
-        socket.write(appendBytes).await()
+        socket.write(appendBytes).coAwait()
     }
 
     override suspend fun readAvailable(buffer: ByteArray, offset: Int, limit: Int): Int {
@@ -115,7 +119,7 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
             recordParser.request(limit)
         }
         return readChannel.receiveCatching().getOrNull()?.let {
-            val actualLimit = it.byteBuf.writerIndex()
+            val actualLimit = it.length()
             assert(actualLimit <= limit) { "Received ${it.length()} more than we can chew $limit" }
             it.getBytes(0, actualLimit, buffer, offset)
             actualLimit
@@ -181,7 +185,7 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
     }
 
     override suspend fun close() {
-        socket.close().await()
+        socket.close().coAwait()
         /**
          * This should be maximum buffer that could've been requested in case:
          * 1. Read request for up to max initiated
@@ -195,12 +199,12 @@ class VertxSocket(private val socketAddress: SocketAddress, private val options:
             }
         }
         id?.let {
-            vertx.undeploy(it).await()
+            vertx.undeploy(it).coAwait()
         }
     }
 }
 
-fun <T> ReadStream<T>.toChannel(vertx: Vertx): ReceiveChannel<T> {
+public fun <T> ReadStream<T>.toChannel(vertx: Vertx): ReceiveChannel<T> {
     return toChannel(vertx.orCreateContext)
 }
 
@@ -209,12 +213,12 @@ fun <T> ReadStream<T>.toChannel(vertx: Vertx): ReceiveChannel<T> {
  *
  * @param context the vertx context
  */
-fun <T> ReadStream<T>.toChannel(context: Context): ReceiveChannel<T> {
+public fun <T> ReadStream<T>.toChannel(context: Context): ReceiveChannel<T> {
     this.pause()
     val ret = ChannelReadStream(
         stream = this,
         channel = Channel(16),
-        context = context
+        context = context,
     )
     ret.subscribe()
     this.fetch(1)
@@ -224,7 +228,7 @@ fun <T> ReadStream<T>.toChannel(context: Context): ReceiveChannel<T> {
 private class ChannelReadStream<T>(
     val stream: ReadStream<T>,
     val channel: Channel<T>,
-    context: Context
+    context: Context,
 ) : Channel<T> by channel, CoroutineScope {
 
     private val logger = AdamLogging.logger { }
@@ -256,7 +260,7 @@ private enum class State {
     SYN_SENT,
     ESTABLISHED,
     CLOSING,
-    CLOSE_WAIT
+    CLOSE_WAIT,
 }
 
 private fun AtomicBoolean.flip(expected: Boolean, error: () -> String) {

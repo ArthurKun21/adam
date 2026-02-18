@@ -25,7 +25,6 @@ import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.exception.UnsupportedImageProtocolException
 import com.malinskiy.adam.extension.newFileWithExtension
 import com.malinskiy.adam.server.junit4.AdbServerRule
-import io.ktor.utils.io.writeIntLittleEndian
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -34,7 +33,6 @@ import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 import kotlin.system.measureTimeMillis
-
 
 class ScreenCaptureRequestTest {
     @Rule
@@ -288,7 +286,7 @@ class ScreenCaptureRequestTest {
                 expectCmd { "host:transport:serial" }.accept()
                 expectCmd { "framebuffer:" }.accept()
 
-                //Unsupported version
+                // Unsupported version
                 output.writeIntLittleEndian(99)
             }
 
@@ -298,7 +296,7 @@ class ScreenCaptureRequestTest {
 
     private fun compare(
         expected: BufferedImage,
-        actual: BufferedImage
+        actual: BufferedImage,
     ): ImageComparisonResult {
         val imageComparison = ImageComparison(expected, actual)
         val comparisonResult = imageComparison.compareImages()

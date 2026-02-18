@@ -27,28 +27,32 @@ import java.io.File
 import kotlin.coroutines.CoroutineContext
 import com.malinskiy.adam.request.sync.v2.PushFileRequest as PushV2FileRequest
 
-class CompatPushFileRequest(
+public class CompatPushFileRequest(
     private val source: File,
     private val destination: String,
     private val supportedFeatures: List<Feature>,
     private val coroutineScope: CoroutineScope,
     private val mode: String = "0777",
-    private val coroutineContext: CoroutineContext = Dispatchers.IO
+    private val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : MultiRequest<ReceiveChannel<Double>>() {
-    override suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?): ReceiveChannel<Double> {
+    override suspend fun execute(
+        androidDebugBridgeClient: AndroidDebugBridgeClient,
+        serial: String?,
+    ): ReceiveChannel<Double> {
         return when {
             supportedFeatures.contains(Feature.SENDRECV_V2) -> {
                 androidDebugBridgeClient.execute(
                     PushV2FileRequest(source, destination, supportedFeatures, mode, false, coroutineContext),
                     coroutineScope,
-                    serial
+                    serial,
                 )
             }
+
             else -> {
                 androidDebugBridgeClient.execute(
                     PushFileRequest(source, destination, mode, coroutineContext),
                     coroutineScope,
-                    serial
+                    serial,
                 )
             }
         }

@@ -16,4 +16,4 @@
 
 package com.malinskiy.adam.exception
 
-class UnsupportedImageProtocolException(version: Int?) : RuntimeException("Unsupported version $version")
+public class UnsupportedImageProtocolException(version: Int?) : RuntimeException("Unsupported version $version")

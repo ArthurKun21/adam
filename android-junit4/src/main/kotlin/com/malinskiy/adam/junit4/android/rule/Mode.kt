@@ -16,7 +16,7 @@
 
 package com.malinskiy.adam.junit4.android.rule
 
-enum class Mode {
+public enum class Mode {
     /**
      * Do not execute test if the rule can't be satisfied
      */
@@ -30,5 +30,5 @@ enum class Mode {
     /**
      * Assert failure if the rule can't be satisfied
      */
-    ASSERT
+    ASSERT,
 }

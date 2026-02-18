@@ -23,10 +23,10 @@ import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.request.abb.AbbExecRequest
 import com.malinskiy.adam.transport.Socket
 
-class InstallCommitRequest(
+public class InstallCommitRequest(
     private val parentSession: String,
     private val supportedFeatures: List<Feature>,
-    private val abandon: Boolean = false
+    private val abandon: Boolean = false,
 ) : ComplexRequest<String>() {
     override fun serialize(): ByteArray {
         val hasAbbExec = supportedFeatures.contains(Feature.ABB_EXEC)
@@ -34,10 +34,12 @@ class InstallCommitRequest(
             add(
                 when {
                     supportedFeatures.contains(Feature.ABB_EXEC) -> "package"
+
                     supportedFeatures.contains(Feature.CMD) -> "exec:cmd package"
-                    //User is responsible for checking if pm supports install-write in this case
+
+                    // User is responsible for checking if pm supports install-write in this case
                     else -> "exec:pm"
-                }
+                },
             )
 
             if (abandon) {
@@ -58,8 +60,8 @@ class InstallCommitRequest(
 
     override suspend fun readElement(socket: Socket): String {
         val result = socket.readStatus()
-        //Rather than checking for success, we check for Failure since some implementations of PackageManagerShellCommand ignore the
-        //logSuccess=true in doCommitSession
+        // Rather than checking for success, we check for Failure since some implementations of PackageManagerShellCommand ignore the
+        // logSuccess=true in doCommitSession
         if (result.contains("Failure")) {
             throw RequestRejectedException("Failed to finalize session $parentSession: $result")
         }

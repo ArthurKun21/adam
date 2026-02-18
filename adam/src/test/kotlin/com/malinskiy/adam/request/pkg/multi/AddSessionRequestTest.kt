@@ -33,10 +33,10 @@ class AddSessionRequestTest {
         val request = AddSessionRequest(
             childSessions = listOf("child-session-1", "child-session-2"),
             parentSession = "parent-session-1",
-            supportedFeatures = listOf(Feature.CMD)
+            supportedFeatures = listOf(Feature.CMD),
         )
         assertThat(
-            request.serialize().toRequestString()
+            request.serialize().toRequestString(),
         ).isEqualTo("0055exec:cmd package install-add-session parent-session-1 child-session-1 child-session-2")
     }
 
@@ -46,11 +46,13 @@ class AddSessionRequestTest {
             AddSessionRequest(
                 childSessions = listOf("child-session-1", "child-session-2"),
                 parentSession = "parent-session-1",
-                supportedFeatures = listOf(Feature.CMD, Feature.ABB_EXEC)
+                supportedFeatures = listOf(Feature.CMD, Feature.ABB_EXEC),
             )
         assertThat(
-            request.serialize().toRequestString()
-        ).isEqualTo("0055abb_exec:package\u0000install-add-session\u0000parent-session-1\u0000child-session-1\u0000child-session-2")
+            request.serialize().toRequestString(),
+        ).isEqualTo(
+            "0055abb_exec:package\u0000install-add-session\u0000parent-session-1\u0000child-session-1\u0000child-session-2",
+        )
     }
 
     @Test
@@ -59,7 +61,7 @@ class AddSessionRequestTest {
             AddSessionRequest(
                 childSessions = listOf("child-session-1", "child-session-2"),
                 parentSession = "parent-session-1",
-                supportedFeatures = listOf(Feature.CMD)
+                supportedFeatures = listOf(Feature.CMD),
             )
 
         val response = "Success".toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
@@ -76,7 +78,7 @@ class AddSessionRequestTest {
             AddSessionRequest(
                 childSessions = listOf("child-session-1", "child-session-2"),
                 parentSession = "parent-session-1",
-                supportedFeatures = listOf(Feature.CMD)
+                supportedFeatures = listOf(Feature.CMD),
             )
 
         val response = "Failure".toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)

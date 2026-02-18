@@ -90,21 +90,28 @@ class FileE2ETest {
         val fileName = testFile.name
         runBlocking {
             val channel =
-                adbRule.adb.execute(PushFileRequest(testFile, "/data/local/tmp/$fileName"), this, serial = adbRule.deviceSerial)
+                adbRule.adb.execute(
+                    PushFileRequest(testFile, "/data/local/tmp/$fileName"),
+                    this,
+                    serial = adbRule.deviceSerial,
+                )
 
             var percentage = 0
-            for(percentageDouble in channel) {
+            for (percentageDouble in channel) {
                 val newPercentage = (percentageDouble * 100).roundToInt()
                 if (newPercentage != percentage) {
                     print('.')
                     percentage = newPercentage
                 }
             }
-            
+
             val stats = adbRule.adb.execute(StatFileRequest("/data/local/tmp/app-debug.apk"), adbRule.deviceSerial)
             assertThat(stats.size).isEqualTo(testFile.length().toUInt())
 
-            val sizeString = adbRule.adb.execute(ShellCommandRequest("${md5()} /data/local/tmp/app-debug.apk"), adbRule.deviceSerial)
+            val sizeString = adbRule.adb.execute(
+                ShellCommandRequest("${md5()} /data/local/tmp/app-debug.apk"),
+                adbRule.deviceSerial,
+            )
             val split = sizeString.output.split(" ").filter { it != "" }
 
             /**
@@ -113,7 +120,7 @@ class FileE2ETest {
              */
             assertThat(split[0]).isEqualTo(testFile.md5())
 
-            //TODO figure out why 644 is actually pushed as 666
+            // TODO figure out why 644 is actually pushed as 666
             assertThat(stats.mode).isEqualTo("100777".toUInt(radix = 8))
         }
     }
@@ -134,9 +141,16 @@ class FileE2ETest {
             withTimeout(10_000) {
                 while (true) {
                     var output =
-                        adbRule.adb.execute(ShellCommandRequest("echo cafebabe > /data/local/tmp/testfile"), serial = adbRule.deviceSerial)
+                        adbRule.adb.execute(
+                            ShellCommandRequest("echo cafebabe > /data/local/tmp/testfile"),
+                            serial = adbRule.deviceSerial,
+                        )
                     println(output)
-                    output = adbRule.adb.execute(ShellCommandRequest("cat /data/local/tmp/testfile"), serial = adbRule.deviceSerial)
+                    output =
+                        adbRule.adb.execute(
+                            ShellCommandRequest("cat /data/local/tmp/testfile"),
+                            serial = adbRule.deviceSerial,
+                        )
                     println(output)
                     if (output.output.contains("cafebabe") && output.exitCode == 0) {
                         break
@@ -148,11 +162,11 @@ class FileE2ETest {
                 val channel = adbRule.adb.execute(
                     PullFileRequest("/data/local/tmp/testfile", testFile, coroutineContext = coroutineContext),
                     this,
-                    adbRule.deviceSerial
+                    adbRule.deviceSerial,
                 )
 
                 var percentage = 0
-                for(percentageDouble in channel) {
+                for (percentageDouble in channel) {
                     val newPercentage = (percentageDouble * 100).roundToInt()
                     if (newPercentage != percentage) {
                         print('.')
@@ -162,7 +176,10 @@ class FileE2ETest {
                 println()
             }.join()
 
-            val sizeString = adbRule.adb.execute(ShellCommandRequest("ls -ln /data/local/tmp/testfile"), adbRule.deviceSerial)
+            val sizeString = adbRule.adb.execute(
+                ShellCommandRequest("ls -ln /data/local/tmp/testfile"),
+                adbRule.deviceSerial,
+            )
             val split = sizeString.output.split(" ").filter { it != "" }
 
             /**
@@ -187,11 +204,11 @@ class FileE2ETest {
                     val channel = adbRule.adb.execute(
                         PullFileRequest("/data/local/tmp/shoudnotexist", testFile, coroutineContext = coroutineContext),
                         this,
-                        adbRule.deviceSerial
+                        adbRule.deviceSerial,
                     )
 
                     var percentage = 0
-                    for(percentageDouble in channel) {
+                    for (percentageDouble in channel) {
                         val newPercentage = (percentageDouble * 100).roundToInt()
                         if (newPercentage != percentage) {
                             print('.')

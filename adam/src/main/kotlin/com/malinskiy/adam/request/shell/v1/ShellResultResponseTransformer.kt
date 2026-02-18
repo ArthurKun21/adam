@@ -21,7 +21,7 @@ import com.malinskiy.adam.Const
 import com.malinskiy.adam.exception.RequestRejectedException
 import com.malinskiy.adam.request.transform.ResponseTransformer
 
-class ShellResultResponseTransformer : ResponseTransformer<ShellCommandResult> {
+public class ShellResultResponseTransformer : ResponseTransformer<ShellCommandResult> {
     override suspend fun process(bytes: ByteArray, offset: Int, limit: Int) {
         builder.write(bytes, 0, limit)
     }
@@ -36,10 +36,11 @@ class ShellResultResponseTransformer : ResponseTransformer<ShellCommandResult> {
         }
         val stdout = output.substring(0 until indexOfDelimiter)
         val exitCodeString = output.substring(indexOfDelimiter + 1).trim()
-        val exitCode = exitCodeString.toIntOrNull() ?: throw RequestRejectedException("Unexpected exit code value $exitCodeString")
+        val exitCode =
+            exitCodeString.toIntOrNull() ?: throw RequestRejectedException("Unexpected exit code value $exitCodeString")
         return ShellCommandResult(
             stdout = stdout.toByteArray(Const.DEFAULT_TRANSPORT_ENCODING),
-            exitCode = exitCode
+            exitCode = exitCode,
         )
     }
 }

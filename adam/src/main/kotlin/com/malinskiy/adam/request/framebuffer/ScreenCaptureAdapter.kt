@@ -27,11 +27,11 @@ import java.nio.ByteBuffer
  * @param buffer consider reusing the buffer between screencapture requests to reduce heap memory pressure
  * @param colorModelFactory reuse the color models required for image conversion
  */
-abstract class ScreenCaptureAdapter<T>(
+public abstract class ScreenCaptureAdapter<T>(
     private var buffer: ByteBuffer? = null,
-    protected val colorModelFactory: ColorModelFactory = ColorModelFactory()
+    protected val colorModelFactory: ColorModelFactory = ColorModelFactory(),
 ) {
-    suspend fun read(socket: Socket, size: Int): ByteBuffer {
+    public suspend fun read(socket: Socket, size: Int): ByteBuffer {
         val localBuffer = buffer
 
         val imageBuffer = if (localBuffer != null && localBuffer.capacity() == size) {
@@ -46,7 +46,7 @@ abstract class ScreenCaptureAdapter<T>(
         return imageBuffer
     }
 
-    abstract suspend fun process(
+    public abstract suspend fun process(
         version: Int,
         bitsPerPixel: Int,
         size: Int,
@@ -61,6 +61,6 @@ abstract class ScreenCaptureAdapter<T>(
         alphaOffset: Int,
         alphaLength: Int,
         colorSpace: ColorSpace? = null,
-        socket: Socket
+        socket: Socket,
     ): T
 }

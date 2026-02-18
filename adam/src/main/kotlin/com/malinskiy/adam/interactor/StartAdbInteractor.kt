@@ -19,10 +19,10 @@ package com.malinskiy.adam.interactor
 import com.malinskiy.adam.Const
 import java.io.File
 
-class StartAdbInteractor : AdbBinaryInteractor() {
-    suspend fun execute(
+public class StartAdbInteractor : AdbBinaryInteractor() {
+    public suspend fun execute(
         adbBinary: File? = null,
         androidHome: File? = null,
-        serverPort: Int = Const.DEFAULT_ADB_PORT
-    ) = execute(adbBinary, androidHome, "-P", serverPort.toString(), "start-server")
+        serverPort: Int = Const.DEFAULT_ADB_PORT,
+    ): Boolean = execute(adbBinary, androidHome, "-P", serverPort.toString(), "start-server")
 }

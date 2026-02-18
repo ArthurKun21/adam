@@ -44,7 +44,7 @@ import java.util.regex.Pattern
 private val BUFFER_BEGIN_RE = Pattern.compile("--------- beginning of (.*)")
 private val LOG_LINE_RE = Pattern.compile(
     "((?:(\\d\\d\\d\\d)-)?(\\d\\d)-(\\d\\d)\\s+(\\d\\d):(\\d\\d):(\\d\\d)\\.(\\d\\d\\d)\\s+(\\d+)\\s+(\\d+)\\s+(.)\\s+)(.*?):\\s(.*)",
-    Pattern.MULTILINE
+    Pattern.MULTILINE,
 )
 private val sinceFormatter = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss.SSS")
     .withZone(ZoneId.systemDefault())
@@ -66,10 +66,11 @@ class LogcatE2ETest {
             val deviceTimezone = TimeZone.getTimeZone(deviceTimezoneString)
 
             val nowInstant = Instant.now()
-            val request = SyncLogcatRequest(LogcatSinceFormat.DateString(nowInstant, deviceTimezoneString), modes = listOf())
+            val request =
+                SyncLogcatRequest(LogcatSinceFormat.DateString(nowInstant, deviceTimezoneString), modes = listOf())
             async {
                 delay(100)
-                //Produce artificial message in logcat
+                // Produce artificial message in logcat
                 adb.adb.execute(ShellCommandRequest("log -t TEST_TAG \"Test message\""), adb.deviceSerial)
             }
 
@@ -88,11 +89,15 @@ class LogcatE2ETest {
     @Test
     fun testChanneledRequest() {
         runBlocking {
-            val deviceTimezoneString = adb.adb.execute(GetSinglePropRequest("persist.sys.timezone"), adb.deviceSerial).trim()
+            val deviceTimezoneString = adb.adb.execute(
+                GetSinglePropRequest("persist.sys.timezone"),
+                adb.deviceSerial,
+            ).trim()
             val deviceTimezone = TimeZone.getTimeZone(deviceTimezoneString)
 
             val nowInstant = Instant.now()
-            val request = ChanneledLogcatRequest(LogcatSinceFormat.DateString(nowInstant, deviceTimezoneString), modes = listOf())
+            val request =
+                ChanneledLogcatRequest(LogcatSinceFormat.DateString(nowInstant, deviceTimezoneString), modes = listOf())
 
             val content = mutableSetOf<LogLine.Log>()
             val channel = adb.adb.execute(request, this, adb.deviceSerial)
@@ -100,7 +105,7 @@ class LogcatE2ETest {
             val background: Deferred<Unit> = async {
                 while (isActive) {
                     delay(100)
-                    //Produce artificial message in logcat
+                    // Produce artificial message in logcat
                     adb.adb.execute(ShellCommandRequest("log -t TEST_TAG \"Test message\""), adb.deviceSerial)
                 }
             }
@@ -148,7 +153,9 @@ class LogcatE2ETest {
 
             val instant get() = ZonedDateTime.ofInstant(date.toInstant(), timeZone.toZoneId())
 
-            override fun toString() = "[LogLine] ${sinceFormatter.format(date.toInstant())} $pid $tid $level $tag: $text"
+            override fun toString() = "[LogLine] ${sinceFormatter.format(
+                date.toInstant(),
+            )} $pid $tid $level $tag: $text"
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true

@@ -1,3 +1,9 @@
+import adam.buildlogic.AdamPublishing
+import adam.buildlogic.configureAdamPom
+import adam.buildlogic.configureIntegrationTestSourceSet
+import adam.buildlogic.configureIntegrationTestTasks
+import adam.buildlogic.integrationTestImplementation
+
 /*
  * Copyright (C) 2021 Anton Malinskiy
  *
@@ -17,61 +23,33 @@
 plugins {
     id("adam.jvm")
     id("jacoco")
+    alias(libs.plugins.vanniktech.maven.publish)
 }
 
+mavenPublishing {
+    coordinates(AdamPublishing.GROUP, "server-stub", version.toString())
 
-sourceSets {
-    create("integrationTest") {
-        compileClasspath += sourceSets.main.get().output
-        runtimeClasspath += sourceSets.main.get().output
+    pom {
+        name.set("server-stub")
+        description.set("Android Debug Bridge helper - Server stub")
+        configureAdamPom()
     }
 }
 
-val integrationTestImplementation: Configuration by configurations.getting {
-    extendsFrom(configurations.implementation.get())
-}
+configureIntegrationTestSourceSet()
 
-configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
+val integrationTestTasks = configureIntegrationTestTasks(
+    configureJacocoReport = { integrationTest ->
+        executionData(integrationTest)
+    },
+)
 
-fun DependencyHandler.`integrationTestImplementation`(dependencyNotation: Any): Dependency? =
-    add("integrationTestImplementation", dependencyNotation)
-
-
-val integrationTest = tasks.register<Test>("integrationTest") {
-    description = "Runs integration tests"
-    group = "verification"
-
-    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
-    classpath = sourceSets["integrationTest"].runtimeClasspath
-    shouldRunAfter("test")
-
-    jacoco {
-        include("**")
-    }
-}
-integrationTest.configure {
-    outputs.upToDateWhen { false }
-}
-
-val jacocoIntegrationTestReport = tasks.register<JacocoReport>("jacocoIntegrationTestReport") {
-    description = "Generates code coverage report for integrationTest task"
-    group = "verification"
-    reports {
-        xml.required.set(true)
-    }
-
-    executionData(integrationTest)
-    sourceSets(sourceSets.getByName("integrationTest"))
-    classDirectories.setFrom(sourceSets.getByName("main").output.classesDirs)
-}
-tasks.check { dependsOn(integrationTest, jacocoIntegrationTestReport) }
-
-tasks.jacocoTestReport {
+val jacocoIntegrationTestReport = integrationTestTasks.jacocoIntegrationTestReport
+jacocoIntegrationTestReport.configure {
     reports {
         xml.required.set(true)
     }
 }
-
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))

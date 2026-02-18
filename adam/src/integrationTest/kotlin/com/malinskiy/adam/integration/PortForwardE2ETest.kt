@@ -67,12 +67,12 @@ class PortForwardE2ETest {
         runBlocking {
             adbRule.adb.execute(
                 PortForwardRequest(LocalTcpPortSpec(12042), RemoteTcpPortSpec(12042), serial = adbRule.deviceSerial),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
 
             val portForwards = adbRule.adb.execute(
                 ListPortForwardsRequest(adbRule.deviceSerial),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
 
             assertThat(portForwards).hasSize(1)
@@ -84,10 +84,14 @@ class PortForwardE2ETest {
             assertThat(rule.remoteSpec).isInstanceOf(RemoteTcpPortSpec::class)
             assertThat((rule.remoteSpec as RemoteTcpPortSpec).port).isEqualTo(12042)
 
-            adbRule.adb.execute(RemovePortForwardRequest(LocalTcpPortSpec(12042), serial = adbRule.deviceSerial), adbRule.deviceSerial)
+            adbRule.adb.execute(
+                RemovePortForwardRequest(LocalTcpPortSpec(12042), serial = adbRule.deviceSerial),
+                adbRule.deviceSerial,
+            )
 
             val afterAllForwards = adbRule.adb.execute(
-                ListPortForwardsRequest(adbRule.deviceSerial), adbRule.deviceSerial
+                ListPortForwardsRequest(adbRule.deviceSerial),
+                adbRule.deviceSerial,
             )
 
             assertThat(afterAllForwards).isEmpty()
@@ -99,15 +103,16 @@ class PortForwardE2ETest {
         runBlocking {
             val portString = adbRule.adb.execute(
                 PortForwardRequest(LocalTcpPortSpec(), RemoteTcpPortSpec(12042), serial = adbRule.deviceSerial),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
 
             val currentPortForwards = adbRule.adb.execute(
-                ListPortForwardsRequest(adbRule.deviceSerial), adbRule.deviceSerial
+                ListPortForwardsRequest(adbRule.deviceSerial),
+                adbRule.deviceSerial,
             )
 
             assertThat(portString).isNotNull()
-            val actual = portString!!.toInt()
+            val actual = portString!!
             val expected = (currentPortForwards.firstOrNull()?.localSpec as LocalTcpPortSpec).port
 
             assertThat(actual).isEqualTo(expected)
@@ -119,17 +124,17 @@ class PortForwardE2ETest {
         runBlocking {
             adbRule.adb.execute(
                 PortForwardRequest(LocalTcpPortSpec(12042), RemoteTcpPortSpec(12042), serial = adbRule.deviceSerial),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
 
             adbRule.adb.execute(
                 RemovePortForwardRequest(LocalTcpPortSpec(12042), serial = adbRule.deviceSerial),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
 
             val portForwards = adbRule.adb.execute(
                 ListPortForwardsRequest(adbRule.deviceSerial),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
 
             assertThat(portForwards).isEmpty()
@@ -144,18 +149,18 @@ class PortForwardE2ETest {
 
         adbRule.adb.execute(
             ReversePortForwardRequest(RemoteTcpPortSpec(12043), LocalTcpPortSpec(12043)),
-            adbRule.deviceSerial
+            adbRule.deviceSerial,
         )
 
         val list = adbRule.adb.execute(ListReversePortForwardsRequest(), adbRule.deviceSerial)
         assertThat(list).hasSize(1)
-        //Host serial is of form "host-$tid", we ignore it here for equality check
+        // Host serial is of form "host-$tid", we ignore it here for equality check
         assertThat(list.first().localSpec).isEqualTo(RemoteTcpPortSpec(12043))
         assertThat(list.first().remoteSpec).isEqualTo(LocalTcpPortSpec(12043))
 
         adbRule.adb.execute(
             RemoveReversePortForwardRequest(RemoteTcpPortSpec(12043)),
-            adbRule.deviceSerial
+            adbRule.deviceSerial,
         )
 
         assertThat(adbRule.adb.execute(ListReversePortForwardsRequest(), adbRule.deviceSerial)).isEmpty()
@@ -166,21 +171,22 @@ class PortForwardE2ETest {
         runBlocking {
             val portString = adbRule.adb.execute(
                 ReversePortForwardRequest(RemoteTcpPortSpec(12042), LocalTcpPortSpec(12042)),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
 
             val currentPortForwards = adbRule.adb.execute(
-                ListReversePortForwardsRequest(), adbRule.deviceSerial
+                ListReversePortForwardsRequest(),
+                adbRule.deviceSerial,
             )
 
             if (portString != null) {
-                //Some devices return the allocated port
-                val actual = portString.toInt()
+                // Some devices return the allocated port
+                val actual = portString
                 val expected = (currentPortForwards.firstOrNull()?.localSpec as RemoteTcpPortSpec).port
 
                 assertThat(actual).isEqualTo(expected)
             } else {
-                //Others do not
+                // Others do not
                 val actual = currentPortForwards.any {
                     it.remoteSpec == LocalTcpPortSpec(12042) && it.localSpec == RemoteTcpPortSpec(12042)
                 }

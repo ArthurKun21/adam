@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package com.malinskiy.adam.junit4.android.screencapture
 
 import androidx.test.runner.screenshot.Screenshot
@@ -24,7 +26,7 @@ import org.junit.runners.model.Statement
 /**
  * JUnit4 rule that produces test events with screenshot paths
  */
-class AdamScreenCaptureRule : TestRule {
+public class AdamScreenCaptureRule : TestRule {
     override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {
             override fun evaluate() {

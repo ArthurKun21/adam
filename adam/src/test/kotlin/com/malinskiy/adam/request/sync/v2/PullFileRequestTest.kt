@@ -25,7 +25,6 @@ import com.malinskiy.adam.exception.UnsupportedSyncProtocolException
 import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.server.junit4.AdbServerRule
 import io.ktor.utils.io.discard
-import io.ktor.utils.io.writeIntLittleEndian
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
@@ -49,8 +48,8 @@ class PullFileRequestTest {
         assertThat(
             String(
                 PullFileRequest("/sdcard/testfile", File("/tmp/testfile"), listOf(Feature.SENDRECV_V2)).serialize(),
-                Const.DEFAULT_TRANSPORT_ENCODING
-            )
+                Const.DEFAULT_TRANSPORT_ENCODING,
+            ),
         )
             .isEqualTo("0005sync:")
     }
@@ -77,7 +76,12 @@ class PullFileRequestTest {
                 }
 
                 val request =
-                    PullFileRequest("/sdcard/testfile", tempFile, listOf(Feature.SENDRECV_V2), coroutineContext = coroutineContext)
+                    PullFileRequest(
+                        "/sdcard/testfile",
+                        tempFile,
+                        listOf(Feature.SENDRECV_V2),
+                        coroutineContext = coroutineContext,
+                    )
                 val execute = client.execute(request, this, "serial")
 
                 var progress = 0.0
@@ -117,7 +121,12 @@ class PullFileRequestTest {
                 }
 
                 val request =
-                    PullFileRequest("/sdcard/testfile", tempFile, listOf(Feature.SENDRECV_V2), coroutineContext = coroutineContext)
+                    PullFileRequest(
+                        "/sdcard/testfile",
+                        tempFile,
+                        listOf(Feature.SENDRECV_V2),
+                        coroutineContext = coroutineContext,
+                    )
                 val execute = client.execute(request, this, "serial")
 
                 var progress = 0.0

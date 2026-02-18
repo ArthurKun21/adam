@@ -44,7 +44,6 @@ import java.io.File
 import java.io.IOException
 import javax.imageio.ImageIO
 
-
 class E2ETest {
     @Rule
     @JvmField
@@ -55,7 +54,7 @@ class E2ETest {
         runBlocking {
             val image = adbRule.adb.execute(
                 ScreenCaptureRequest(RawImageScreenCaptureAdapter()),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             ).toBufferedImage()
 
             if (!ImageIO.write(image, "png", File("/tmp/screen.png"))) {
@@ -75,13 +74,13 @@ class E2ETest {
         runBlocking {
             val response = adbRule.adb.execute(
                 ShellCommandRequest("echo hello"),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
             assertThat(response).isEqualTo(
                 ShellCommandResult(
                     "hello${adbRule.lineSeparator}".toByteArray(Const.DEFAULT_TRANSPORT_ENCODING),
-                    0
-                )
+                    0,
+                ),
             )
         }
     }
@@ -91,7 +90,7 @@ class E2ETest {
         runBlocking {
             val response = adbRule.adb.execute(
                 ShellCommandRequest("false"),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
             assertThat(response.exitCode).isNotEqualTo(0)
         }
@@ -102,7 +101,7 @@ class E2ETest {
         runBlocking {
             val response = adbRule.adb.execute(
                 ShellCommandRequest("echo -n 1"),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
             assertThat(response.exitCode).isEqualTo(0)
             assertThat(response.output).isEqualTo("1")
@@ -114,12 +113,12 @@ class E2ETest {
         runBlocking {
             val lineSeparator = adbRule.adb.execute(
                 ShellCommandRequest("echo"),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             ).output
 
             val response = adbRule.adb.execute(
                 ShellCommandRequest("uname"),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
             assertThat(response.output).endsWith(lineSeparator)
         }
@@ -130,7 +129,7 @@ class E2ETest {
         runBlocking {
             val props = adbRule.adb.execute(
                 GetPropRequest(),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
             assertThat(props["sys.boot_completed"]).isEqualTo("1")
         }
@@ -141,7 +140,7 @@ class E2ETest {
         runBlocking {
             val response = adbRule.adb.execute(
                 GetSinglePropRequest("sys.boot_completed"),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
             assertThat(response).isEqualTo("1${adbRule.lineSeparator}")
         }
@@ -153,7 +152,7 @@ class E2ETest {
             val channel = adbRule.adb.execute(
                 serial = adbRule.deviceSerial,
                 request = ChanneledLogcatRequest(),
-                scope = this
+                scope = this,
             )
 
             val line = channel.receive()
@@ -167,7 +166,7 @@ class E2ETest {
         runBlocking {
             val list = adbRule.adb.execute(
                 ListDevicesRequest(),
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
 
             assertThat(list).hasSize(1)
@@ -195,12 +194,12 @@ class E2ETest {
     @Test
     fun testFetchDeviceFeatures() = runBlocking {
         val features = adbRule.adb.execute(FetchDeviceFeaturesRequest(adbRule.deviceSerial))
-        //No exception means it's working, but every emulator has a different feature set
+        // No exception means it's working, but every emulator has a different feature set
     }
 
     @Test
     fun testFetchHostFeatures() = runBlocking {
         adbRule.adb.execute(FetchHostFeaturesRequest()).let { println(it) }
-        //No exception means it's working
+        // No exception means it's working
     }
 }

@@ -1,3 +1,6 @@
+import adam.buildlogic.AdamPublishing
+import adam.buildlogic.configureAdamPom
+
 /*
  * Copyright (C) 2021 Anton Malinskiy
  *
@@ -15,18 +18,16 @@
  */
 
 plugins {
-    id("java")
+    id("adam.java")
+    alias(libs.plugins.vanniktech.maven.publish)
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
+mavenPublishing {
+    coordinates(AdamPublishing.GROUP, "android-testrunner-contract", version.toString())
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+    pom {
+        name.set("android-testrunner-contract")
+        description.set("Android Debug Bridge helper - Test runner contract")
+        configureAdamPom()
     }
 }
-
-

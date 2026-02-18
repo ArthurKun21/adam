@@ -38,12 +38,12 @@ import java.net.InetSocketAddress
  * @param cleanResponse by default all responses contain the emulator auth output that is unnecessary. If you want  the output to include
  * everything the emulator returns - set this to false
  */
-class EmulatorCommandRequest(
+public class EmulatorCommandRequest(
     private val cmd: String,
-    val address: InetSocketAddress,
+    public val address: InetSocketAddress,
     private val authToken: String? = null,
     private val cleanResponse: Boolean = true,
-    val idleTimeoutOverride: Long? = null
+    public val idleTimeoutOverride: Long? = null,
 ) {
     private suspend fun readAuthToken(): String? {
         val authTokenFile = File(System.getProperty("user.home"), ".emulator_console_auth_token")
@@ -59,7 +59,7 @@ class EmulatorCommandRequest(
         }
     }
 
-    suspend fun process(socket: Socket): String {
+    public suspend fun process(socket: Socket): String {
         val sessionBuilder = StringBuilder()
         val token = authToken ?: readAuthToken() ?: ""
         if (token.isNotEmpty()) {
@@ -81,6 +81,7 @@ class EmulatorCommandRequest(
                     count == 0 -> {
                         continue@loop
                     }
+
                     count > 0 -> {
                         output.append(String(buffer, 0, count, Charsets.UTF_8))
                     }
@@ -94,6 +95,7 @@ class EmulatorCommandRequest(
                  * Additional confirmation of auth
                  */
                 token.isNotBlank() -> output.indexOf(OUTPUT_DELIMITER, firstOkPosition + 1)
+
                 else -> firstOkPosition
             }
 
@@ -105,7 +107,7 @@ class EmulatorCommandRequest(
         }
     }
 
-    companion object {
+    public companion object {
         /**
          * Note: the following messages are expected to be quite stable from emulator.
          * Emulator console will send the following message upon connection:
@@ -123,6 +125,6 @@ class EmulatorCommandRequest(
          * So we try to search and skip first two "OK\r\n", return the rest.
          *
          */
-        const val OUTPUT_DELIMITER: String = "OK\r\n"
+        public const val OUTPUT_DELIMITER: String = "OK\r\n"
     }
 }

@@ -19,12 +19,16 @@ package com.malinskiy.adam.request.adbd
 import com.malinskiy.adam.request.SynchronousRequest
 import com.malinskiy.adam.request.transform.StringResponseTransformer
 
-class RestartAdbdRequest(private val mode: AdbdMode) : SynchronousRequest<String>() {
+public class RestartAdbdRequest(private val mode: AdbdMode) : SynchronousRequest<String>() {
     private val transformer = StringResponseTransformer()
 
-    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int) = transformer.process(bytes, offset, limit)
+    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = transformer.process(
+        bytes,
+        offset,
+        limit,
+    )
 
-    override fun serialize() = createBaseRequest(mode.requestString)
+    override fun serialize(): ByteArray = createBaseRequest(mode.requestString)
 
-    override fun transform() = transformer.transform()
+    override fun transform(): String = transformer.transform()
 }

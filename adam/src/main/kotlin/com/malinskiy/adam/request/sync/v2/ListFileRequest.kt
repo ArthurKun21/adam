@@ -32,9 +32,9 @@ import com.malinskiy.adam.transport.withDefaultBuffer
 import java.time.Instant
 
 @Features(Feature.LS_V2)
-class ListFileRequest(
+public class ListFileRequest(
     private val remotePath: String,
-    private val supportedFeatures: List<Feature>
+    private val supportedFeatures: List<Feature>,
 ) : ComplexRequest<List<FileEntryV2>>() {
 
     override fun validate(): ValidationResponse {
@@ -89,11 +89,13 @@ class ListFileRequest(
                                 atime = atime,
                                 mtime = mtime,
                                 ctime = ctime,
-                                name = String(data, 0, nameLength, Const.DEFAULT_TRANSPORT_ENCODING)
-                            )
+                                name = String(data, 0, nameLength, Const.DEFAULT_TRANSPORT_ENCODING),
+                            ),
                         )
                     }
+
                     data.copyOfRange(0, 4).contentEquals(Const.Message.DONE) -> break@loop
+
                     else -> break@loop
                 }
             }
@@ -102,5 +104,5 @@ class ListFileRequest(
         }
     }
 
-    override fun serialize() = createBaseRequest("sync:")
+    override fun serialize(): ByteArray = createBaseRequest("sync:")
 }

@@ -50,17 +50,29 @@ class ListReversePortForwardsRequestTest {
                     xx localabstract:namedsocket local:/tmp/socket
                     xx localreserved:namedsocket local:/tmp/socket
                     xx localfilesystem:namedsocket local:/tmp/socket
-                    
-                """.trimIndent()
+
+                    """.trimIndent(),
                 )
             }
 
             val output = client.execute(ListReversePortForwardsRequest(), serial = "xx")
             assertThat(output).containsExactly(
                 ReversePortForwardingRule("xx", RemoteTcpPortSpec(80), LocalTcpPortSpec(80)),
-                ReversePortForwardingRule("xx", RemoteAbstractPortSpec("namedsocket"), LocalUnixSocketPortSpec("/tmp/socket")),
-                ReversePortForwardingRule("xx", RemoteReservedPortSpec("namedsocket"), LocalUnixSocketPortSpec("/tmp/socket")),
-                ReversePortForwardingRule("xx", RemoteFilesystemPortSpec("namedsocket"), LocalUnixSocketPortSpec("/tmp/socket"))
+                ReversePortForwardingRule(
+                    "xx",
+                    RemoteAbstractPortSpec("namedsocket"),
+                    LocalUnixSocketPortSpec("/tmp/socket"),
+                ),
+                ReversePortForwardingRule(
+                    "xx",
+                    RemoteReservedPortSpec("namedsocket"),
+                    LocalUnixSocketPortSpec("/tmp/socket"),
+                ),
+                ReversePortForwardingRule(
+                    "xx",
+                    RemoteFilesystemPortSpec("namedsocket"),
+                    LocalUnixSocketPortSpec("/tmp/socket"),
+                ),
             )
 
             assertThat(output.first().serial).isEqualTo("xx")

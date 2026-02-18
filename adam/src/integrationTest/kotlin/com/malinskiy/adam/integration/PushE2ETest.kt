@@ -60,20 +60,35 @@ class PushE2ETest {
     @Test
     fun testPush() {
         val source = temp.newFolder()
-        val X = File(source, "X").apply { mkdir() }
-        val Y = File(source, "Y").apply { mkdir() }
-        val Z = File(Y, "Z").apply { mkdir() }
-        val x = File(X, "testfilex").apply { createNewFile(); writeText("Xcafebabe\n") }
-        val y = File(Y, "testfiley").apply { createNewFile(); writeText("Ycafebabe\n") }
-        val z = File(Z, "testfilez").apply { createNewFile(); writeText("Zcafebabe\n") }
-        //Testing non-latin filenames
-        val q = File(source, "тестовыйфайл").apply { createNewFile(); writeText("кафебаба\n") }
+        val xDir = File(source, "X").apply { mkdir() }
+        val yDir = File(source, "Y").apply { mkdir() }
+        val zDir = File(yDir, "Z").apply { mkdir() }
+        val x = File(xDir, "testfilex").apply {
+            createNewFile()
+            writeText("Xcafebabe\n")
+        }
+        val y = File(yDir, "testfiley").apply {
+            createNewFile()
+            writeText("Ycafebabe\n")
+        }
+        val z = File(zDir, "testfilez").apply {
+            createNewFile()
+            writeText("Zcafebabe\n")
+        }
+        // Testing non-latin filenames
+        val q = File(source, "тестовыйфайл").apply {
+            createNewFile()
+            writeText("кафебаба\n")
+        }
 
         runBlocking {
             val execute =
-                adbRule.adb.execute(PushRequest(source, "/data/local/tmp/testdir", adbRule.supportedFeatures), adbRule.deviceSerial)
+                adbRule.adb.execute(
+                    PushRequest(source, "/data/local/tmp/testdir", adbRule.supportedFeatures),
+                    adbRule.deviceSerial,
+                )
 
-            //Should create a subdir since dst already exists
+            // Should create a subdir since dst already exists
             assertThat(statFile("/data/local/tmp/testdir").isDirectory()).isTrue()
 
             assertThat(statFile("/data/local/tmp/testdir/X").isDirectory()).isTrue()
@@ -94,13 +109,19 @@ class PushE2ETest {
     @Test
     fun testPushCreatingSubdir() {
         val source = temp.newFolder("testdir with special 'chars()")
-        val x = File(source, "testfilex").apply { createNewFile(); writeText("Xcafebabe\n") }
+        val x = File(source, "testfilex").apply {
+            createNewFile()
+            writeText("Xcafebabe\n")
+        }
 
         runBlocking {
             val execute =
-                adbRule.adb.execute(PushRequest(source, "/data/local/tmp", adbRule.supportedFeatures), adbRule.deviceSerial)
+                adbRule.adb.execute(
+                    PushRequest(source, "/data/local/tmp", adbRule.supportedFeatures),
+                    adbRule.deviceSerial,
+                )
 
-            //Should create a subdir since dst already exists
+            // Should create a subdir since dst already exists
             assertThat(statFile("/data/local/tmp/testdir with special 'chars()").isDirectory()).isTrue()
             assertThat(statFile("/data/local/tmp/testdir with special 'chars()/testfilex").isRegularFile()).isTrue()
         }
@@ -116,28 +137,43 @@ class PushE2ETest {
         runBlocking {
             adbRule.adb.execute(ShellCommandRequest("mkdir -p /data/local/tmp/testdir/X"), adbRule.deviceSerial)
             adbRule.adb.execute(ShellCommandRequest("mkdir -p /data/local/tmp/testdir/Y/Z"), adbRule.deviceSerial)
-            adbRule.adb.execute(ShellCommandRequest("echo Xcafebabe > /data/local/tmp/testdir/X/testfilex"), adbRule.deviceSerial)
-            adbRule.adb.execute(ShellCommandRequest("echo Ycafebabe > /data/local/tmp/testdir/Y/testfiley"), adbRule.deviceSerial)
-            adbRule.adb.execute(ShellCommandRequest("echo Zcafebabe > /data/local/tmp/testdir/Y/Z/testfilez"), adbRule.deviceSerial)
-            //Testing non-latin filenames
-            adbRule.adb.execute(ShellCommandRequest("echo кафебаба > /data/local/tmp/testdir/тестовыйфайл"), adbRule.deviceSerial)
+            adbRule.adb.execute(
+                ShellCommandRequest("echo Xcafebabe > /data/local/tmp/testdir/X/testfilex"),
+                adbRule.deviceSerial,
+            )
+            adbRule.adb.execute(
+                ShellCommandRequest("echo Ycafebabe > /data/local/tmp/testdir/Y/testfiley"),
+                adbRule.deviceSerial,
+            )
+            adbRule.adb.execute(
+                ShellCommandRequest("echo Zcafebabe > /data/local/tmp/testdir/Y/Z/testfilez"),
+                adbRule.deviceSerial,
+            )
+            // Testing non-latin filenames
+            adbRule.adb.execute(
+                ShellCommandRequest("echo кафебаба > /data/local/tmp/testdir/тестовыйфайл"),
+                adbRule.deviceSerial,
+            )
 
             val dst = temp.newFolder()
             dst.delete()
             val execute =
-                adbRule.adb.execute(PullRequest("/data/local/tmp/testdir", dst, adbRule.supportedFeatures), adbRule.deviceSerial)
+                adbRule.adb.execute(
+                    PullRequest("/data/local/tmp/testdir", dst, adbRule.supportedFeatures),
+                    adbRule.deviceSerial,
+                )
 
-            val X = File(dst, "X")
-            val Y = File(dst, "Y")
-            val Z = File(Y, "Z")
-            val x = File(X, "testfilex")
-            val y = File(Y, "testfiley")
-            val z = File(Z, "testfilez")
+            val xDir = File(dst, "X")
+            val yDir = File(dst, "Y")
+            val zDir = File(yDir, "Z")
+            val x = File(xDir, "testfilex")
+            val y = File(yDir, "testfiley")
+            val z = File(zDir, "testfilez")
             val q = File(dst, "тестовыйфайл")
 
-            assertThat(X).isDirectory()
-            assertThat(Y).isDirectory()
-            assertThat(Z).isDirectory()
+            assertThat(xDir).isDirectory()
+            assertThat(yDir).isDirectory()
+            assertThat(zDir).isDirectory()
 
             assertThat(x).isFile()
             assertThat(y).isFile()

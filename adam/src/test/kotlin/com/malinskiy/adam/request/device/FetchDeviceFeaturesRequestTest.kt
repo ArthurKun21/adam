@@ -34,8 +34,8 @@ class FetchDeviceFeaturesRequestTest {
         assertThat(
             String(
                 fetchDeviceFeaturesRequest.serialize(),
-                Const.DEFAULT_TRANSPORT_ENCODING
-            )
+                Const.DEFAULT_TRANSPORT_ENCODING,
+            ),
         ).isEqualTo("001Dhost-serial:cafebabe:features")
     }
 
@@ -45,7 +45,7 @@ class FetchDeviceFeaturesRequestTest {
         runBlocking {
             StubSocket(
                 content = "0054fixed_push_symlink_timestamp,apex,fixed_push_mkdir,stat_v2,abb_exec,cmd,abb,shell_v2"
-                    .toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)
+                    .toByteArray(Const.DEFAULT_TRANSPORT_ENCODING),
             ).use { socket ->
                 val features = fetchDeviceFeaturesRequest.readElement(socket)
 
@@ -57,7 +57,7 @@ class FetchDeviceFeaturesRequestTest {
                     Feature.ABB_EXEC,
                     Feature.CMD,
                     Feature.ABB,
-                    Feature.SHELL_V2
+                    Feature.SHELL_V2,
                 )
             }
         }

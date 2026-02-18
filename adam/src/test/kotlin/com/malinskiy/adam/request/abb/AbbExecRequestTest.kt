@@ -38,7 +38,9 @@ class AbbExecRequestTest {
 
     @Test
     fun testSerialize() {
-        assertThat(AbbExecRequest(listOf("cmd", "package", "install"), listOf(Feature.ABB_EXEC)).serialize().toRequestString())
+        assertThat(
+            AbbExecRequest(listOf("cmd", "package", "install"), listOf(Feature.ABB_EXEC)).serialize().toRequestString(),
+        )
             .isEqualTo("001Cabb_exec:cmd\u0000package\u0000install")
     }
 
@@ -59,7 +61,7 @@ class AbbExecRequestTest {
         runBlocking {
             StubSocket("cafebabe".toByteArray(Const.DEFAULT_TRANSPORT_ENCODING)).use { socket ->
                 assertThat(
-                    AbbExecRequest(listOf(), supportedFeatures = emptyList()).readElement(socket)
+                    AbbExecRequest(listOf(), supportedFeatures = emptyList()).readElement(socket),
                 ).isEqualTo("cafebabe")
             }
         }

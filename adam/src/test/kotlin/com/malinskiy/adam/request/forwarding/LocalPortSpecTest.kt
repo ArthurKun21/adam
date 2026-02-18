@@ -21,7 +21,6 @@ import assertk.assertions.isEqualTo
 import com.malinskiy.adam.exception.UnsupportedForwardingSpecException
 import org.junit.Test
 
-
 class LocalPortSpecTest {
     @Test(expected = UnsupportedForwardingSpecException::class)
     fun testUnsupported() {

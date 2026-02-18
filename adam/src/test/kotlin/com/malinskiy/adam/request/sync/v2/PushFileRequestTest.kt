@@ -75,7 +75,6 @@ class PushFileRequestTest {
                 }
 
                 assertThat(progress).isEqualTo(1.0)
-
             }.join()
 
             assertThat(receiveFile.readBytes()).isEqualTo(fixture.readBytes())

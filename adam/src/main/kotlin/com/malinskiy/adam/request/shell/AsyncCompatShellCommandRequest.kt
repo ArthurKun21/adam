@@ -32,25 +32,27 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.produce
 import com.malinskiy.adam.request.shell.v2.ChanneledShellCommandRequest as V2ChanneledShellCommandRequest
 
-abstract class AsyncCompatShellCommandRequest<T : Any>(
-    val cmd: String,
+public abstract class AsyncCompatShellCommandRequest<T : Any>(
+    public val cmd: String,
     private val supportedFeatures: List<Feature>,
     private val target: Target = NonSpecifiedTarget,
     private val coroutineScope: CoroutineScope,
     private val socketIdleTimeout: Long? = null,
 ) : MultiRequest<ReceiveChannel<T>>() {
 
-    abstract suspend fun convertChunk(response: ShellCommandResultChunk): T?
+    public abstract suspend fun convertChunk(response: ShellCommandResultChunk): T?
 
     override suspend fun execute(
         androidDebugBridgeClient: AndroidDebugBridgeClient,
-        serial: String?
+        serial: String?,
     ): ReceiveChannel<T> {
         return when {
             supportedFeatures.contains(Feature.SHELL_V2) -> {
                 val channel = Channel<ShellCommandInputChunk>()
                 val receiveChannel = androidDebugBridgeClient.execute(
-                    V2ChanneledShellCommandRequest(cmd, channel, target, socketIdleTimeout), coroutineScope, serial,
+                    V2ChanneledShellCommandRequest(cmd, channel, target, socketIdleTimeout),
+                    coroutineScope,
+                    serial,
                 )
                 coroutineScope.produce {
                     for (chunk in receiveChannel) {
@@ -62,7 +64,9 @@ abstract class AsyncCompatShellCommandRequest<T : Any>(
 
             else -> {
                 val receiveChannel: ReceiveChannel<String> = androidDebugBridgeClient.execute(
-                    ChanneledShellCommandRequest(cmd, target, socketIdleTimeout), coroutineScope, serial,
+                    ChanneledShellCommandRequest(cmd, target, socketIdleTimeout),
+                    coroutineScope,
+                    serial,
                 )
                 coroutineScope.produce {
                     for (line in receiveChannel) {
@@ -75,5 +79,5 @@ abstract class AsyncCompatShellCommandRequest<T : Any>(
         }
     }
 
-    abstract suspend fun close(channel: SendChannel<T>)
+    public abstract suspend fun close(channel: SendChannel<T>)
 }

@@ -32,21 +32,21 @@ import kotlinx.coroutines.channels.SendChannel
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 
-abstract class BasePushFileRequest(
+public abstract class BasePushFileRequest(
     private val local: File,
     protected val remotePath: String,
     protected val mode: String = "0777",
-    coroutineContext: CoroutineContext = Dispatchers.IO
+    coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : AsyncChannelRequest<Double, Unit>() {
-    protected val fileReader = AsyncFileReader(
+    protected val fileReader: AsyncFileReader = AsyncFileReader(
         file = local,
         start = 0,
         offset = 8,
         length = Const.MAX_FILE_PACKET_LENGTH - 8,
-        coroutineContext = coroutineContext
+        coroutineContext = coroutineContext,
     )
-    protected var totalBytes = local.length()
-    protected var currentPosition = 0L
+    protected var totalBytes: Long = local.length()
+    protected var currentPosition: Long = 0L
     protected val modeValue: Int
         get() = mode.toInt(8) and "0777".toInt(8)
 
@@ -73,9 +73,12 @@ abstract class BasePushFileRequest(
                             sendChannel.send(1.0)
                             true
                         } else {
-                            throw PushFailedException("adb didn't acknowledge the file transfer: ${transportResponse.message ?: ""}")
+                            throw PushFailedException(
+                                "adb didn't acknowledge the file transfer: ${transportResponse.message ?: ""}",
+                            )
                         }
                     }
+
                     buffer.limit() > 0 -> {
                         Const.Message.DATA.copyInto(buffer.array())
                         val available = buffer.limit() - 8
@@ -88,6 +91,7 @@ abstract class BasePushFileRequest(
                         sendChannel.send(currentPosition.toDouble() / totalBytes)
                         false
                     }
+
                     else -> false
                 }
             } finally {
@@ -96,13 +100,13 @@ abstract class BasePushFileRequest(
         }
     }
 
-    override fun serialize() = createBaseRequest("sync:")
+    override fun serialize(): ByteArray = createBaseRequest("sync:")
 
     override suspend fun close(channel: SendChannel<Double>) {
         fileReader.close()
     }
 
-    override suspend fun writeElement(element: Unit, socket: Socket) = Unit
+    override suspend fun writeElement(element: Unit, socket: Socket): Unit = Unit
 
     override fun validate(): ValidationResponse {
         val response = super.validate()

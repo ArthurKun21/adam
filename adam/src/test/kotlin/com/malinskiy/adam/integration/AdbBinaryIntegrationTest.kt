@@ -39,6 +39,5 @@ class AdbBinaryIntegrationTest {
             startAdbInteractor.execute(serverPort = customServerPort)
             stopAdbInteractor.execute(serverPort = customServerPort)
         }
-
     }
 }

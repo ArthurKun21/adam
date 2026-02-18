@@ -54,9 +54,16 @@ class SendRecvV2E2ETest {
             withTimeout(10_000) {
                 while (true) {
                     var output =
-                        adbRule.adb.execute(ShellCommandRequest("echo cafebabe > /data/local/tmp/testfile"), serial = adbRule.deviceSerial)
+                        adbRule.adb.execute(
+                            ShellCommandRequest("echo cafebabe > /data/local/tmp/testfile"),
+                            serial = adbRule.deviceSerial,
+                        )
                     println(output)
-                    output = adbRule.adb.execute(ShellCommandRequest("cat /data/local/tmp/testfile"), serial = adbRule.deviceSerial)
+                    output =
+                        adbRule.adb.execute(
+                            ShellCommandRequest("cat /data/local/tmp/testfile"),
+                            serial = adbRule.deviceSerial,
+                        )
                     println(output)
                     if (output.output.contains("cafebabe") && output.exitCode == 0) {
                         break
@@ -80,13 +87,18 @@ class SendRecvV2E2ETest {
             val file = temp.newFile()
 
             val channel = adbRule.adb.execute(
-                PullFileRequest("/data/local/tmp/testfile", file, adbRule.supportedFeatures, coroutineContext = coroutineContext),
+                PullFileRequest(
+                    "/data/local/tmp/testfile",
+                    file,
+                    adbRule.supportedFeatures,
+                    coroutineContext = coroutineContext,
+                ),
                 this,
-                adbRule.deviceSerial
+                adbRule.deviceSerial,
             )
 
             var percentage = 0
-            for(percentageDouble in channel) {
+            for (percentageDouble in channel) {
                 val newPercentage = (percentageDouble * 100).roundToInt()
                 if (newPercentage != percentage) {
                     print('.')
@@ -111,14 +123,14 @@ class SendRecvV2E2ETest {
                         adbRule.supportedFeatures,
                         "0644",
                         false,
-                        coroutineContext = coroutineContext
+                        coroutineContext = coroutineContext,
                     ),
                     this,
-                    serial = adbRule.deviceSerial
+                    serial = adbRule.deviceSerial,
                 )
 
             var percentage = 0
-            for(percentageDouble in channel) {
+            for (percentageDouble in channel) {
                 val newPercentage = (percentageDouble * 100).roundToInt()
                 if (newPercentage != percentage) {
                     print('.')
@@ -128,7 +140,10 @@ class SendRecvV2E2ETest {
             val stats = adbRule.adb.execute(StatFileRequest("/data/local/tmp/app-debug.apk"), adbRule.deviceSerial)
             assertThat(stats.size).isEqualTo(testFile.length().toUInt())
 
-            val sizeString = adbRule.adb.execute(ShellCommandRequest("${md5()} /data/local/tmp/app-debug.apk"), adbRule.deviceSerial)
+            val sizeString = adbRule.adb.execute(
+                ShellCommandRequest("${md5()} /data/local/tmp/app-debug.apk"),
+                adbRule.deviceSerial,
+            )
             val split = sizeString.output.split(" ").filter { it != "" }
 
             /**
@@ -137,7 +152,7 @@ class SendRecvV2E2ETest {
              */
             assertThat(split[0]).isEqualTo(testFile.md5())
 
-            //TODO figure out why 644 is actually pushed as 666
+            // TODO figure out why 644 is actually pushed as 666
             assertThat(stats.mode).isEqualTo("100666".toUInt(radix = 8))
         }
     }

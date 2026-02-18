@@ -16,10 +16,10 @@
 
 package com.malinskiy.adam.request.testrunner.model
 
-enum class TokenType {
+public enum class TokenType {
     INSTRUMENTATION_STATUS,
     INSTRUMENTATION_STATUS_CODE,
     INSTRUMENTATION_RESULT,
     INSTRUMENTATION_CODE,
-    INSTRUMENTATION_FAILED
+    INSTRUMENTATION_FAILED,
 }

@@ -1,3 +1,8 @@
+import adam.buildlogic.AdamPublishing
+import adam.buildlogic.configureAdamPom
+import adam.buildlogic.configureIntegrationTestSourceSet
+import adam.buildlogic.configureIntegrationTestTasks
+import adam.buildlogic.integrationTestImplementation
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.remove
 
@@ -22,10 +27,19 @@ plugins {
     id("jacoco")
     id("org.jetbrains.dokka")
     alias(libs.plugins.protobuf)
+    alias(libs.plugins.vanniktech.maven.publish)
     id("idea")
 }
 
+mavenPublishing {
+    coordinates(AdamPublishing.GROUP, "adam", version.toString())
 
+    pom {
+        name.set("adam")
+        description.set("Android Debug Bridge helper - core library")
+        configureAdamPom()
+    }
+}
 
 protobuf {
     protoc {
@@ -62,38 +76,25 @@ protobuf {
     }
 }
 
-sourceSets {
-    create("integrationTest") {
-        compileClasspath += sourceSets.main.get().output
-        runtimeClasspath += sourceSets.main.get().output
+configureIntegrationTestSourceSet()
+
+val integrationTestTasks = configureIntegrationTestTasks(
+    configureIntegrationTest = { jacocoIntegrationTestReport ->
+        finalizedBy(jacocoIntegrationTestReport)
+    },
+    configureJacocoReport = { integrationTest ->
+        executionData(fileTree(layout.buildDirectory).include("jacoco/integrationTest.exec"))
+        mustRunAfter(integrationTest)
+    },
+)
+
+val integrationTest = integrationTestTasks.integrationTest
+
+val jacocoIntegrationTestReport = integrationTestTasks.jacocoIntegrationTestReport
+jacocoIntegrationTestReport.configure {
+    reports {
+        xml.required.set(true)
     }
-}
-
-val integrationTestImplementation: Configuration by configurations.getting {
-    extendsFrom(configurations.implementation.get())
-}
-
-configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
-
-fun DependencyHandler.`integrationTestImplementation`(dependencyNotation: Any): Dependency? =
-    add("integrationTestImplementation", dependencyNotation)
-
-
-val integrationTest = tasks.register<Test>("integrationTest") {
-    description = "Runs integration tests"
-    group = "verification"
-
-    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
-    classpath = sourceSets["integrationTest"].runtimeClasspath
-    shouldRunAfter("test")
-
-    jacoco {
-        include("**")
-    }
-}
-integrationTest.configure {
-    outputs.upToDateWhen { false }
-    finalizedBy("jacocoIntegrationTestReport")
 }
 
 // See https://github.com/jacoco/jacoco/issues/1357
@@ -110,20 +111,6 @@ val connectedAndroidTest = tasks.register<Test>("connectedAndroidTest") {
     dependsOn(integrationTest)
 }
 
-val jacocoIntegrationTestReport = tasks.register<JacocoReport>("jacocoIntegrationTestReport") {
-    description = "Generates code coverage report for integrationTest task"
-    group = "verification"
-    reports {
-        xml.required.set(true)
-    }
-
-    executionData(fileTree(layout.buildDirectory).include("jacoco/integrationTest.exec"))
-    sourceSets(sourceSets.getByName("integrationTest"))
-    classDirectories.setFrom(sourceSets.getByName("main").output.classesDirs)
-    mustRunAfter(integrationTest)
-}
-tasks.check { dependsOn(integrationTest, jacocoIntegrationTestReport) }
-
 val jacocoCombinedTestReport = tasks.register<JacocoReport>("jacocoCombinedTestReport") {
     description = "Generates code coverage report for all test tasks"
     group = "verification"
@@ -134,21 +121,17 @@ val jacocoCombinedTestReport = tasks.register<JacocoReport>("jacocoCombinedTestR
     mustRunAfter(tasks["test"], integrationTest)
 }
 
-tasks.jacocoTestReport {
-    reports {
-        xml.required.set(true)
+dokka {
+    dokkaPublications.html {
+        outputDirectory.set(rootProject.rootDir.resolve("docs/api"))
     }
-}
-
-tasks.dokkaHtml.configure {
-    outputDirectory.set(rootProject.rootDir.resolve("docs/api"))
 }
 
 dependencies {
     implementation(libs.annotations)
     implementation(kotlin("stdlib-jdk8"))
     implementation(libs.coroutines.core)
-    implementation(libs.logging)
+    implementation(libs.logcat)
     api(libs.protobuf.lite)
     api(libs.grpc.protobuf.lite)
     api(libs.grpc.kotlin.stub)

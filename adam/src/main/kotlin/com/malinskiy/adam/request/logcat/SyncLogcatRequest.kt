@@ -20,25 +20,27 @@ import com.malinskiy.adam.request.shell.v1.ShellCommandResult
 import com.malinskiy.adam.request.shell.v1.SyncShellCommandRequest
 import java.time.Instant
 
-class SyncLogcatRequest(
+public class SyncLogcatRequest(
     since: LogcatSinceFormat? = null,
     modes: List<LogcatReadMode> = listOf(LogcatReadMode.long),
     buffers: List<LogcatBuffer> = listOf(LogcatBuffer.default),
     pid: Long? = null,
     lastReboot: Boolean? = null,
-    filters: List<LogcatFilterSpec> = emptyList()
+    filters: List<LogcatFilterSpec> = emptyList(),
 ) : SyncShellCommandRequest<String>(
     cmd = "logcat" +
-            " -d" +
-            (since?.let {
+        " -d" +
+        (
+            since?.let {
                 " -t ${since.text}"
-            } ?: "") +
-            " ${modes.joinToString(separator = " ") { "-v $it" }}" +
-            " ${buffers.joinToString(separator = " ") { "-b $it" }}" +
-            (pid?.let { " --pid=$it" } ?: "") +
-            (lastReboot?.let { " -L" } ?: "") +
-            " ${filters.joinToString(separator = " ") { "${it.tag}:${it.level.name}" }}"
-                .trimEnd()
+            } ?: ""
+            ) +
+        " ${modes.joinToString(separator = " ") { "-v $it" }}" +
+        " ${buffers.joinToString(separator = " ") { "-b $it" }}" +
+        (pid?.let { " --pid=$it" } ?: "") +
+        (lastReboot?.let { " -L" } ?: "") +
+        " ${filters.joinToString(separator = " ") { "${it.tag}:${it.level.name}" }}"
+            .trimEnd(),
 ) {
-    override fun convertResult(response: ShellCommandResult) = response.output
+    override fun convertResult(response: ShellCommandResult): String = response.output
 }

@@ -37,20 +37,20 @@ import kotlin.coroutines.CoroutineContext
 /**
  * @param coroutineContext if you don't specify your context then you'll have no control over the `wait for file to finish writing`: closing the channel doesn't close the underlying resources
  */
-abstract class BasePullFileRequest(
+public abstract class BasePullFileRequest(
     private val remotePath: String,
     local: File,
     private val size: Long? = null,
-    coroutineContext: CoroutineContext = Dispatchers.IO
+    coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : AsyncChannelRequest<Double, Unit>() {
 
     private val fileWriter = AsyncFileWriter(local, coroutineContext)
-    var totalBytes = -1L
-    var currentPosition = 0L
+    public var totalBytes: Long = -1L
+    public var currentPosition: Long = 0L
 
     override suspend fun handshake(socket: Socket) {
         super.handshake(socket)
-        //If we don't have expected size, fetch it
+        // If we don't have expected size, fetch it
         totalBytes = size ?: StatFileRequest(remotePath).readElement(socket).size.toLong()
         if (totalBytes > 0) {
             fileWriter.start()
@@ -73,6 +73,7 @@ abstract class BasePullFileRequest(
                         }
                         true
                     }
+
                     header.contentEquals(Const.Message.DATA) -> {
                         val available = data.copyOfRange(4, 8).toInt()
                         if (available > Const.MAX_FILE_PACKET_LENGTH) {
@@ -88,6 +89,7 @@ abstract class BasePullFileRequest(
                         sendChannel.send(currentPosition.toDouble() / totalBytes)
                         false
                     }
+
                     header.contentEquals(Const.Message.FAIL) -> {
                         val size = data.copyOfRange(4, 8).toInt()
                         compatClear()
@@ -98,14 +100,15 @@ abstract class BasePullFileRequest(
                         val errorMessage = String(array(), 0, size)
                         throw PullFailedException("Failed to pull file $remotePath: $errorMessage")
                     }
+
                     else -> {
                         throw UnsupportedSyncProtocolException(
                             "Unexpected header message ${
                                 String(
                                     header,
-                                    Const.DEFAULT_TRANSPORT_ENCODING
+                                    Const.DEFAULT_TRANSPORT_ENCODING,
                                 )
-                            }"
+                            }",
                         )
                     }
                 }
@@ -121,7 +124,7 @@ abstract class BasePullFileRequest(
         }
     }
 
-    override fun serialize() = createBaseRequest("sync:")
+    override fun serialize(): ByteArray = createBaseRequest("sync:")
 
     override fun validate(): ValidationResponse {
         return if (remotePath.length > Const.MAX_REMOTE_PATH_LENGTH) {
@@ -131,6 +134,5 @@ abstract class BasePullFileRequest(
         }
     }
 
-    override suspend fun writeElement(element: Unit, socket: Socket) = Unit
-
+    override suspend fun writeElement(element: Unit, socket: Socket): Unit = Unit
 }

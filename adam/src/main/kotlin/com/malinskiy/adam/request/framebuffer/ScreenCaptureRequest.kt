@@ -26,7 +26,7 @@ import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withDefaultBuffer
 import java.nio.ByteOrder
 
-class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T>) : ComplexRequest<T>() {
+public class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T>) : ComplexRequest<T>() {
     override suspend fun readElement(socket: Socket): T {
         withDefaultBuffer {
             compatLimit(4)
@@ -35,9 +35,15 @@ class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T>) : Co
 
             val protocolVersion = order(ByteOrder.LITTLE_ENDIAN).int
             val headerSize = when (protocolVersion) {
-                1 -> 12 // bpp, size, width, height, 4*(length, offset)
-                2 -> 13 // bpp, colorSpace, size, width, height, 4*(length, offset)
-                16 -> 3 // compatibility mode: size, width, height. used previously to denote framebuffer depth
+                // bpp, size, width, height, 4*(length, offset)
+                1 -> 12
+
+                // bpp, colorSpace, size, width, height, 4*(length, offset)
+                2 -> 13
+
+                // compatibility mode: size, width, height. used previously to denote framebuffer depth
+                16 -> 3
+
                 /**
                  * See https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/master/daemon/framebuffer_service.cpp#42
                  * for a possible new value for DDMS_RAWIMAGE_VERSION
@@ -66,8 +72,9 @@ class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T>) : Co
                     blueLength = 5,
                     alphaOffset = 0,
                     alphaLength = 0,
-                    socket = socket
+                    socket = socket,
                 )
+
                 1 -> adapter.process(
                     version = protocolVersion,
                     bitsPerPixel = int,
@@ -82,8 +89,9 @@ class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T>) : Co
                     greenLength = int,
                     alphaOffset = int,
                     alphaLength = int,
-                    socket = socket
+                    socket = socket,
                 )
+
                 2 -> adapter.process(
                     version = protocolVersion,
                     bitsPerPixel = int,
@@ -99,12 +107,13 @@ class ScreenCaptureRequest<T>(private val adapter: ScreenCaptureAdapter<T>) : Co
                     greenLength = int,
                     alphaOffset = int,
                     alphaLength = int,
-                    socket = socket
+                    socket = socket,
                 )
+
                 else -> throw UnsupportedImageProtocolException(protocolVersion)
             }
         }
     }
 
-    override fun serialize() = createBaseRequest("framebuffer:")
+    override fun serialize(): ByteArray = createBaseRequest("framebuffer:")
 }

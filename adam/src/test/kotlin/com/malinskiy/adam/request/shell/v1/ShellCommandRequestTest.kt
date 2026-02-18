@@ -24,7 +24,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 
-
 class ShellCommandRequestTest {
     @get:Rule
     val server = AdbServerRule()

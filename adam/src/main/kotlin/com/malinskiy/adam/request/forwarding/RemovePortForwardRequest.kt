@@ -19,14 +19,14 @@ package com.malinskiy.adam.request.forwarding
 import com.malinskiy.adam.request.SerialTarget
 import com.malinskiy.adam.request.SynchronousRequest
 
-class RemovePortForwardRequest(
+public class RemovePortForwardRequest(
     private val local: LocalTcpPortSpec,
-    serial: String
+    serial: String,
 ) : SynchronousRequest<Unit>(target = SerialTarget(serial)) {
-    override fun serialize() =
+    override fun serialize(): ByteArray =
         createBaseRequest("killforward:${local.toSpec()}")
 
-    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int) = Unit
+    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = Unit
 
-    override fun transform() = Unit
+    override fun transform(): Unit = Unit
 }

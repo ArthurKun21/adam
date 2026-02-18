@@ -36,14 +36,18 @@ class LsV2E2ETest {
     @Before
     fun setup() {
         runBlocking {
-            externalStorageMount = adbRule.adb.execute(ShellCommandRequest("echo \$EXTERNAL_STORAGE"), adbRule.deviceSerial).output.trim()
+            externalStorageMount =
+                adbRule.adb.execute(ShellCommandRequest("echo \$EXTERNAL_STORAGE"), adbRule.deviceSerial).output.trim()
         }
     }
 
     @Test
     fun testListFile() {
         runBlocking {
-            val list = adbRule.adb.execute(ListFileRequest(externalStorageMount, adbRule.supportedFeatures), adbRule.deviceSerial)
+            val list = adbRule.adb.execute(
+                ListFileRequest(externalStorageMount, adbRule.supportedFeatures),
+                adbRule.deviceSerial,
+            )
             for (i in list) {
                 println(i)
             }

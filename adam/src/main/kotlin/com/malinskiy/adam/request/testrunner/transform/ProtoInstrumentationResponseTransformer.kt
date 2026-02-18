@@ -19,9 +19,26 @@ package com.malinskiy.adam.request.transform
 import com.android.commands.am.InstrumentationData
 import com.google.protobuf.InvalidProtocolBufferException
 import com.malinskiy.adam.Const
-import com.malinskiy.adam.extension.*
-import com.malinskiy.adam.request.testrunner.*
-import com.malinskiy.adam.request.testrunner.model.*
+import com.malinskiy.adam.extension.compatLimit
+import com.malinskiy.adam.extension.compatPosition
+import com.malinskiy.adam.request.testrunner.TestAssumptionFailed
+import com.malinskiy.adam.request.testrunner.TestEnded
+import com.malinskiy.adam.request.testrunner.TestEvent
+import com.malinskiy.adam.request.testrunner.TestFailed
+import com.malinskiy.adam.request.testrunner.TestIdentifier
+import com.malinskiy.adam.request.testrunner.TestIgnored
+import com.malinskiy.adam.request.testrunner.TestRunEnded
+import com.malinskiy.adam.request.testrunner.TestRunFailed
+import com.malinskiy.adam.request.testrunner.TestRunStartedEvent
+import com.malinskiy.adam.request.testrunner.TestStarted
+import com.malinskiy.adam.request.testrunner.model.Finished
+import com.malinskiy.adam.request.testrunner.model.NotStarted
+import com.malinskiy.adam.request.testrunner.model.Running
+import com.malinskiy.adam.request.testrunner.model.SessionResultCode
+import com.malinskiy.adam.request.testrunner.model.State
+import com.malinskiy.adam.request.testrunner.model.Status
+import com.malinskiy.adam.request.testrunner.model.StatusKey
+import com.malinskiy.adam.request.testrunner.model.TestStatusAggregator
 import java.io.File
 import java.io.RandomAccessFile
 import java.nio.MappedByteBuffer
@@ -42,7 +59,7 @@ import java.nio.channels.FileChannel
  *
  * see frameworks/base/cmds/am/src/com/android/commands/am/Instrument.java#readLogcat
  */
-class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Const.MAX_PROTOBUF_PACKET_LENGTH) :
+public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Const.MAX_PROTOBUF_PACKET_LENGTH) :
     ProgressiveResponseTransformer<List<TestEvent>?> {
     private val backingFile = RandomAccessFile(File.createTempFile("tmp-proto", null, null), "rw")
     private val channel = backingFile.channel
@@ -67,7 +84,10 @@ class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Co
             for (status in session.testStatusList ?: emptyList()) {
                 if (state == NotStarted) {
                     val testCount =
-                        status.results?.entriesList?.filter { entry -> entry.key?.let { it == StatusKey.NUMTESTS.value } ?: false }
+                        status.results?.entriesList?.filter { entry ->
+                            entry.key?.let { it == StatusKey.NUMTESTS.value }
+                                ?: false
+                        }
                             ?.mapNotNull { it.valueInt }
                             ?.firstOrNull()
                             ?: 0
@@ -86,10 +106,21 @@ class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Co
                     if (entry.key != null) {
                         when (StatusKey.of(entry.key)) {
                             StatusKey.TEST -> testMethodName = entry.valueString ?: testClassName
+
                             StatusKey.CLASS -> testClassName = entry.valueString ?: testMethodName
+
                             StatusKey.STACK -> stackTrace = entry.valueString ?: stackTrace
-                            StatusKey.CURRENT -> Unit //Test index
-                            StatusKey.NUMTESTS, StatusKey.ERROR, StatusKey.SHORTMSG, StatusKey.STREAM, StatusKey.ID -> Unit
+
+                            StatusKey.CURRENT -> Unit
+
+                            // Test index
+                            StatusKey.NUMTESTS,
+                            StatusKey.ERROR,
+                            StatusKey.SHORTMSG,
+                            StatusKey.STREAM,
+                            StatusKey.ID,
+                            -> Unit
+
                             StatusKey.UNKNOWN -> testMetrics[entry.key] = entry.valueToString()
                         }
                     }
@@ -101,7 +132,10 @@ class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Co
                         testClassName = previousTestStatus.key.className
                         testMethodName = previousTestStatus.key.testName
                         resultCodeOverride = previousTestStatus.value.statusCode
-                    } ?: run { testClassName = ""; testMethodName = "" }
+                    } ?: run {
+                        testClassName = ""
+                        testMethodName = ""
+                    }
                 }
 
                 if (testClassName.isNotBlank() && testMethodName.isNotBlank()) {
@@ -112,8 +146,8 @@ class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Co
                             resultCodeOverride ?: Status.valueOf(status.resultCode),
                             status.logcat,
                             stackTrace,
-                            testMetrics
-                        )
+                            testMetrics,
+                        ),
                     )
                 }
             }
@@ -139,6 +173,7 @@ class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Co
                             }
                         }
                     }
+
                     InstrumentationData.SessionStatusCode.SESSION_ABORTED -> {
                         val errorText = session.sessionStatus.errorText ?: ""
                         val lastTest = testStatuses.entries.lastOrNull()
@@ -152,6 +187,7 @@ class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Co
 
                         events.add(TestRunFailed(errorText))
                     }
+
                     else -> Unit
                 }
 
@@ -162,7 +198,9 @@ class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Co
 
                 if (sessionOutput != null) {
                     val matchResult = timeRegex.find(sessionOutput)
-                    val elapsedTime = matchResult?.groups?.get(1)?.let { it.value.toFloatOrNull() }?.let { (it * 1000).toLong() } ?: 0L
+                    val elapsedTime =
+                        matchResult?.groups?.get(1)?.let { it.value.toFloatOrNull() }?.let { (it * 1000).toLong() }
+                            ?: 0L
                     events.add(TestRunEnded(elapsedTime, testRunMetrics))
                 }
             }
@@ -179,7 +217,7 @@ class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Co
 
             return events
         } catch (e: InvalidProtocolBufferException) {
-            //wait for more input
+            // wait for more input
             buffer.compatPosition(buffer.limit())
             return null
         }
@@ -197,7 +235,7 @@ class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Co
         resultCode: Status,
         logcat: String?,
         stackTrace: String,
-        testMetrics: Map<String, String>
+        testMetrics: Map<String, String>,
     ): List<TestEvent> {
         val id = TestIdentifier(className, methodName)
         var events = mutableListOf<TestEvent>()
@@ -217,13 +255,16 @@ class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Long = Co
             Status.ERROR, Status.FAILURE -> {
                 events.add(TestFailed(id, stackTrace))
             }
+
             Status.IGNORED -> {
                 events.add(TestIgnored(id))
                 statusAggregator.logcatBuilder.clear()
             }
+
             Status.ASSUMPTION_FAILURE -> {
                 events.add(TestAssumptionFailed(id, stackTrace))
             }
+
             Status.SUCCESS, Status.START, Status.IN_PROGRESS, Status.UNKNOWN -> Unit
         }
 

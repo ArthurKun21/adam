@@ -27,11 +27,11 @@ import kotlinx.coroutines.Dispatchers
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 
-class WriteIndividualPackageRequest(
+public class WriteIndividualPackageRequest(
     private val file: File,
     private val supportedFeatures: List<Feature>,
     private val session: String,
-    private val coroutineContext: CoroutineContext = Dispatchers.IO
+    private val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : ComplexRequest<String>() {
     override fun serialize(): ByteArray {
         val hasAbbExec = supportedFeatures.contains(Feature.ABB_EXEC)
@@ -39,10 +39,12 @@ class WriteIndividualPackageRequest(
             add(
                 when {
                     supportedFeatures.contains(Feature.ABB_EXEC) -> "package"
+
                     supportedFeatures.contains(Feature.CMD) -> "exec:cmd package"
-                    //User is responsible for checking if pm supports install-write in this case
+
+                    // User is responsible for checking if pm supports install-write in this case
                     else -> "exec:pm"
-                }
+                },
             )
 
             add("install-write")

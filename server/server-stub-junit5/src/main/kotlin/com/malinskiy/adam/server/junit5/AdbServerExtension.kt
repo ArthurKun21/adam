@@ -31,13 +31,12 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.memberProperties
 
-
-class AdbServerExtension : BeforeEachCallback, AfterEachCallback {
-    lateinit var server: AndroidDebugBridgeServer
-    val client: AndroidDebugBridgeClient
+public class AdbServerExtension : BeforeEachCallback, AfterEachCallback {
+    public lateinit var server: AndroidDebugBridgeServer
+    public val client: AndroidDebugBridgeClient
         get() = server.client
 
-    fun session(block: suspend Session.() -> Unit) {
+    public fun session(block: suspend Session.() -> Unit) {
         server.listen { input, output ->
             val session = Session(input, output)
             block(session)
@@ -55,7 +54,10 @@ class AdbServerExtension : BeforeEachCallback, AfterEachCallback {
     private fun setupServerField(context: ExtensionContext) {
         val instance = context.testInstance.get()
         instance::class.memberProperties
-            .filter { it.hasAnnotation<AdbServer>() && it.returnType.isSubtypeOf(AndroidDebugBridgeServer::class.createType()) }
+            .filter {
+                it.hasAnnotation<AdbServer>() &&
+                    it.returnType.isSubtypeOf(AndroidDebugBridgeServer::class.createType())
+            }
             .filterIsInstance<KMutableProperty<*>>()
             .forEach { prop ->
                 prop.setter.call(instance, server)
@@ -65,14 +67,17 @@ class AdbServerExtension : BeforeEachCallback, AfterEachCallback {
     private fun setupClientField(context: ExtensionContext) {
         val instance = context.testInstance.get()
         instance::class.memberProperties
-            .filter { it.hasAnnotation<AdbClient>() && it.returnType.isSubtypeOf(AndroidDebugBridgeClient::class.createType()) }
+            .filter {
+                it.hasAnnotation<AdbClient>() &&
+                    it.returnType.isSubtypeOf(AndroidDebugBridgeClient::class.createType())
+            }
             .filterIsInstance<KMutableProperty<*>>()
             .forEach { prop ->
                 prop.setter.call(instance, client)
             }
     }
 
-    override fun afterEach(context: ExtensionContext?) {
+    override fun afterEach(context: ExtensionContext) {
         runBlocking {
             withContext(NonCancellable) {
                 server.dispose()
@@ -80,4 +85,3 @@ class AdbServerExtension : BeforeEachCallback, AfterEachCallback {
         }
     }
 }
-

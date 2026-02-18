@@ -23,22 +23,22 @@ import java.net.InetAddress
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
 
-class AndroidDebugBridgeClientFactory {
-    var port: Int? = null
-    var host: InetAddress? = null
-    var coroutineContext: CoroutineContext? = null
-    var socketFactory: SocketFactory? = null
-    var idleTimeout: Duration? = null
-    var connectTimeout: Duration? = null
+public class AndroidDebugBridgeClientFactory {
+    public var port: Int? = null
+    public var host: InetAddress? = null
+    public var coroutineContext: CoroutineContext? = null
+    public var socketFactory: SocketFactory? = null
+    public var idleTimeout: Duration? = null
+    public var connectTimeout: Duration? = null
 
-    fun build(): AndroidDebugBridgeClient {
+    public fun build(): AndroidDebugBridgeClient {
         return AndroidDebugBridgeClient(
             port = port ?: DiscoverAdbSocketInteractor().execute(),
             host = host ?: InetAddress.getByName(Const.DEFAULT_ADB_HOST),
             socketFactory = socketFactory ?: VertxSocketFactory(
                 idleTimeout = idleTimeout?.toMillis() ?: 30_000,
-                connectTimeout = connectTimeout?.toMillis() ?: 10_000
-            )
+                connectTimeout = connectTimeout?.toMillis() ?: 10_000,
+            ),
         )
     }
 }

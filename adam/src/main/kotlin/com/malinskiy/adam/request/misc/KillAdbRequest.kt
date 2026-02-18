@@ -19,10 +19,10 @@ package com.malinskiy.adam.request.misc
 import com.malinskiy.adam.request.HostTarget
 import com.malinskiy.adam.request.SynchronousRequest
 
-class KillAdbRequest : SynchronousRequest<Unit>(target = HostTarget) {
-    override fun serialize() = createBaseRequest("kill")
+public class KillAdbRequest : SynchronousRequest<Unit>(target = HostTarget) {
+    override fun serialize(): ByteArray = createBaseRequest("kill")
 
-    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int) = Unit
+    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = Unit
 
-    override fun transform() = Unit
+    override fun transform(): Unit = Unit
 }

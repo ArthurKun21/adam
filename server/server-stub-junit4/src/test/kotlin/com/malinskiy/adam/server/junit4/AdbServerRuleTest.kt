@@ -22,14 +22,14 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 
-class AdbServerRuleTest {
+public class AdbServerRuleTest {
     @get:Rule
-    val server = AdbServerRule()
-    val client: AndroidDebugBridgeClient
+    public val server: AdbServerRule = AdbServerRule()
+    public val client: AndroidDebugBridgeClient
         get() = server.client
 
     @Test
-    fun test() {
+    public fun test() {
         server.session {
             expectAdbServerVersion()
                 .accept()

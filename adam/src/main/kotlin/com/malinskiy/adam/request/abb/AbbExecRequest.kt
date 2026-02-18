@@ -26,7 +26,10 @@ import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withDefaultBuffer
 
 @Features(Feature.ABB_EXEC)
-open class AbbExecRequest(private val args: List<String>, private val supportedFeatures: List<Feature>) : ComplexRequest<String>() {
+public open class AbbExecRequest(
+    private val args: List<String>,
+    private val supportedFeatures: List<Feature>,
+) : ComplexRequest<String>() {
     private val transformer = StringResponseTransformer()
 
     override suspend fun readElement(socket: Socket): String {
@@ -36,7 +39,7 @@ open class AbbExecRequest(private val args: List<String>, private val supportedF
         return transformer.transform()
     }
 
-    override fun serialize() = createBaseRequest("abb_exec:${args.joinToString(DELIMITER.toString())}")
+    override fun serialize(): ByteArray = createBaseRequest("abb_exec:${args.joinToString(DELIMITER.toString())}")
 
     override fun validate(): ValidationResponse {
         val response = super.validate()
@@ -49,7 +52,7 @@ open class AbbExecRequest(private val args: List<String>, private val supportedF
         }
     }
 
-    companion object {
-        const val DELIMITER = 0x00.toChar()
+    public companion object {
+        public const val DELIMITER: Char = 0x00.toChar()
     }
 }

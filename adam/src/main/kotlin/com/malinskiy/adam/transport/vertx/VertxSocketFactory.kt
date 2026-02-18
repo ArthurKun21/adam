@@ -21,13 +21,13 @@ import com.malinskiy.adam.transport.SocketFactory
 import io.vertx.core.Vertx
 import io.vertx.core.net.NetClientOptions
 import io.vertx.core.net.SocketAddress
-import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import java.net.InetSocketAddress
 import java.util.concurrent.atomic.AtomicBoolean
 
-class VertxSocketFactory(
+public class VertxSocketFactory(
     private val connectTimeout: Long = 10_000,
-    private val idleTimeout: Long = 30_000
+    private val idleTimeout: Long = 30_000,
 ) : SocketFactory {
     private val vertx by lazy {
         Vertx.vertx().also { initialized.set(true) }
@@ -35,11 +35,14 @@ class VertxSocketFactory(
     private val initialized = AtomicBoolean(false)
 
     override suspend fun tcp(socketAddress: InetSocketAddress, connectTimeout: Long?, idleTimeout: Long?): Socket {
-        val vertxSocket = VertxSocket(SocketAddress.inetSocketAddress(socketAddress), NetClientOptions().apply {
-            setConnectTimeout((connectTimeout ?: this@VertxSocketFactory.connectTimeout).toTimeoutInt())
-            setIdleTimeout((idleTimeout ?: this@VertxSocketFactory.idleTimeout).toTimeoutInt())
-        })
-        val id = vertx.deployVerticle(vertxSocket).await()
+        val vertxSocket = VertxSocket(
+            SocketAddress.inetSocketAddress(socketAddress),
+            NetClientOptions().apply {
+                setConnectTimeout((connectTimeout ?: this@VertxSocketFactory.connectTimeout).toTimeoutInt())
+                setIdleTimeout((idleTimeout ?: this@VertxSocketFactory.idleTimeout).toTimeoutInt())
+            },
+        )
+        val id = vertx.deployVerticle(vertxSocket).coAwait()
         vertxSocket.id = id
         return vertxSocket
     }
@@ -52,7 +55,10 @@ class VertxSocketFactory(
 
     private fun Long.toTimeoutInt(): Int {
         val toInt = toInt()
-        return if (toInt < 0) Int.MAX_VALUE
-        else toInt
+        return if (toInt < 0) {
+            Int.MAX_VALUE
+        } else {
+            toInt
+        }
     }
 }

@@ -22,7 +22,10 @@ import com.malinskiy.adam.request.HostTarget
 import com.malinskiy.adam.transport.Socket
 import kotlinx.coroutines.channels.SendChannel
 
-class AsyncDeviceMonitorRequest : AsyncChannelRequest<List<Device>, Unit>(target = HostTarget, socketIdleTimeout = Long.MAX_VALUE) {
+public class AsyncDeviceMonitorRequest : AsyncChannelRequest<List<Device>, Unit>(
+    target = HostTarget,
+    socketIdleTimeout = Long.MAX_VALUE,
+) {
     override suspend fun readElement(socket: Socket, sendChannel: SendChannel<List<Device>>): Boolean {
         val data = socket.readProtocolString()
 
@@ -34,13 +37,13 @@ class AsyncDeviceMonitorRequest : AsyncChannelRequest<List<Device>, Unit>(target
                     val split = line.split("\t")
                     Device(
                         serial = split[0],
-                        state = DeviceState.from(split[1])
+                        state = DeviceState.from(split[1]),
                     )
-                }
+                },
         )
         return false
     }
 
-    override fun serialize() = createBaseRequest("track-devices")
-    override suspend fun writeElement(element: Unit, socket: Socket) = Unit
+    override fun serialize(): ByteArray = createBaseRequest("track-devices")
+    override suspend fun writeElement(element: Unit, socket: Socket): Unit = Unit
 }

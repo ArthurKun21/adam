@@ -22,10 +22,10 @@ import com.malinskiy.adam.request.SynchronousRequest
 /**
  * Doesn't work with SerialTarget, have to use the serial as a parameter for the execute method
  */
-class RemoveAllReversePortForwardsRequest : SynchronousRequest<Unit>(target = NonSpecifiedTarget) {
-    override fun serialize() = createBaseRequest("reverse:killforward-all")
+public class RemoveAllReversePortForwardsRequest : SynchronousRequest<Unit>(target = NonSpecifiedTarget) {
+    override fun serialize(): ByteArray = createBaseRequest("reverse:killforward-all")
 
-    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int) = Unit
+    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int): Unit = Unit
 
-    override fun transform() = Unit
+    override fun transform(): Unit = Unit
 }

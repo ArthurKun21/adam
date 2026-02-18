@@ -30,8 +30,8 @@ import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withDefaultBuffer
 import java.time.Instant
 
-class StatFileRequest(
-    private val remotePath: String
+public class StatFileRequest(
+    private val remotePath: String,
 ) : ComplexRequest<FileEntryV1>() {
     override suspend fun readElement(socket: Socket): FileEntryV1 {
         socket.writeSyncRequest(Const.Message.LSTAT_V1, remotePath)
@@ -47,7 +47,7 @@ class StatFileRequest(
             return FileEntryV1(
                 mode = bytes.copyOfRange(4, 8).toUInt(),
                 size = bytes.copyOfRange(8, 12).toUInt(),
-                mtime = Instant.ofEpochSecond(bytes.copyOfRange(12, 16).toInt().toLong())
+                mtime = Instant.ofEpochSecond(bytes.copyOfRange(12, 16).toInt().toLong()),
             )
         }
     }
@@ -60,6 +60,5 @@ class StatFileRequest(
         }
     }
 
-    override fun serialize() = createBaseRequest("sync:")
+    override fun serialize(): ByteArray = createBaseRequest("sync:")
 }
-

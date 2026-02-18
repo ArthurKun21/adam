@@ -24,7 +24,7 @@ import com.malinskiy.adam.transport.Socket
 /**
  * check if mdns discovery is available
  */
-class MdnsCheckRequest : ComplexRequest<MdnsStatus>(target = HostTarget) {
+public class MdnsCheckRequest : ComplexRequest<MdnsStatus>(target = HostTarget) {
     override suspend fun readElement(socket: Socket): MdnsStatus {
         val string = socket.readProtocolString()
         return if (string.contains("mdns daemon unavailable")) {
@@ -35,5 +35,5 @@ class MdnsCheckRequest : ComplexRequest<MdnsStatus>(target = HostTarget) {
         }
     }
 
-    override fun serialize() = createBaseRequest("mdns:check")
+    override fun serialize(): ByteArray = createBaseRequest("mdns:check")
 }

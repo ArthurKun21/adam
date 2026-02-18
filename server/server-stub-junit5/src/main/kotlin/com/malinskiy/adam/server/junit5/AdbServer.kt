@@ -18,4 +18,4 @@ package com.malinskiy.adam.server.junit5
 
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class AdbServer
+public annotation class AdbServer

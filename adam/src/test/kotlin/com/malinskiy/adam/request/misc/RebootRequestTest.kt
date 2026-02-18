@@ -53,7 +53,9 @@ class RebootRequestTest {
 
     @Test
     fun testSideloadAutoReboot() {
-        val actual = RebootRequest(RebootMode.SIDELOAD_AUTO_REBOOT).serialize().toString(Const.DEFAULT_TRANSPORT_ENCODING)
+        val actual = RebootRequest(
+            RebootMode.SIDELOAD_AUTO_REBOOT,
+        ).serialize().toString(Const.DEFAULT_TRANSPORT_ENCODING)
         assertThat(actual)
             .isEqualTo("001Breboot:sideload-auto-reboot")
     }

@@ -21,10 +21,10 @@ import com.malinskiy.adam.transport.Socket
 import java.awt.image.BufferedImage
 import java.nio.ByteBuffer
 
-class BufferedImageScreenCaptureAdapter(
+public class BufferedImageScreenCaptureAdapter(
     private var recycledImage: BufferedImage? = null,
     buffer: ByteBuffer? = null,
-    colorModelFactory: ColorModelFactory = ColorModelFactory()
+    colorModelFactory: ColorModelFactory = ColorModelFactory(),
 ) : ScreenCaptureAdapter<BufferedImage>(colorModelFactory = colorModelFactory, buffer = buffer) {
 
     override suspend fun process(
@@ -42,7 +42,7 @@ class BufferedImageScreenCaptureAdapter(
         alphaOffset: Int,
         alphaLength: Int,
         colorSpace: ColorSpace?,
-        socket: Socket
+        socket: Socket,
     ): BufferedImage {
         val imageBuffer: ByteBuffer = read(socket, size)
         imageBuffer.compatRewind()
@@ -53,10 +53,15 @@ class BufferedImageScreenCaptureAdapter(
                         val shortArray = ShortArray(imageBuffer.limit() / 2)
                         imageBuffer.asShortBuffer().get(shortArray)
                         it.raster.setDataElements(
-                            0, 0, width, height, shortArray
+                            0,
+                            0,
+                            width,
+                            height,
+                            shortArray,
                         )
                     }
             }
+
             32 -> {
                 if (alphaOffset == 24 && alphaLength == 8 &&
                     blueOffset == 16 && blueLength == 8 &&
@@ -69,7 +74,11 @@ class BufferedImageScreenCaptureAdapter(
                     createOrReuseBufferedImage(colorSpace, width, height, BufferedImage.TYPE_4BYTE_ABGR)
                         .also {
                             it.raster.setDataElements(
-                                0, 0, width, height, imageBuffer.array()
+                                0,
+                                0,
+                                width,
+                                height,
+                                imageBuffer.array(),
                             )
                         }
                 } else {
@@ -86,7 +95,7 @@ class BufferedImageScreenCaptureAdapter(
                                         blueOffset,
                                         blueLength,
                                         alphaOffset,
-                                        alphaLength
+                                        alphaLength,
                                     )
                                     it.raster.setDataElements(x, y, bytes)
                                 }
@@ -94,7 +103,10 @@ class BufferedImageScreenCaptureAdapter(
                         }
                 }
             }
-            else -> throw UnsupportedOperationException("BufferedImageScreenCaptureAdapter only works with 16 and 32 bit images")
+
+            else -> throw UnsupportedOperationException(
+                "BufferedImageScreenCaptureAdapter only works with 16 and 32 bit images",
+            )
         }
     }
 
@@ -102,7 +114,7 @@ class BufferedImageScreenCaptureAdapter(
         colorSpace: ColorSpace?,
         width: Int,
         height: Int,
-        type: Int
+        type: Int,
     ): BufferedImage {
         val bufferedImage = when (val profileName = colorSpace?.getProfileName()) {
             null -> {
@@ -117,6 +129,7 @@ class BufferedImageScreenCaptureAdapter(
                     BufferedImage(width, height, type)
                 }
             }
+
             else -> {
                 val colorModel = colorModelFactory.get(profileName, type)
                 val localRecycledImage = recycledImage

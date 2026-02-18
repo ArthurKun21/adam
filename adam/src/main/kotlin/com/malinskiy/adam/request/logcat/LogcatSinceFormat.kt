@@ -25,16 +25,16 @@ private val sinceFormatter = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss.SSS")
 
 private val sinceYearFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
-sealed class LogcatSinceFormat(val text: String) {
+public sealed class LogcatSinceFormat(public val text: String) {
     // It formats with 'MM-dd HH:mm:ss.SSS'
-    class DateString(instant: Instant, timezone: String) :
+    public class DateString(instant: Instant, timezone: String) :
         LogcatSinceFormat("'${sinceFormatter.withZone(TimeZone.getTimeZone(timezone).toZoneId()).format(instant)}'")
 
     // It formats with 'yyyy-MM-dd HH:mm:ss.SSS'
-    class DateStringYear(instant: Instant, timezone: String) :
+    public class DateStringYear(instant: Instant, timezone: String) :
         LogcatSinceFormat("'${sinceYearFormatter.withZone(TimeZone.getTimeZone(timezone).toZoneId()).format(instant)}'")
 
     // It formats with 'SSS.0'
-    class TimeStamp(instant: Instant) :
+    public class TimeStamp(instant: Instant) :
         LogcatSinceFormat("${instant.toEpochMilli()}.0")
 }

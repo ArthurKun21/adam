@@ -21,7 +21,7 @@ import com.malinskiy.adam.AndroidDebugBridgeClient
 /**
  * This type of request is a wrapper of a sequence of requests
  */
-abstract class MultiRequest<T : Any?> {
-    abstract suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?): T
-    open fun validate(): ValidationResponse = ValidationResponse.Success
+public abstract class MultiRequest<T : Any?> {
+    public abstract suspend fun execute(androidDebugBridgeClient: AndroidDebugBridgeClient, serial: String?): T
+    public open fun validate(): ValidationResponse = ValidationResponse.Success
 }

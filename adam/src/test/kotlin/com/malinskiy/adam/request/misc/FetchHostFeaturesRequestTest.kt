@@ -50,7 +50,7 @@ class FetchHostFeaturesRequestTest {
                     Feature.ABB_EXEC,
                     Feature.CMD,
                     Feature.ABB,
-                    Feature.SHELL_V2
+                    Feature.SHELL_V2,
                 )
             }
         }

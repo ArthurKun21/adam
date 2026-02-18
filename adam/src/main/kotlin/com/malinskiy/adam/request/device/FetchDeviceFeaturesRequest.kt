@@ -22,9 +22,9 @@ import com.malinskiy.adam.request.Feature
 import com.malinskiy.adam.request.SerialTarget
 import com.malinskiy.adam.transport.Socket
 
-class FetchDeviceFeaturesRequest(serial: String) : ComplexRequest<List<Feature>>(target = SerialTarget(serial)) {
+public class FetchDeviceFeaturesRequest(serial: String) : ComplexRequest<List<Feature>>(target = SerialTarget(serial)) {
 
-    override fun serialize() = createBaseRequest("features")
+    override fun serialize(): ByteArray = createBaseRequest("features")
 
     override suspend fun readElement(socket: Socket): List<Feature> {
         return socket.readProtocolString().split(',').mapNotNull { Feature.of(it) }

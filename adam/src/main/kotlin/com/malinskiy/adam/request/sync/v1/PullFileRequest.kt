@@ -27,11 +27,11 @@ import kotlin.coroutines.CoroutineContext
 /**
  * @param coroutineContext if you don't specify your context then you'll have no control over the `wait for file to finish writing`: closing the channel doesn't close the underlying resources
  */
-class PullFileRequest(
+public class PullFileRequest(
     private val remotePath: String,
     local: File,
     size: Long? = null,
-    coroutineContext: CoroutineContext = Dispatchers.IO
+    coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : BasePullFileRequest(remotePath, local, size, coroutineContext) {
     override suspend fun handshake(socket: Socket) {
         super.handshake(socket)

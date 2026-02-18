@@ -26,10 +26,10 @@ import java.awt.image.DataBuffer
 import java.awt.image.DirectColorModel
 import java.io.IOException
 
-class ColorModelFactory {
+public class ColorModelFactory {
     private val cache = mutableMapOf<String, ColorModel>()
 
-    fun get(profileName: String, type: Int): ColorModel {
+    public fun get(profileName: String, type: Int): ColorModel {
         cache[profileName]?.let { return it }
 
         synchronized(cache) {
@@ -48,18 +48,20 @@ class ColorModelFactory {
                         true,
                         false,
                         Transparency.TRANSLUCENT,
-                        DataBuffer.TYPE_BYTE
+                        DataBuffer.TYPE_BYTE,
                     )
                 }
+
                 BufferedImage.TYPE_3BYTE_BGR -> {
                     ComponentColorModel(
                         colorSpace,
                         false,
                         false,
                         Transparency.TRANSLUCENT,
-                        DataBuffer.TYPE_BYTE
+                        DataBuffer.TYPE_BYTE,
                     )
                 }
+
                 BufferedImage.TYPE_INT_ARGB -> {
                     DirectColorModel(
                         colorSpace,
@@ -69,14 +71,13 @@ class ColorModelFactory {
                         0x000000ff,
                         -0x1000000,
                         false,
-                        DataBuffer.TYPE_INT
+                        DataBuffer.TYPE_INT,
                     )
                 }
+
                 else -> throw RuntimeException("Unsupported buffered image type $type")
             }
             return colorModel.also { cache[profileName] = it }
         }
     }
-
-
 }

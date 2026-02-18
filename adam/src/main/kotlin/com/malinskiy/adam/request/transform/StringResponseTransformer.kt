@@ -18,7 +18,7 @@ package com.malinskiy.adam.request.transform
 
 import com.malinskiy.adam.Const
 
-class StringResponseTransformer : ResponseTransformer<String> {
+public class StringResponseTransformer : ResponseTransformer<String> {
     override suspend fun process(bytes: ByteArray, offset: Int, limit: Int) {
         val part = String(bytes, 0, limit, Const.DEFAULT_TRANSPORT_ENCODING)
         builder.append(part)

@@ -16,7 +16,7 @@
 
 package com.malinskiy.adam.request.testrunner.model
 
-enum class SessionResultCode(val value: Int) {
+public enum class SessionResultCode(public val value: Int) {
     FINISHED(-1),
-    ERROR(0)
+    ERROR(0),
 }

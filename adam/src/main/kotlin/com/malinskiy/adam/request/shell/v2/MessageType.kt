@@ -16,7 +16,7 @@
 
 package com.malinskiy.adam.request.shell.v2
 
-enum class MessageType {
+public enum class MessageType {
     STDIN,
     STDOUT,
     STDERR,
@@ -35,9 +35,11 @@ enum class MessageType {
     /**
      * Indicates an invalid or unknown packet
      */
-    INVALID;
+    INVALID,
 
-    fun toValue() = when (this) {
+    ;
+
+    public fun toValue(): Int = when (this) {
         STDIN -> 0
         STDOUT -> 1
         STDERR -> 2
@@ -47,8 +49,8 @@ enum class MessageType {
         INVALID -> 255
     }
 
-    companion object {
-        fun of(value: Int) = when (value) {
+    public companion object {
+        public fun of(value: Int): MessageType = when (value) {
             0 -> STDIN
             1 -> STDOUT
             2 -> STDERR

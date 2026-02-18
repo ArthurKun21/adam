@@ -31,14 +31,14 @@ import com.malinskiy.adam.transport.Socket
  *
  * Doesn't work with SerialTarget, have to use the serial as a parameter for the execute method
  */
-class ReversePortForwardRequest(
+public class ReversePortForwardRequest(
     private val local: RemotePortSpec,
     private val remote: LocalPortSpec,
-    private val mode: PortForwardingMode = PortForwardingMode.DEFAULT
+    private val mode: PortForwardingMode = PortForwardingMode.DEFAULT,
 
 ) : ComplexRequest<Int?>(target = NonSpecifiedTarget) {
 
-    override fun serialize() =
+    override fun serialize(): ByteArray =
         createBaseRequest("reverse:forward${mode.value}:${local.toSpec()};${remote.toSpec()}")
 
     override suspend fun readElement(socket: Socket): Int? {

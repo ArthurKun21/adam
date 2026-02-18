@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package com.malinskiy.adam.junit4.android.screencapture
 
 import android.os.Bundle
@@ -42,7 +44,7 @@ import java.io.File
  * INSTRUMENTATION_STATUS: stream=.
  * INSTRUMENTATION_STATUS: test=ignoreTest
  */
-class AdamScreenCaptureProcessor : BasicScreenCaptureProcessor() {
+public class AdamScreenCaptureProcessor : BasicScreenCaptureProcessor() {
     override fun process(capture: ScreenCapture): String? {
         val filename = super.process(capture)
         val absoluteScreenCapturePath = File(mDefaultScreenshotPath, filename)
@@ -50,7 +52,7 @@ class AdamScreenCaptureProcessor : BasicScreenCaptureProcessor() {
         val bundle = Bundle(1)
         bundle.putString(
             "com.malinskiy.adam.junit4.android.screencapture.AdamScreenCaptureProcessor.v1",
-            absoluteScreenCapturePath.absolutePath
+            absoluteScreenCapturePath.absolutePath,
         )
         InstrumentationRegistry.getInstrumentation().sendStatus(2, bundle)
         return filename

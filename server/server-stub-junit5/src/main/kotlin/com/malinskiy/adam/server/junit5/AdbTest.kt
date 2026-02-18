@@ -23,4 +23,4 @@ import java.lang.annotation.Inherited
 @ExtendWith(AdbServerExtension::class)
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
-annotation class AdbTest
+public annotation class AdbTest

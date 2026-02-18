@@ -24,20 +24,24 @@ import com.malinskiy.adam.request.Target
  * shell v1 service doesn't support exit codes
  * we append an `echo $?` at the end to print the exit code as well and parse it
  */
-abstract class SyncShellCommandRequest<T : Any?>(val cmd: String, target: Target = NonSpecifiedTarget) :
+public abstract class SyncShellCommandRequest<T : Any?>(public val cmd: String, target: Target = NonSpecifiedTarget) :
     SynchronousRequest<T>(target) {
 
     /**
      * Descendants should override this method to map the response to appropriate output
      */
-    abstract fun convertResult(response: ShellCommandResult): T
+    public abstract fun convertResult(response: ShellCommandResult): T
 
     private val responseTransformer = ShellResultResponseTransformer()
-    override suspend fun process(bytes: ByteArray, offset: Int, limit: Int) = responseTransformer.process(bytes, offset, limit)
-    override fun transform() = convertResult(responseTransformer.transform())
-    override fun serialize() = createBaseRequest("shell:$cmd;echo ${EXIT_CODE_DELIMITER}$?")
+    override suspend fun process(
+        bytes: ByteArray,
+        offset: Int,
+        limit: Int,
+    ): Unit = responseTransformer.process(bytes, offset, limit)
+    override fun transform(): T = convertResult(responseTransformer.transform())
+    override fun serialize(): ByteArray = createBaseRequest("shell:$cmd;echo ${EXIT_CODE_DELIMITER}$?")
 
-    companion object {
-        const val EXIT_CODE_DELIMITER = 'x'
+    public companion object {
+        public const val EXIT_CODE_DELIMITER: Char = 'x'
     }
 }

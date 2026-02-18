@@ -19,7 +19,7 @@ package com.malinskiy.adam.request.prop
 import com.malinskiy.adam.request.shell.v1.ShellCommandResult
 import com.malinskiy.adam.request.shell.v1.SyncShellCommandRequest
 
-class GetPropRequest : SyncShellCommandRequest<Map<String, String>>("getprop") {
+public class GetPropRequest : SyncShellCommandRequest<Map<String, String>>("getprop") {
     override fun convertResult(response: ShellCommandResult): Map<String, String> {
         return response.output
             .lines()

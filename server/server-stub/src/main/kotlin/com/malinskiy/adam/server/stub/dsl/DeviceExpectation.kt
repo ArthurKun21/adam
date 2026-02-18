@@ -16,15 +16,15 @@
 
 package com.malinskiy.adam.server.stub.dsl
 
-data class DeviceExpectation(
-    val serialNo: String,
-    private val list: MutableList<suspend Session.() -> Unit> = mutableListOf()
+public data class DeviceExpectation(
+    public val serialNo: String,
+    private val list: MutableList<suspend Session.() -> Unit> = mutableListOf(),
 ) {
-    fun session(block: suspend Session.() -> Unit) {
+    public fun session(block: suspend Session.() -> Unit) {
         list.add(block)
     }
 
-    suspend fun handle(session: Session) {
+    public suspend fun handle(session: Session) {
         assert(list.size > 0) { "No handles registered for request" }
         val head = list.removeAt(0)
         head(session)

@@ -28,11 +28,11 @@ import com.malinskiy.adam.transport.Socket
 import java.io.File
 
 @Features(Feature.CMD, Feature.ABB_EXEC)
-class CreateMultiPackageSessionRequest(
+public class CreateMultiPackageSessionRequest(
     private val pkgList: List<InstallationPackage>,
     private val supportedFeatures: List<Feature>,
     private val reinstall: Boolean,
-    private val extraArgs: List<String> = emptyList()
+    private val extraArgs: List<String> = emptyList(),
 ) : ComplexRequest<CreateSessionResponse>() {
     override fun validate(): ValidationResponse {
         val response = super.validate()
@@ -84,7 +84,7 @@ class CreateMultiPackageSessionRequest(
                     "package"
                 } else {
                     "exec:cmd package"
-                }
+                },
             )
 
             add("install-create")
@@ -134,7 +134,7 @@ class CreateMultiPackageSessionRequest(
         return CreateSessionResponse(sessionId, createSessionResponse)
     }
 
-    companion object {
-        val SUPPORTED_EXTENSIONS = setOf("apk", "apex")
+    public companion object {
+        public val SUPPORTED_EXTENSIONS: Set<String> = setOf("apk", "apex")
     }
 }

@@ -25,4 +25,4 @@ import com.malinskiy.adam.request.Feature
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-annotation class Features(vararg val features: Feature)
+public annotation class Features(vararg val features: Feature)

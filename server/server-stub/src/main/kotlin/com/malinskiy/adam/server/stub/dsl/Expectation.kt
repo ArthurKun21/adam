@@ -16,30 +16,32 @@
 
 package com.malinskiy.adam.server.stub.dsl
 
-class Expectation {
+public class Expectation {
     private val handlers = mutableMapOf<String, DeviceExpectation>()
     private var otherHandlers = mutableMapOf<String, suspend Session.() -> Unit>()
 
-    fun serial(serialNo: String, block: DeviceExpectation.() -> Unit) {
+    public fun serial(serialNo: String, block: DeviceExpectation.() -> Unit) {
         val deviceExpectation = handlers[serialNo] ?: DeviceExpectation(serialNo)
         handlers[serialNo] = deviceExpectation
         block(deviceExpectation)
     }
 
-    fun other(transportString: String, block: suspend Session.() -> Unit) {
+    public fun other(transportString: String, block: suspend Session.() -> Unit) {
         assert(!otherHandlers.contains(transportString)) { "Handler for $transportString already exists" }
         otherHandlers[transportString] = block
     }
 
-    suspend fun select(session: Session): Boolean {
+    public suspend fun select(session: Session): Boolean {
         val transportCmd = session.input.receiveCommand()
         return if (transportCmd.startsWith("host:transport:")) {
             val serial = transportCmd.substringAfter("host:transport:")
-            handlers[serial]?.let { it.handle(session); true } ?: false
+            handlers[serial]?.let {
+                it.handle(session)
+                true
+            } ?: false
         } else {
             otherHandlers[transportCmd]?.invoke(session) ?: return false
             return true
         }
     }
 }
-
