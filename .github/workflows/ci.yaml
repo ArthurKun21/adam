@@ -55,7 +55,7 @@ jobs:
           zip -r -X ../../../../../test-result.zip .
 
       - name: Save test output
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: test-result
@@ -67,7 +67,7 @@ jobs:
           zip -r -X ../../../../../../test-coverage.zip .
 
       - name: Save coverage output
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: test-coverage
           path: test-coverage.zip
@@ -150,7 +150,7 @@ jobs:
           zip -r -X ../../../../../integration-test-${{ matrix.api }}-result.zip .
 
       - name: Save integration test output
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: integration-test-${{ matrix.api }}-result
@@ -163,14 +163,14 @@ jobs:
           zip -r -X ../../../../../../integration-test-${{ matrix.api }}-coverage.zip .
 
       - name: Save coverage output
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: integration-test-${{ matrix.api }}-coverage
           path: integration-test-${{ matrix.api }}-coverage.zip
 
       - name: Save logcat output
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: logcat-${{ matrix.api }}
