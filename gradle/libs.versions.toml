@@ -2,7 +2,7 @@
 kotlin = "2.3.20"
 coroutines = "1.10.2"
 annotations = "26.1.0"
-ktor = "3.4.1"
+ktor = "3.4.2"
 logcat = "0.4"
 vertx = "5.0.10"
 apacheCommonsPool2 = "2.13.1"
