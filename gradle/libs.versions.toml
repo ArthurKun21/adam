@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 coroutines = "1.10.2"
 annotations = "26.1.0"
 ktor = "3.5.0"
