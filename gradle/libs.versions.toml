@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.4.0"
-coroutines = "1.10.2"
+coroutines = "1.11.0"
 annotations = "26.1.0"
 ktor = "3.5.0"
 logcat = "0.4"
