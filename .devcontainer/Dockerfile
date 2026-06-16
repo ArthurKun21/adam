@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/java:17-bookworm
+FROM mcr.microsoft.com/devcontainers/java:25-bookworm
 
 # Always start as root for provisioning
 USER root
