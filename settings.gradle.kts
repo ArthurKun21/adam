@@ -15,6 +15,8 @@
  */
 
 pluginManagement {
+    includeBuild("build-logic")
+
     repositories {
         google {
             content {
@@ -46,7 +48,7 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-rootProject.name = "adm"
+rootProject.name = "adam"
 include(":adam")
 include(":transport-ktor")
 include(":android-junit4")

@@ -28,7 +28,7 @@ Kotlin coroutine-based ADB (Android Debug Bridge) client library.
 - **android-testrunner-contract** — Android test runner contract interfaces
 - **androidx-screencapture** — AndroidX screen capture helpers
 - **server/** — Server stubs for testing (`server-stub`, `server-stub-junit4`, `server-stub-junit5`)
-- **buildSrc** — Convention plugins and build logic
+- **build-logic** — Convention plugins and build logic
 
 ### Key Types
 
@@ -36,15 +36,6 @@ Kotlin coroutine-based ADB (Android Debug Bridge) client library.
 - `Request` — Base class for all ADB requests; subclasses: `ComplexRequest<T>`, `AsyncChannelRequest<T, I>`, `MultiRequest<T>`
 - `Socket` — Interface for transport layer (implemented by `KtorSocket`)
 - `Target` — Request targeting (HostTarget, DeviceTarget, etc.)
-
-## Key Dependencies
-
-- Kotlin 2.3.10, Coroutines 1.10.2
-- Ktor 3.4.0 (network/transport)
-- Vert.x 5.0.7 (core, kotlin, coroutines)
-- Protobuf 4.33.5 (javalite) + gRPC 1.79.0
-- Android Gradle Plugin 9.0.0 (compileSdk 36, minSdk 24, targetSdk 36)
-- JVM target: 17
 
 ## Code Style
 
