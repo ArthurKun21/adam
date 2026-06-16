@@ -59,10 +59,12 @@ kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.
 androidx-gradle = { module = "com.android.tools.build:gradle", version.ref = "androidGradle" }
 
 spotless-gradle = { group = "com.diffplug.spotless", name = "spotless-plugin-gradle", version.ref = "spotless" }
+ktlint-core = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint-core" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufGradle" }
 android-library = { id = "com.android.library", version.ref = "androidGradle" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktechMavenPublish" }
