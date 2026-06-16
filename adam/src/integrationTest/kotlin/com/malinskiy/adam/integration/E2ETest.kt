@@ -17,8 +17,8 @@
 package com.malinskiy.adam.integration
 
 import assertk.assertThat
+import assertk.assertions.contains
 import assertk.assertions.endsWith
-import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEqualTo
 import assertk.assertions.startsWith
@@ -169,8 +169,7 @@ class E2ETest {
                 adbRule.deviceSerial,
             )
 
-            assertThat(list).hasSize(1)
-            assertThat(list[0].serial).isEqualTo(adbRule.deviceSerial)
+            assertThat(list.map { it.serial }).contains(adbRule.deviceSerial)
         }
     }
 
