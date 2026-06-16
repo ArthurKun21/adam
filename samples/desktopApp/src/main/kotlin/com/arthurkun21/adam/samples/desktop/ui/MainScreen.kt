@@ -101,6 +101,7 @@ internal fun MainScreen(
                 DeviceActionsCard(
                     state = state,
                     onTakeScreenshot = actualViewModel::takeScreenshot,
+                    onFetchLogcat = actualViewModel::fetchLogcat,
                     onCommandChanged = actualViewModel::onCommandChanged,
                     onExecuteCommand = actualViewModel::executeCommand,
                 )
@@ -181,7 +182,7 @@ private fun ConnectionCard(
                     onValueChange = onPortChanged,
                     label = { Text("Port") },
                     isError = state.portNumber == null,
-                    supportingText = { Text("ADB server port") },
+                    supportingText = { Text("ADB server port; $DEFAULT_ADB_PORT is the usual local default") },
                     enabled = !state.inProgress,
                     singleLine = true,
                     modifier = Modifier.width(160.dp),
@@ -205,6 +206,7 @@ private fun ConnectionCard(
 private fun DeviceActionsCard(
     state: MainScreenState,
     onTakeScreenshot: () -> Unit,
+    onFetchLogcat: () -> Unit,
     onCommandChanged: (String) -> Unit,
     onExecuteCommand: () -> Unit,
 ) {
@@ -230,11 +232,22 @@ private fun DeviceActionsCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                OutlinedButton(
-                    enabled = state.deviceSerial != null && !state.inProgress,
-                    onClick = onTakeScreenshot,
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Take screenshot")
+                    OutlinedButton(
+                        enabled = state.deviceSerial != null && !state.inProgress,
+                        onClick = onTakeScreenshot,
+                    ) {
+                        Text("Take screenshot")
+                    }
+                    OutlinedButton(
+                        enabled = state.deviceSerial != null && !state.inProgress,
+                        onClick = onFetchLogcat,
+                    ) {
+                        Text("Fetch logcat")
+                    }
                 }
             }
 
@@ -259,6 +272,19 @@ private fun DeviceActionsCard(
             }
 
             TerminalOutput(state.commandOutput)
+
+            HorizontalDivider()
+
+            Text(
+                text = "Recent device logcat",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+            )
+
+            TerminalOutput(
+                output = state.logcatOutput,
+                placeholder = "Recent logcat output will appear here.",
+            )
         }
     }
 }
@@ -289,14 +315,17 @@ private fun ScreenshotPreview(screenshot: ByteArray?) {
 }
 
 @Composable
-private fun TerminalOutput(output: String) {
+private fun TerminalOutput(
+    output: String,
+    placeholder: String = "Command output will appear here.",
+) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
-            text = output.ifBlank { "Command output will appear here." },
+            text = output.ifBlank { placeholder },
             style = MaterialTheme.typography.bodyMedium,
             fontFamily = FontFamily.Monospace,
             modifier = Modifier.padding(12.dp),

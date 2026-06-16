@@ -8,6 +8,7 @@ internal data class MainScreenState(
     val port: String = DEFAULT_ADB_PORT.toString(),
     val command: String = "getprop ro.product.model",
     val commandOutput: String = "",
+    val logcatOutput: String = "",
     val screenshot: ByteArray? = null,
     val connectionStatus: String = "Not connected",
     val isConnected: Boolean = false,
@@ -26,6 +27,7 @@ internal data class MainScreenState(
             port == other.port &&
             command == other.command &&
             commandOutput == other.commandOutput &&
+            logcatOutput == other.logcatOutput &&
             screenshot.contentEquals(other.screenshot) &&
             connectionStatus == other.connectionStatus &&
             isConnected == other.isConnected &&
@@ -39,6 +41,7 @@ internal data class MainScreenState(
         result = 31 * result + port.hashCode()
         result = 31 * result + command.hashCode()
         result = 31 * result + commandOutput.hashCode()
+        result = 31 * result + logcatOutput.hashCode()
         result = 31 * result + (screenshot?.contentHashCode() ?: 0)
         result = 31 * result + connectionStatus.hashCode()
         result = 31 * result + isConnected.hashCode()
