@@ -1,6 +1,7 @@
 import adam.buildlogic.ProjectConfig
 import adam.buildlogic.configureAndroid
-import org.gradle.accessors.dm.LibrariesForLibs
+import adam.buildlogic.library
+import adam.buildlogic.libs
 
 plugins {
     id("com.android.library")
@@ -23,17 +24,15 @@ java {
     targetCompatibility = ProjectConfig.JavaVersion
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
         jvmTarget.set(ProjectConfig.JvmTarget)
     }
 }
 
-val libs = the<LibrariesForLibs>()
-
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    api(libs.androidx.test.runner)
-    api(libs.androidx.test.monitor)
-    api(libs.junit4)
+    api(libs.library("androidx-test-runner"))
+    api(libs.library("androidx-test-monitor"))
+    api(libs.library("junit4"))
 }

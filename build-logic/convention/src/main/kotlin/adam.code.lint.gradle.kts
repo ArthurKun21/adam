@@ -1,18 +1,16 @@
-import org.gradle.accessors.dm.LibrariesForLibs
+import adam.buildlogic.libs
+import adam.buildlogic.version
 
 plugins {
     id("com.diffplug.spotless")
 }
 
-val libs = the<LibrariesForLibs>()
-
-
 spotless {
     kotlin {
         target("**/*.kt", "**/*.kts")
         targetExclude("**/build/**/*.kt")
-        ktlint(libs.ktlint.core.get().version).editorConfigOverride(
-            mapOf("ktlint_standard_annotation" to "disabled")
+        ktlint(libs.version("ktlint-core")).editorConfigOverride(
+            mapOf("ktlint_standard_annotation" to "disabled"),
         )
         trimTrailingWhitespace()
         endWithNewline()

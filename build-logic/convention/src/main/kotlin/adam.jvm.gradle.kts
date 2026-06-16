@@ -15,7 +15,7 @@ java {
     targetCompatibility = ProjectConfig.JavaVersion
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
         jvmTarget.set(ProjectConfig.JvmTarget)
         freeCompilerArgs.addAll(
