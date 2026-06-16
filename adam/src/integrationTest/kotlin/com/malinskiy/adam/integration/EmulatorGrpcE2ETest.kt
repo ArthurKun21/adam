@@ -24,8 +24,12 @@ import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
+import org.junit.Assume
 import org.junit.Rule
 import org.junit.Test
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.Socket
 
 class EmulatorGrpcE2ETest {
     @Rule
@@ -35,8 +39,10 @@ class EmulatorGrpcE2ETest {
     @Test
     fun testProto() {
         runBlocking {
-            val adbPort = emulator.deviceSerial.substringAfter('-').toInt()
-            val channel = ManagedChannelBuilder.forAddress("localhost", adbPort + 3000).apply {
+            val grpcAddress = emulator.emulatorGrpcAddress()
+            Assume.assumeTrue("Emulator gRPC is not available at $grpcAddress", grpcAddress.canConnect())
+
+            val channel = ManagedChannelBuilder.forAddress(grpcAddress.hostString, grpcAddress.port).apply {
                 usePlaintext()
                 executor(Dispatchers.IO.asExecutor())
             }.build()
@@ -45,5 +51,27 @@ class EmulatorGrpcE2ETest {
             val status = emulator.getStatus(Empty.getDefaultInstance())
             println(status)
         }
+    }
+
+    private fun AdbDeviceRule.emulatorGrpcAddress(): InetSocketAddress {
+        val consoleAddress = if (deviceSerial.startsWith("emulator-")) {
+            InetSocketAddress("localhost", deviceSerial.substringAfter('-').toInt())
+        } else {
+            InetSocketAddress(deviceSerial.substringBeforeLast(':'), deviceSerial.substringAfterLast(':').toInt() - 1)
+        }
+        return InetSocketAddress(consoleAddress.hostString, consoleAddress.port + 3000)
+    }
+
+    private fun InetSocketAddress.canConnect(): Boolean {
+        return try {
+            Socket().use { socket -> socket.connect(this, CONNECT_TIMEOUT_MS) }
+            true
+        } catch (e: IOException) {
+            false
+        }
+    }
+
+    private companion object {
+        const val CONNECT_TIMEOUT_MS = 1000
     }
 }

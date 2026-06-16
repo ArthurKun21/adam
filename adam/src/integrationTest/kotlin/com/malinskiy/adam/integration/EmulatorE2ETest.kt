@@ -22,9 +22,12 @@ import com.malinskiy.adam.request.emu.EmulatorCommandRequest
 import com.malinskiy.adam.rule.AdbDeviceRule
 import com.malinskiy.adam.rule.DeviceType
 import kotlinx.coroutines.runBlocking
+import org.junit.Assume
 import org.junit.Rule
 import org.junit.Test
+import java.io.IOException
 import java.net.InetSocketAddress
+import java.net.Socket
 
 class EmulatorE2ETest {
     @Rule
@@ -34,15 +37,37 @@ class EmulatorE2ETest {
     @Test
     fun testHelpCommand() {
         runBlocking {
-            val port = adbRule.deviceSerial.substringAfter('-').toInt()
+            val address = adbRule.emulatorConsoleAddress()
+            Assume.assumeTrue("Emulator console is not available at $address", address.canConnect())
 
             val output = adbRule.adb.execute(
                 EmulatorCommandRequest(
                     "help",
-                    InetSocketAddress("localhost", port),
+                    address,
                 ),
             )
             assertThat(output).startsWith("Android console commands")
         }
+    }
+
+    private fun AdbDeviceRule.emulatorConsoleAddress(): InetSocketAddress {
+        return if (deviceSerial.startsWith("emulator-")) {
+            InetSocketAddress("localhost", deviceSerial.substringAfter('-').toInt())
+        } else {
+            InetSocketAddress(deviceSerial.substringBeforeLast(':'), deviceSerial.substringAfterLast(':').toInt() - 1)
+        }
+    }
+
+    private fun InetSocketAddress.canConnect(): Boolean {
+        return try {
+            Socket().use { socket -> socket.connect(this, CONNECT_TIMEOUT_MS) }
+            true
+        } catch (e: IOException) {
+            false
+        }
+    }
+
+    private companion object {
+        const val CONNECT_TIMEOUT_MS = 1000
     }
 }

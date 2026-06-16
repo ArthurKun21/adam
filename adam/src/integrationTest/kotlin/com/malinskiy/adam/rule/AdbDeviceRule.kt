@@ -72,16 +72,22 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
     private suspend fun CoroutineScope.waitForDevice(): Device {
         while (isActive) {
             try {
-                loop@ for (device in adb.execute(ListDevicesRequest())) {
+                val preferredSerial = System.getenv("ANDROID_SERIAL")
+                val devices = adb.execute(ListDevicesRequest()).let { devices ->
+                    if (preferredSerial == null) {
+                        devices
+                    } else {
+                        devices.sortedBy { device -> device.serial != preferredSerial }
+                    }
+                }
+
+                loop@ for (device in devices) {
                     val booted = adb.execute(GetSinglePropRequest("sys.boot_completed"), device.serial).isNotBlank()
                     if (!booted) continue
 
                     when (deviceType) {
                         DeviceType.EMULATOR -> {
-                            Assume.assumeTrue(
-                                "No device of type $deviceType found",
-                                device.serial.startsWith("emulator-"),
-                            )
+                            if (!isEmulator(device)) continue@loop
                         }
 
                         DeviceType.ANY -> Unit
@@ -109,6 +115,11 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
         }
         Assume.assumeTrue("Timeout waiting for device", false)
         throw IllegalStateException("Unreachable")
+    }
+
+    private suspend fun isEmulator(device: Device): Boolean {
+        return device.serial.startsWith("emulator-") ||
+            adb.execute(GetSinglePropRequest("ro.kernel.qemu"), device.serial) == "1"
     }
 
     private suspend fun startAdb() {
