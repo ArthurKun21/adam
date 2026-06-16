@@ -23,4 +23,6 @@ internal data class AdbConnection(
     val host: String,
     val port: Int,
     val deviceSerial: String?,
-)
+) {
+    val deviceLabel: String = deviceSerial?.let { "device $it" } ?: "no connected device"
+}

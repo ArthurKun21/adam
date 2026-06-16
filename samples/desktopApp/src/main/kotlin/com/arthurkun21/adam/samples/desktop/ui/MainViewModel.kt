@@ -3,37 +3,46 @@ package com.arthurkun21.adam.samples.desktop.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.malinskiy.adam.AndroidDebugBridgeClientFactory
+import com.malinskiy.adam.interactor.StartAdbInteractor
 import com.malinskiy.adam.request.device.DeviceState
 import com.malinskiy.adam.request.device.ListDevicesRequest
 import com.malinskiy.adam.request.framebuffer.BufferedImageScreenCaptureAdapter
 import com.malinskiy.adam.request.framebuffer.ScreenCaptureRequest
 import com.malinskiy.adam.request.shell.v1.ShellCommandRequest
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import logcat.LogPriority
-import logcat.asLog
-import logcat.logcat
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.net.InetAddress
 import javax.imageio.ImageIO
 
 internal class MainViewModel : ViewModel() {
-    private val client = AndroidDebugBridgeClientFactory().build()
+    private var connection: AdbConnection? = null
+    private var devicePollingJob: Job? = null
 
     private val _uiState = MutableStateFlow(MainScreenState())
     val uiState: StateFlow<MainScreenState> = _uiState.asStateFlow()
+
+    init {
+        connect()
+    }
 
     fun onAdbHostChanged(value: String) {
         _uiState.update { it.copy(host = value) }
     }
 
     fun onAdbPortChanged(value: String) {
-        val newValue = value.toIntOrNull() ?: DEFAULT_ADB_PORT
-        _uiState.update { it.copy(port = newValue) }
+        if (value.all(Char::isDigit)) {
+            _uiState.update { it.copy(port = value) }
+        }
     }
 
     fun onCommandChanged(command: String) {
@@ -41,29 +50,35 @@ internal class MainViewModel : ViewModel() {
     }
 
     fun connect() {
+        val port = _uiState.value.portNumber
+        if (port == null) {
+            _uiState.update {
+                it.copy(
+                    connectionStatus = "ADB server port is required",
+                    snackbarMessage = "Enter a valid ADB server port",
+                )
+            }
+            return
+        }
+
         viewModelScope.launch {
             _uiState.update { it.copy(inProgress = true) }
 
             try {
-                client.close()
-            } catch (ex: Exception) {
-                logcat(LogPriority.ERROR, TAG) {
-                    "Failed to close the client: ${ex.asLog()}"
-                }
-            }
-
-            try {
+                startLocalAdbServerIfNeeded(_uiState.value.host, port)
                 val newConnection = createAdbConnection(
                     _uiState.value.host,
-                    _uiState.value.port,
+                    port,
                 )
                 connection?.client?.close()
                 connection = newConnection
+                startDevicePolling(newConnection)
                 _uiState.update {
                     it.copy(
-                        connectionStatus = "Connected device: ${newConnection.deviceLabel}",
+                        connectionStatus = "Connected to ADB server at ${newConnection.host}:${newConnection.port}",
                         isConnected = true,
                         inProgress = false,
+                        deviceSerial = newConnection.deviceSerial,
                         snackbarMessage = "Connected to ${newConnection.host}:${newConnection.port}; " +
                             newConnection.deviceLabel,
                     )
@@ -71,6 +86,8 @@ internal class MainViewModel : ViewModel() {
             } catch (failure: CancellationException) {
                 throw failure
             } catch (failure: Exception) {
+                devicePollingJob?.cancel()
+                devicePollingJob = null
                 connection?.client?.close()
                 connection = null
                 _uiState.update {
@@ -78,6 +95,7 @@ internal class MainViewModel : ViewModel() {
                         connectionStatus = "Not connected",
                         isConnected = false,
                         inProgress = false,
+                        deviceSerial = null,
                         snackbarMessage = "Connection failed: ${failure.message}",
                     )
                 }
@@ -91,7 +109,7 @@ internal class MainViewModel : ViewModel() {
             _uiState.update { it.copy(inProgress = true) }
 
             try {
-                val screenshot = takeScreenshotInClient()
+                val screenshot = takeScreenshotInClient(currentConnection)
                 _uiState.update {
                     it.copy(
                         screenshot = screenshot,
@@ -119,7 +137,7 @@ internal class MainViewModel : ViewModel() {
             _uiState.update { it.copy(inProgress = true) }
 
             try {
-                val output = executeCommandInClient()
+                val output = executeCommandInClient(currentConnection, command)
                 _uiState.update {
                     it.copy(
                         commandOutput = output,
@@ -146,8 +164,24 @@ internal class MainViewModel : ViewModel() {
     }
 
     fun close() {
+        devicePollingJob?.cancel()
+        devicePollingJob = null
         connection?.client?.close()
         connection = null
+    }
+
+    private suspend fun startLocalAdbServerIfNeeded(
+        host: String,
+        port: Int,
+    ) {
+        if (!host.isLocalAdbHost()) return
+
+        val started = withContext(Dispatchers.IO) {
+            StartAdbInteractor().execute(serverPort = port)
+        }
+        check(started) {
+            "ADB server is not running and adb could not be started. Check that adb is on PATH or ANDROID_HOME is set."
+        }
     }
 
     private suspend fun createAdbConnection(
@@ -162,9 +196,7 @@ internal class MainViewModel : ViewModel() {
             .build()
 
         return try {
-            val deviceSerial = client.execute(ListDevicesRequest())
-                .firstOrNull { it.state == DeviceState.DEVICE }
-                ?.serial
+            val deviceSerial = findConnectedDeviceSerial(client)
 
             AdbConnection(
                 client = client,
@@ -178,25 +210,72 @@ internal class MainViewModel : ViewModel() {
         }
     }
 
-    suspend fun takeScreenshotInClient(): ByteArray {
-        val serial = requireNotNull(_uiState.value.deviceSerial) {
+    private fun startDevicePolling(connection: AdbConnection) {
+        devicePollingJob?.cancel()
+        devicePollingJob = viewModelScope.launch {
+            while (isActive && this@MainViewModel.connection?.client === connection.client) {
+                try {
+                    val deviceSerial = findConnectedDeviceSerial(connection.client)
+                    this@MainViewModel.connection = connection.copy(deviceSerial = deviceSerial)
+                    _uiState.update {
+                        it.copy(
+                            deviceSerial = deviceSerial,
+                            connectionStatus = "Connected to ADB server at ${connection.host}:${connection.port}",
+                        )
+                    }
+                } catch (failure: CancellationException) {
+                    throw failure
+                } catch (failure: Exception) {
+                    this@MainViewModel.connection = null
+                    _uiState.update {
+                        it.copy(
+                            connectionStatus = "ADB server disconnected: ${failure.message}",
+                            isConnected = false,
+                            deviceSerial = null,
+                            snackbarMessage = "ADB connection lost: ${failure.message}",
+                        )
+                    }
+                    return@launch
+                }
+
+                delay(DEVICE_POLL_INTERVAL_MS)
+            }
+        }
+    }
+
+    private suspend fun findConnectedDeviceSerial(client: com.malinskiy.adam.AndroidDebugBridgeClient): String? =
+        withContext(Dispatchers.IO) {
+            client.execute(ListDevicesRequest())
+                .firstOrNull { it.state == DeviceState.DEVICE }
+                ?.serial
+        }
+
+    private suspend fun takeScreenshotInClient(connection: AdbConnection): ByteArray {
+        val serial = requireNotNull(connection.deviceSerial) {
             "No connected device was reported by the ADB server"
         }
-        val image = client.execute(
-            request = ScreenCaptureRequest(BufferedImageScreenCaptureAdapter()),
-            serial = serial,
-        )
+        val image = withContext(Dispatchers.IO) {
+            connection.client.execute(
+                request = ScreenCaptureRequest(BufferedImageScreenCaptureAdapter()),
+                serial = serial,
+            )
+        }
         return ByteArrayOutputStream().use { output ->
             ImageIO.write(image, "png", output)
             output.toByteArray()
         }
     }
 
-    suspend fun executeCommandInClient(command: String): String {
-        val serial = requireNotNull(_uiState.value.deviceSerial) {
+    private suspend fun executeCommandInClient(
+        connection: AdbConnection,
+        command: String,
+    ): String {
+        val serial = requireNotNull(connection.deviceSerial) {
             "No connected device was reported by the ADB server"
         }
-        val result = client.execute(ShellCommandRequest(command), serial = serial)
+        val result = withContext(Dispatchers.IO) {
+            connection.client.execute(ShellCommandRequest(command), serial = serial)
+        }
         return buildString {
             append(result.output)
             appendLine()
@@ -206,4 +285,6 @@ internal class MainViewModel : ViewModel() {
     }
 }
 
-private const val TAG = "Adb-ui"
+private fun String.isLocalAdbHost(): Boolean = this == DEFAULT_ADB_HOST || equals("localhost", ignoreCase = true)
+
+private const val DEVICE_POLL_INTERVAL_MS = 1_000L
