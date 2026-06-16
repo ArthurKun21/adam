@@ -1,0 +1,4 @@
+# Keep checked-out test fixtures byte-for-byte stable across platforms.
+adam/src/test/resources/** text eol=lf
+adam/src/test/resources/**/*.apk binary
+adam/src/test/resources/instrumentation/proto_1.input binary
