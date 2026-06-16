@@ -28,13 +28,25 @@ dokka = "2.2.0"
 spotless = "8.7.0"
 ktlint-core = "1.8.0"
 
+compose = "1.11.1"
+composeMaterial3 = "1.11.0-alpha07"
+coil = "3.5.0"
+lifecycle = "2.11.0-beta01"
+
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
+lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 apache-commons-pool2 = { module = "org.apache.commons:commons-pool2", version.ref = "apacheCommonsPool2" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-debug = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-debug", version.ref = "coroutines" }
+coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
+
+
 ktor-network = { module = "io.ktor:ktor-network-jvm", version.ref = "ktor" }
 logcat = { module = "com.squareup.logcat:logcat", version.ref = "logcat" }
 vertx-core = { module = "io.vertx:vertx-core", version.ref = "vertx" }
@@ -56,6 +68,8 @@ image-comparison = { module = "com.github.romankh3:image-comparison", version.re
 
 ## Gradle Plugins
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-compose-compiler-gradle = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+compose-gradle = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
 androidx-gradle = { module = "com.android.tools.build:gradle", version.ref = "androidGradle" }
 
 spotless-gradle = { group = "com.diffplug.spotless", name = "spotless-plugin-gradle", version.ref = "spotless" }
@@ -63,6 +77,8 @@ ktlint-core = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlin
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufGradle" }
 android-library = { id = "com.android.library", version.ref = "androidGradle" }
