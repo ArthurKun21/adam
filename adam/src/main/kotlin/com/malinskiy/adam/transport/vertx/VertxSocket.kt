@@ -28,8 +28,8 @@ import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.net.NetClient
 import io.vertx.core.net.NetClientOptions
+import io.vertx.core.net.NetSocket
 import io.vertx.core.net.SocketAddress
-import io.vertx.core.net.impl.NetSocketImpl
 import io.vertx.core.streams.ReadStream
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.coAwait
@@ -52,7 +52,7 @@ public class VertxSocket(
 
     public var id: String? = null
     public var netClient: NetClient? = null
-    private lateinit var socket: NetSocketImpl
+    private lateinit var socket: NetSocket
     private lateinit var recordParser: VariableSizeRecordParser
     private lateinit var readChannel: ReceiveChannel<Buffer>
     private val state = AtomicReference(State.CREATED)
@@ -64,7 +64,7 @@ public class VertxSocket(
         netClient = client
         val connect = client.connect(socketAddress)
         state.change(State.CREATED, State.SYN_SENT) { "Socket connection error" }
-        socket = connect.coAwait() as NetSocketImpl
+        socket = connect.coAwait()
 
         state.change(State.SYN_SENT, State.ESTABLISHED) { "Socket connection error" }
         canRead.flip(false) { "Socket connection error: canRead was true, expected false" }
@@ -77,7 +77,7 @@ public class VertxSocket(
                 state.change(State.ESTABLISHED, State.CLOSED) { "Socket close error" }
             }
 
-        recordParser = VariableSizeRecordParser(stream = socket as ReadStream<Buffer>)
+        recordParser = VariableSizeRecordParser(stream = socket)
         recordParser.pause()
         readChannel = (recordParser).toChannel(vertx)
     }
