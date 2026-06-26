@@ -231,10 +231,7 @@ internal class MainViewModel : ViewModel() {
         devicePollingJob = null
     }
 
-    private suspend fun startLocalAdbServerIfNeeded(
-        host: String,
-        port: Int,
-    ) {
+    private suspend fun startLocalAdbServerIfNeeded(host: String, port: Int) {
         if (!host.isLocalAdbHost()) {
             log.info { "Skipping local adb start for remote ADB server $host:$port" }
             return
@@ -242,7 +239,7 @@ internal class MainViewModel : ViewModel() {
 
         val started = withAdbTimeout("starting local ADB server on port $port") {
             withContext(Dispatchers.IO) {
-                StartAdbInteractor().execute(serverPort = port)
+                StartAdbInteractor().execute()
             }
         }
         check(started) {
