@@ -30,10 +30,13 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.io.ByteArrayOutputStream
 import java.net.InetAddress
-import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import javax.imageio.ImageIO
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
+import java.time.Duration as JavaDuration
 
 internal class MainViewModel : ViewModel() {
     private var connection: AdbConnection? = null
@@ -268,8 +271,8 @@ internal class MainViewModel : ViewModel() {
             .apply {
                 this.host = adbHost
                 this.port = port
-                connectTimeout = Duration.ofMillis(SOCKET_CONNECT_TIMEOUT_MS)
-                idleTimeout = Duration.ofMillis(SOCKET_IDLE_TIMEOUT_MS)
+                connectTimeout = JavaDuration.ofMillis(socketConnectTimeout.inWholeMilliseconds)
+                idleTimeout = JavaDuration.ofMillis(socketIdleTimeout.inWholeMilliseconds)
             }
             .build()
 
@@ -319,7 +322,7 @@ internal class MainViewModel : ViewModel() {
                     return@launch
                 }
 
-                delay(DEVICE_POLL_INTERVAL_MS)
+                delay(devicePollInterval)
             }
         }
     }
@@ -345,7 +348,7 @@ internal class MainViewModel : ViewModel() {
         val serial = requireNotNull(connection.deviceSerial) {
             "No connected device was reported by the ADB server"
         }
-        val image = withAdbTimeout("capturing screenshot", SCREENSHOT_TIMEOUT_MS) {
+        val image = withAdbTimeout("capturing screenshot", screenshotTimeout) {
             withContext(Dispatchers.IO) {
                 connection.client.execute(
                     request = ScreenCaptureRequest(BufferedImageScreenCaptureAdapter()),
@@ -407,7 +410,7 @@ internal class MainViewModel : ViewModel() {
 
     private suspend fun <T> withAdbTimeout(
         operation: String,
-        timeoutMillis: Long = ADB_OPERATION_TIMEOUT_MS,
+        timeoutMillis: Duration = adbOperationTimeout,
         block: suspend () -> T,
     ): T = try {
         withTimeout(timeoutMillis) {
@@ -415,7 +418,7 @@ internal class MainViewModel : ViewModel() {
         }
     } catch (failure: TimeoutCancellationException) {
         throw IllegalStateException(
-            "Timed out while $operation after ${timeoutMillis / 1_000}s",
+            "Timed out while $operation after ${timeoutMillis.inWholeSeconds}s",
             failure,
         )
     }
@@ -444,10 +447,10 @@ internal class MainViewModel : ViewModel() {
 
 private fun String.isLocalAdbHost(): Boolean = this == DEFAULT_ADB_HOST || equals("localhost", ignoreCase = true)
 
-private const val DEVICE_POLL_INTERVAL_MS = 1_000L
-private const val ADB_OPERATION_TIMEOUT_MS = 15_000L
-private const val SCREENSHOT_TIMEOUT_MS = 30_000L
-private const val SOCKET_CONNECT_TIMEOUT_MS = 5_000L
-private const val SOCKET_IDLE_TIMEOUT_MS = 15_000L
+private val devicePollInterval = 1_000.milliseconds
+private val adbOperationTimeout = 15.seconds
+private val screenshotTimeout = 30.seconds
+private val socketConnectTimeout = 5.seconds
+private val socketIdleTimeout = 15.seconds
 private const val LOGCAT_LOOKBACK_SECONDS = 120L
 private const val MAX_LOGCAT_OUTPUT_LENGTH = 20_000
