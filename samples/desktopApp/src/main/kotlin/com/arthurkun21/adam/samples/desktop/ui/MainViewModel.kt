@@ -2,7 +2,6 @@ package com.arthurkun21.adam.samples.desktop.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.AndroidDebugBridgeClientFactory
 import com.malinskiy.adam.interactor.StartAdbInteractor
 import com.malinskiy.adam.log.AdamLogging
@@ -14,6 +13,7 @@ import com.malinskiy.adam.request.logcat.LogcatBuffer
 import com.malinskiy.adam.request.logcat.LogcatReadMode
 import com.malinskiy.adam.request.logcat.LogcatSinceFormat
 import com.malinskiy.adam.request.logcat.SyncLogcatRequest
+import com.malinskiy.adam.request.misc.ConnectDeviceRequest
 import com.malinskiy.adam.request.shell.v1.ShellCommandRequest
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -29,17 +29,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.io.ByteArrayOutputStream
-import java.net.InetAddress
 import java.time.Instant
 import java.time.ZoneId
 import javax.imageio.ImageIO
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import java.time.Duration as JavaDuration
 
 internal class MainViewModel : ViewModel() {
-    private var connection: AdbConnection? = null
+    private val adbClient = AndroidDebugBridgeClientFactory()
+        .apply {
+            connectTimeout = JavaDuration.ofMillis(socketConnectTimeout.inWholeMilliseconds)
+            idleTimeout = JavaDuration.ofMillis(socketIdleTimeout.inWholeMilliseconds)
+        }
+        .build()
+
     private var devicePollingJob: Job? = null
     private val log = AdamLogging.logger {}
 
@@ -98,22 +102,17 @@ internal class MainViewModel : ViewModel() {
 
             try {
                 startLocalAdbServerIfNeeded(host, port)
-                val newConnection = createAdbConnection(
-                    host,
-                    port,
-                )
-                connection?.client?.close()
-                connection = newConnection
-                startDevicePolling(newConnection)
-                log.info { "Connected to ADB server at ${newConnection.host}:${newConnection.port}" }
+                val newConnection = createAdbConnection(host, port)
+                startDevicePolling()
+                log.info { "Connected to ADB server at ${host}:${port}" }
                 _uiState.update {
                     it.copy(
                         connectionStatus = connectionStatusFor(newConnection),
                         isConnected = true,
                         inProgress = false,
-                        deviceSerial = newConnection.deviceSerial,
-                        snackbarMessage = "Connected to ${newConnection.host}:${newConnection.port}; " +
-                            newConnection.deviceLabel,
+                        deviceSerial = newConnection ?: "No connected device",
+                        snackbarMessage = "Connected to ${host}:${port}; " +
+                            "device ${newConnection ?: "not found"}",
                     )
                 }
             } catch (failure: CancellationException) {
@@ -121,8 +120,6 @@ internal class MainViewModel : ViewModel() {
             } catch (failure: Exception) {
                 devicePollingJob?.cancel()
                 devicePollingJob = null
-                connection?.client?.close()
-                connection = null
                 log.error(failure) { "Failed to connect to ADB server at $host:$port" }
                 _uiState.update {
                     it.copy(
@@ -138,13 +135,12 @@ internal class MainViewModel : ViewModel() {
     }
 
     fun takeScreenshot() {
-        val currentConnection = connection ?: return
         viewModelScope.launch {
             _uiState.update { it.copy(inProgress = true) }
 
             try {
-                log.info { "Capturing screenshot from ${currentConnection.deviceLabel}" }
-                val screenshot = takeScreenshotInClient(currentConnection)
+                log.info { "Capturing screenshot from ${_uiState.value.deviceLabel}" }
+                val screenshot = takeScreenshotInClient()
                 _uiState.update {
                     it.copy(
                         screenshot = screenshot,
@@ -167,14 +163,13 @@ internal class MainViewModel : ViewModel() {
     }
 
     fun executeCommand() {
-        val currentConnection = connection ?: return
         val command = _uiState.value.command
         viewModelScope.launch {
             _uiState.update { it.copy(inProgress = true) }
 
             try {
-                log.info { "Executing shell command on ${currentConnection.deviceLabel}: $command" }
-                val output = executeCommandInClient(currentConnection, command)
+                log.info { "Executing shell command on ${_uiState.value.deviceLabel}: $command" }
+                val output = executeCommandInClient(command)
                 _uiState.update {
                     it.copy(
                         commandOutput = output,
@@ -198,13 +193,12 @@ internal class MainViewModel : ViewModel() {
     }
 
     fun fetchLogcat() {
-        val currentConnection = connection ?: return
         viewModelScope.launch {
             _uiState.update { it.copy(inProgress = true) }
 
             try {
-                log.info { "Fetching recent logcat from ${currentConnection.deviceLabel}" }
-                val output = fetchLogcatInClient(currentConnection)
+                log.info { "Fetching recent logcat from ${_uiState.value.deviceLabel}" }
+                val output = fetchLogcatInClient()
                 _uiState.update {
                     it.copy(
                         logcatOutput = output,
@@ -235,8 +229,6 @@ internal class MainViewModel : ViewModel() {
         log.info { "Closing Adam desktop sample ADB connection" }
         devicePollingJob?.cancel()
         devicePollingJob = null
-        connection?.client?.close()
-        connection = null
     }
 
     private suspend fun startLocalAdbServerIfNeeded(
@@ -258,59 +250,40 @@ internal class MainViewModel : ViewModel() {
         }
     }
 
-    private suspend fun createAdbConnection(
-        host: String,
-        port: Int,
-    ): AdbConnection {
-        val adbHost = withAdbTimeout("resolving ADB host $host") {
-            withContext(Dispatchers.IO) {
-                InetAddress.getByName(host)
-            }
-        }
-        val client = AndroidDebugBridgeClientFactory()
-            .apply {
-                this.host = adbHost
-                this.port = port
-                connectTimeout = JavaDuration.ofMillis(socketConnectTimeout.inWholeMilliseconds)
-                idleTimeout = JavaDuration.ofMillis(socketIdleTimeout.inWholeMilliseconds)
-            }
-            .build()
+    private suspend fun createAdbConnection(host: String, port: Int): String? {
 
         return try {
-            val deviceSerial = findConnectedDeviceSerial(client)
-
-            AdbConnection(
-                client = client,
-                host = host,
-                port = port,
-                deviceSerial = deviceSerial,
+            val output = adbClient.execute(
+                ConnectDeviceRequest(host, port),
             )
+            log.info { "ADB connect output: $output" }
+
+            findConnectedDeviceSerial()
         } catch (failure: Exception) {
-            client.close()
-            throw failure
+            log.error {
+                "ADB connect failed: ${failure.message}"
+            }
+            null
         }
     }
 
-    private fun startDevicePolling(connection: AdbConnection) {
+    private fun startDevicePolling() {
         devicePollingJob?.cancel()
         devicePollingJob = viewModelScope.launch {
-            while (isActive && this@MainViewModel.connection?.client === connection.client) {
+            while (isActive) {
                 try {
-                    val deviceSerial = findConnectedDeviceSerial(connection.client, logDevices = false)
-                    val updatedConnection = connection.copy(deviceSerial = deviceSerial)
-                    this@MainViewModel.connection = updatedConnection
+                    val deviceSerial = findConnectedDeviceSerial(logDevices = false)
                     _uiState.update {
                         it.copy(
                             deviceSerial = deviceSerial,
                             isConnected = true,
-                            connectionStatus = connectionStatusFor(updatedConnection),
+                            connectionStatus = connectionStatusFor(deviceSerial),
                         )
                     }
                 } catch (failure: CancellationException) {
                     throw failure
                 } catch (failure: Exception) {
                     log.error(failure) { "ADB device polling failed" }
-                    this@MainViewModel.connection = null
                     _uiState.update {
                         it.copy(
                             connectionStatus = "ADB server disconnected: ${failure.message}",
@@ -327,13 +300,10 @@ internal class MainViewModel : ViewModel() {
         }
     }
 
-    private suspend fun findConnectedDeviceSerial(
-        client: AndroidDebugBridgeClient,
-        logDevices: Boolean = true,
-    ): String? {
+    private suspend fun findConnectedDeviceSerial(logDevices: Boolean = true): String? {
         val devices = withAdbTimeout("listing connected ADB devices") {
             withContext(Dispatchers.IO) {
-                client.execute(ListDevicesRequest())
+                adbClient.execute(ListDevicesRequest())
             }
         }
         if (logDevices) {
@@ -344,13 +314,12 @@ internal class MainViewModel : ViewModel() {
         return devices.firstOrNull { it.state == DeviceState.DEVICE }?.serial
     }
 
-    private suspend fun takeScreenshotInClient(connection: AdbConnection): ByteArray {
-        val serial = requireNotNull(connection.deviceSerial) {
-            "No connected device was reported by the ADB server"
-        }
+    private suspend fun takeScreenshotInClient(): ByteArray {
+        val serial = _uiState.value.deviceSerial ?: return byteArrayOf()
+
         val image = withAdbTimeout("capturing screenshot", screenshotTimeout) {
             withContext(Dispatchers.IO) {
-                connection.client.execute(
+                adbClient.execute(
                     request = ScreenCaptureRequest(BufferedImageScreenCaptureAdapter()),
                     serial = serial,
                 )
@@ -362,16 +331,14 @@ internal class MainViewModel : ViewModel() {
         }
     }
 
-    private suspend fun executeCommandInClient(
-        connection: AdbConnection,
-        command: String,
-    ): String {
-        val serial = requireNotNull(connection.deviceSerial) {
-            "No connected device was reported by the ADB server"
-        }
+    private suspend fun executeCommandInClient(command: String): String {
+        val serial = _uiState.value.deviceSerial ?: return ""
+
         val result = withAdbTimeout("executing shell command") {
             withContext(Dispatchers.IO) {
-                connection.client.execute(ShellCommandRequest(command), serial = serial)
+                adbClient.execute(
+                    ShellCommandRequest(command), serial = serial,
+                )
             }
         }
         if (result.exitCode != 0) {
@@ -385,17 +352,16 @@ internal class MainViewModel : ViewModel() {
         }
     }
 
-    private suspend fun fetchLogcatInClient(connection: AdbConnection): String {
-        val serial = requireNotNull(connection.deviceSerial) {
-            "No connected device was reported by the ADB server"
-        }
+    private suspend fun fetchLogcatInClient(): String {
+        val serial = _uiState.value.deviceSerial ?: return ""
+
         val since = LogcatSinceFormat.DateStringYear(
             Instant.now().minusSeconds(LOGCAT_LOOKBACK_SECONDS),
             ZoneId.systemDefault().id,
         )
         val output = withAdbTimeout("fetching recent logcat") {
             withContext(Dispatchers.IO) {
-                connection.client.execute(
+                adbClient.execute(
                     request = SyncLogcatRequest(
                         since = since,
                         modes = listOf(LogcatReadMode.time),
@@ -423,9 +389,9 @@ internal class MainViewModel : ViewModel() {
         )
     }
 
-    private fun connectionStatusFor(connection: AdbConnection): String = buildString {
-        append("Connected to ADB server at ${connection.host}:${connection.port}")
-        if (connection.deviceSerial == null) {
+    private fun connectionStatusFor(deviceSerial: String?): String = buildString {
+        append("Connected to ADB server")
+        if (deviceSerial == null) {
             append("; waiting for a device")
         }
     }
@@ -447,7 +413,7 @@ internal class MainViewModel : ViewModel() {
 
 private fun String.isLocalAdbHost(): Boolean = this == DEFAULT_ADB_HOST || equals("localhost", ignoreCase = true)
 
-private val devicePollInterval = 1_000.milliseconds
+private val devicePollInterval = 5.seconds
 private val adbOperationTimeout = 15.seconds
 private val screenshotTimeout = 30.seconds
 private val socketConnectTimeout = 5.seconds

@@ -37,8 +37,8 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -59,9 +59,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 
 @Composable
-internal fun MainScreen(
-    viewModel: MainViewModel? = null,
-) {
+internal fun MainScreen(viewModel: MainViewModel? = null) {
     val actualViewModel = viewModel ?: remember { MainViewModel() }
     val snackbarHostState = remember { SnackbarHostState() }
     val state by actualViewModel.uiState.collectAsState()
