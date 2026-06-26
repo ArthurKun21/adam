@@ -311,13 +311,20 @@ internal class MainViewModel : ViewModel() {
         return devices.firstOrNull { it.state == DeviceState.DEVICE }?.serial
     }
 
-    private suspend fun takeScreenshotInClient(): ByteArray {
-        val serial = _uiState.value.deviceSerial ?: return byteArrayOf()
+    private suspend fun takeScreenshotInClient(): ByteArray? {
+        val serial = _uiState.value.deviceSerial ?: run {
+            log.error {
+                "Screenshot capture failed: no connected device"
+            }
+            return null
+        }
+
+        val adapter = BufferedImageScreenCaptureAdapter()
 
         val image = withAdbTimeout("capturing screenshot", screenshotTimeout) {
             withContext(Dispatchers.IO) {
                 adbClient.execute(
-                    request = ScreenCaptureRequest(BufferedImageScreenCaptureAdapter()),
+                    request = ScreenCaptureRequest(adapter),
                     serial = serial,
                 )
             }
