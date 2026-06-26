@@ -59,8 +59,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 
 @Composable
-internal fun MainScreen(viewModel: MainViewModel? = null) {
-    val actualViewModel = viewModel ?: remember { MainViewModel() }
+internal fun MainScreen() {
+    val actualViewModel = remember { MainViewModel() }
     val snackbarHostState = remember { SnackbarHostState() }
     val state by actualViewModel.uiState.collectAsState()
 
