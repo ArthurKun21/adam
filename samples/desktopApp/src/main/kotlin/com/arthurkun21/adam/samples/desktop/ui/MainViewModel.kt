@@ -162,6 +162,10 @@ internal class MainViewModel : ViewModel() {
         }
     }
 
+    fun updateSerial(serial: String) {
+        _uiState.update { it.copy(deviceSerial = serial) }
+    }
+
     fun executeCommand() {
         val command = _uiState.value.command
         viewModelScope.launch {
@@ -303,12 +307,21 @@ internal class MainViewModel : ViewModel() {
                 adbClient.execute(ListDevicesRequest())
             }
         }
+        val sortedDevices = devices
+            .sortedBy { it.serial.contains("emulator", ignoreCase = true) }
+
+        _uiState.update { current ->
+            current.copy(deviceSerialList = devices.map { it.serial })
+        }
+
         if (logDevices) {
-            val deviceSummary = devices.joinToString { "${it.serial}:${it.state.name.lowercase()}" }
+            val deviceSummary = sortedDevices.joinToString { "${it.serial}:${it.state.name.lowercase()}" }
                 .ifBlank { "none" }
             log.info { "ADB devices: $deviceSummary" }
         }
-        return devices.firstOrNull { it.state == DeviceState.DEVICE }?.serial
+
+
+        return sortedDevices.firstOrNull { it.state == DeviceState.DEVICE }?.serial
     }
 
     private suspend fun takeScreenshotInClient(): ByteArray? {

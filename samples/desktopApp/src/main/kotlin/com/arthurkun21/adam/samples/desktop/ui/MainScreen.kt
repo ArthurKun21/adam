@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -98,6 +99,7 @@ internal fun MainScreen() {
                 )
                 DeviceActionsCard(
                     state = state,
+                    onDeviceSelect = actualViewModel::updateSerial,
                     onTakeScreenshot = actualViewModel::takeScreenshot,
                     onFetchLogcat = actualViewModel::fetchLogcat,
                     onCommandChanged = actualViewModel::onCommandChanged,
@@ -154,7 +156,10 @@ private fun ConnectionCard(
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(
+                12.dp,
+                Alignment.CenterVertically,
+            ),
         ) {
             Text(
                 text = "ADB server",
@@ -203,6 +208,7 @@ private fun ConnectionCard(
 @Composable
 private fun DeviceActionsCard(
     state: MainScreenState,
+    onDeviceSelect: (String) -> Unit,
     onTakeScreenshot: () -> Unit,
     onFetchLogcat: () -> Unit,
     onCommandChanged: (String) -> Unit,
@@ -234,6 +240,7 @@ private fun DeviceActionsCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+
                     OutlinedButton(
                         enabled = state.deviceSerial != null && !state.inProgress,
                         onClick = onTakeScreenshot,
@@ -248,6 +255,10 @@ private fun DeviceActionsCard(
                     }
                 }
             }
+            DeviceList(
+                devices = state.deviceSerialList,
+                onDeviceSelect = onDeviceSelect,
+            )
 
             ScreenshotPreview(state.screenshot)
 
@@ -283,6 +294,26 @@ private fun DeviceActionsCard(
                 output = state.logcatOutput,
                 placeholder = "Recent logcat output will appear here.",
             )
+        }
+    }
+}
+
+@Composable
+private fun DeviceList(
+    devices: List<String>,
+    onDeviceSelect: (String) -> Unit,
+) {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        devices.forEach { device ->
+            OutlinedButton(
+                onClick = { onDeviceSelect(device) },
+            ) {
+                Text(device)
+            }
         }
     }
 }

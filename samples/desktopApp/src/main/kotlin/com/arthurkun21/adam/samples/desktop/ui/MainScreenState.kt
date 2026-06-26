@@ -14,6 +14,7 @@ internal data class MainScreenState(
     val isConnected: Boolean = false,
     val inProgress: Boolean = false,
     val deviceSerial: String? = null,
+    val deviceSerialList: List<String> = emptyList(),
     val snackbarMessage: String? = null,
 ) {
     val portNumber: Int? = port.toIntOrNull()
