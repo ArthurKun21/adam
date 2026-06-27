@@ -31,7 +31,7 @@ ktlint-core = "1.8.0"
 compose = "1.11.1"
 composeMaterial3 = "1.11.0-alpha07"
 coil = "3.5.0"
-lifecycle = "2.11.0-beta01"
+lifecycle = "2.11.0-beta02"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
