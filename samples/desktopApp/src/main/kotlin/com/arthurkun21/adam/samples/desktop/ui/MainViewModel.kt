@@ -25,6 +25,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -368,6 +369,8 @@ internal class MainViewModel : ViewModel() {
         log.info { "Closing Adam desktop sample ADB connection" }
         devicePollingJob?.cancel()
         devicePollingJob = null
+        viewModelScope.cancel()
+        adbClient.close()
     }
 
     private suspend fun ensureAdbServerStarted() {
@@ -435,21 +438,18 @@ internal class MainViewModel : ViewModel() {
     }
 
     private suspend fun connectDeviceOverTcp(host: String, port: Int): String? {
-        return try {
-            val output = adbClient.execute(
-                ConnectDeviceRequest(host, port),
-            )
-            log.info { "ADB connect output: $output" }
-
-            findConnectedDeviceSerial()
-        } catch (failure: CancellationException) {
-            throw failure
-        } catch (failure: Exception) {
-            log.error {
-                "ADB connect failed: ${failure.message}"
+        val output = withAdbTimeout("connecting ADB device at $host:$port") {
+            withContext(Dispatchers.IO) {
+                adbClient.execute(
+                    ConnectDeviceRequest(host, port),
+                )
             }
-            null
         }
+        log.info { "ADB connect output: $output" }
+
+        check(!output.startsWith("failed", ignoreCase = true)) { output }
+
+        return findConnectedDeviceSerial()
     }
 
     private suspend fun reconnectDevice(serial: String?): String {
