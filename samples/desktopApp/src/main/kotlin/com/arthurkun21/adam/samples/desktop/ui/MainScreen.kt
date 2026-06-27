@@ -59,6 +59,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 
+/**
+ * Desktop demo for the Adam ADB client.
+ *
+ * This top-level composable owns the ViewModel and side effects. The rest of the
+ * file is plain state-driven UI, which makes it easier to copy individual Adam
+ * examples into another Compose application.
+ */
 @Composable
 internal fun MainScreen() {
     val viewModel = remember { MainViewModel() }
@@ -84,6 +91,12 @@ internal fun MainScreen() {
             onHostChanged = viewModel::onAdbHostChanged,
             onPortChanged = viewModel::onAdbPortChanged,
             onConnect = viewModel::connect,
+            onReconnect = viewModel::reconnect,
+            onDisconnect = viewModel::disconnect,
+            onPairingHostChanged = viewModel::onPairingHostChanged,
+            onPairingPortChanged = viewModel::onPairingPortChanged,
+            onPairingCodeChanged = viewModel::onPairingCodeChanged,
+            onPair = viewModel::pair,
             onDeviceSelect = viewModel::updateSerial,
             onTakeScreenshot = viewModel::takeScreenshot,
             onFetchLogcat = viewModel::fetchLogcat,
@@ -118,6 +131,12 @@ private fun MainScreenContent(
                     onHostChanged = actions.onHostChanged,
                     onPortChanged = actions.onPortChanged,
                     onConnect = actions.onConnect,
+                    onReconnect = actions.onReconnect,
+                    onDisconnect = actions.onDisconnect,
+                    onPairingHostChanged = actions.onPairingHostChanged,
+                    onPairingPortChanged = actions.onPairingPortChanged,
+                    onPairingCodeChanged = actions.onPairingCodeChanged,
+                    onPair = actions.onPair,
                 )
                 DeviceActionsCard(
                     state = state,
@@ -136,6 +155,12 @@ private data class MainScreenActions(
     val onHostChanged: (String) -> Unit,
     val onPortChanged: (String) -> Unit,
     val onConnect: () -> Unit,
+    val onReconnect: () -> Unit,
+    val onDisconnect: () -> Unit,
+    val onPairingHostChanged: (String) -> Unit,
+    val onPairingPortChanged: (String) -> Unit,
+    val onPairingCodeChanged: (String) -> Unit,
+    val onPair: () -> Unit,
     val onDeviceSelect: (String) -> Unit,
     val onTakeScreenshot: () -> Unit,
     val onFetchLogcat: () -> Unit,
@@ -185,19 +210,27 @@ private fun ConnectionCard(
     onHostChanged: (String) -> Unit,
     onPortChanged: (String) -> Unit,
     onConnect: () -> Unit,
+    onReconnect: () -> Unit,
+    onDisconnect: () -> Unit,
+    onPairingHostChanged: (String) -> Unit,
+    onPairingPortChanged: (String) -> Unit,
+    onPairingCodeChanged: (String) -> Unit,
+    onPair: () -> Unit,
 ) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(
-                12.dp,
-                Alignment.CenterVertically,
-            ),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = "ADB over Wi-Fi device",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                text = "Adam talks to the local ADB server, then asks that server to connect to this device endpoint.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -223,16 +256,84 @@ private fun ConnectionCard(
                     singleLine = true,
                     modifier = Modifier.width(160.dp),
                 )
+            }
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 Button(
                     enabled = state.canConnect,
                     onClick = onConnect,
-                    modifier = Modifier.height(56.dp),
                 ) {
-                    Text(state.connectButtonLabel)
+                    Text("Connect")
+                }
+                OutlinedButton(
+                    enabled = state.canReconnect,
+                    onClick = onReconnect,
+                ) {
+                    Text("Reconnect")
+                }
+                OutlinedButton(
+                    enabled = state.canDisconnect,
+                    onClick = onDisconnect,
+                ) {
+                    Text("Disconnect")
                 }
             }
             if (state.inProgress) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+
+            HorizontalDivider()
+
+            Text(
+                text = "Pair Android 11+ device",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                text = "Use the pairing host, port, and code shown in Wireless debugging. " +
+                    "Pairing is separate from connecting.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedTextField(
+                    value = state.pairingHost,
+                    onValueChange = onPairingHostChanged,
+                    label = { Text("Pairing host") },
+                    enabled = !state.inProgress,
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                )
+                OutlinedTextField(
+                    value = state.pairingPort,
+                    onValueChange = onPairingPortChanged,
+                    label = { Text("Pairing port") },
+                    isError = state.pairingPort.isNotBlank() && state.pairingPortNumber == null,
+                    enabled = !state.inProgress,
+                    singleLine = true,
+                    modifier = Modifier.width(160.dp),
+                )
+                OutlinedTextField(
+                    value = state.pairingCode,
+                    onValueChange = onPairingCodeChanged,
+                    label = { Text("Pairing code") },
+                    enabled = !state.inProgress,
+                    singleLine = true,
+                    modifier = Modifier.width(160.dp),
+                )
+                Button(
+                    enabled = state.canPair,
+                    onClick = onPair,
+                    modifier = Modifier.height(56.dp),
+                ) {
+                    Text("Pair")
+                }
             }
         }
     }

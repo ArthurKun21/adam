@@ -6,6 +6,7 @@ import com.malinskiy.adam.AndroidDebugBridgeClientFactory
 import com.malinskiy.adam.Const
 import com.malinskiy.adam.interactor.StartAdbInteractor
 import com.malinskiy.adam.log.AdamLogging
+import com.malinskiy.adam.request.SerialTarget
 import com.malinskiy.adam.request.device.DeviceState
 import com.malinskiy.adam.request.device.ListDevicesRequest
 import com.malinskiy.adam.request.framebuffer.BufferedImageScreenCaptureAdapter
@@ -15,6 +16,10 @@ import com.malinskiy.adam.request.logcat.LogcatReadMode
 import com.malinskiy.adam.request.logcat.LogcatSinceFormat
 import com.malinskiy.adam.request.logcat.SyncLogcatRequest
 import com.malinskiy.adam.request.misc.ConnectDeviceRequest
+import com.malinskiy.adam.request.misc.Device
+import com.malinskiy.adam.request.misc.DisconnectDeviceRequest
+import com.malinskiy.adam.request.misc.PairDeviceRequest
+import com.malinskiy.adam.request.misc.ReconnectRequest
 import com.malinskiy.adam.request.shell.v1.ShellCommandRequest
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +42,13 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import java.time.Duration as JavaDuration
 
+/**
+ * Small state holder for the desktop sample.
+ *
+ * The methods intentionally mirror Adam request names so readers can jump from the
+ * UI to the relevant library API: connect, reconnect, disconnect, pair, shell,
+ * logcat, and screen capture.
+ */
 internal class MainViewModel : ViewModel() {
     private val adbClient = AndroidDebugBridgeClientFactory()
         .apply {
@@ -66,31 +78,31 @@ internal class MainViewModel : ViewModel() {
         }
     }
 
+    fun onPairingHostChanged(value: String) {
+        _uiState.update { it.copy(pairingHost = value) }
+    }
+
+    fun onPairingPortChanged(value: String) {
+        if (value.all(Char::isDigit)) {
+            _uiState.update { it.copy(pairingPort = value) }
+        }
+    }
+
+    fun onPairingCodeChanged(value: String) {
+        _uiState.update { it.copy(pairingCode = value) }
+    }
+
     fun onCommandChanged(command: String) {
         _uiState.update { it.copy(command = command) }
     }
 
     fun connect() {
         val host = _uiState.value.host.trim()
-        val port = _uiState.value.portNumber
-        if (host.isBlank()) {
-            _uiState.update {
-                it.copy(
-                    connectionStatus = "Device host is required",
-                    snackbarMessage = "Enter a device host",
-                )
-            }
+        val port = _uiState.value.portNumber ?: run {
+            validateDeviceEndpoint(host, null)
             return
         }
-        if (port == null) {
-            _uiState.update {
-                it.copy(
-                    connectionStatus = "Device port is required",
-                    snackbarMessage = "Enter a valid device port",
-                )
-            }
-            return
-        }
+        if (!validateDeviceEndpoint(host, port)) return
 
         viewModelScope.launch {
             log.info { "Connecting to ADB device at $host:$port" }
@@ -129,6 +141,128 @@ internal class MainViewModel : ViewModel() {
                         inProgress = false,
                         deviceSerial = null,
                         snackbarMessage = "Connection failed: ${failure.message}",
+                    )
+                }
+            }
+        }
+    }
+
+    fun reconnect() {
+        viewModelScope.launch {
+            val selectedSerial = _uiState.value.deviceSerial
+            log.info { "Reconnecting ${selectedSerial ?: "first available ADB device"}" }
+            _uiState.update {
+                it.copy(
+                    inProgress = true,
+                    connectionStatus = "Reconnecting ${selectedSerial ?: "first available ADB device"}",
+                )
+            }
+
+            try {
+                ensureAdbServerStarted()
+                val output = reconnectDevice(selectedSerial)
+                val deviceSerial = findConnectedDeviceSerial()
+                startDevicePolling()
+                _uiState.update {
+                    it.copy(
+                        connectionStatus = connectionStatusFor(deviceSerial),
+                        isConnected = true,
+                        inProgress = false,
+                        deviceSerial = deviceSerial,
+                        snackbarMessage = "Reconnect requested: $output",
+                    )
+                }
+            } catch (failure: CancellationException) {
+                throw failure
+            } catch (failure: Exception) {
+                log.error(failure) { "ADB reconnect failed" }
+                _uiState.update {
+                    it.copy(
+                        inProgress = false,
+                        snackbarMessage = "Reconnect failed: ${failure.message}",
+                    )
+                }
+            }
+        }
+    }
+
+    fun disconnect() {
+        val host = _uiState.value.host.trim()
+        val port = _uiState.value.portNumber ?: run {
+            validateDeviceEndpoint(host, null)
+            return
+        }
+        if (!validateDeviceEndpoint(host, port)) return
+
+        viewModelScope.launch {
+            log.info { "Disconnecting ADB device at $host:$port" }
+            _uiState.update {
+                it.copy(
+                    inProgress = true,
+                    connectionStatus = "Disconnecting ADB device at $host:$port",
+                )
+            }
+
+            try {
+                ensureAdbServerStarted()
+                val output = disconnectDevice(host, port)
+                val deviceSerial = findConnectedDeviceSerial()
+                _uiState.update {
+                    it.copy(
+                        connectionStatus = connectionStatusFor(deviceSerial),
+                        isConnected = deviceSerial != null,
+                        inProgress = false,
+                        deviceSerial = deviceSerial,
+                        snackbarMessage = "Disconnected $host:$port: $output",
+                    )
+                }
+            } catch (failure: CancellationException) {
+                throw failure
+            } catch (failure: Exception) {
+                log.error(failure) { "ADB disconnect failed for $host:$port" }
+                _uiState.update {
+                    it.copy(
+                        inProgress = false,
+                        snackbarMessage = "Disconnect failed: ${failure.message}",
+                    )
+                }
+            }
+        }
+    }
+
+    fun pair() {
+        val host = _uiState.value.pairingHost.trim()
+        val port = _uiState.value.pairingPortNumber
+        val pairingCode = _uiState.value.pairingCode.trim()
+        if (!validatePairingEndpoint(host, port, pairingCode)) return
+
+        viewModelScope.launch {
+            val address = "$host:$port"
+            log.info { "Pairing ADB device at $address" }
+            _uiState.update {
+                it.copy(
+                    inProgress = true,
+                    connectionStatus = "Pairing ADB device at $address",
+                )
+            }
+
+            try {
+                ensureAdbServerStarted()
+                val output = pairDevice(address, pairingCode)
+                _uiState.update {
+                    it.copy(
+                        inProgress = false,
+                        snackbarMessage = "Pairing result: $output",
+                    )
+                }
+            } catch (failure: CancellationException) {
+                throw failure
+            } catch (failure: Exception) {
+                log.error(failure) { "ADB pairing failed for $address" }
+                _uiState.update {
+                    it.copy(
+                        inProgress = false,
+                        snackbarMessage = "Pairing failed: ${failure.message}",
                     )
                 }
             }
@@ -247,6 +381,59 @@ internal class MainViewModel : ViewModel() {
         }
     }
 
+    private fun validateDeviceEndpoint(host: String, port: Int?): Boolean {
+        if (host.isBlank()) {
+            _uiState.update {
+                it.copy(
+                    connectionStatus = "Device host is required",
+                    snackbarMessage = "Enter a device host",
+                )
+            }
+            return false
+        }
+        if (port == null) {
+            _uiState.update {
+                it.copy(
+                    connectionStatus = "Device port is required",
+                    snackbarMessage = "Enter a valid device port",
+                )
+            }
+            return false
+        }
+        return true
+    }
+
+    private fun validatePairingEndpoint(host: String, port: Int?, pairingCode: String): Boolean {
+        if (host.isBlank()) {
+            _uiState.update {
+                it.copy(
+                    connectionStatus = "Pairing host is required",
+                    snackbarMessage = "Enter a pairing host",
+                )
+            }
+            return false
+        }
+        if (port == null) {
+            _uiState.update {
+                it.copy(
+                    connectionStatus = "Pairing port is required",
+                    snackbarMessage = "Enter the pairing port shown on the device",
+                )
+            }
+            return false
+        }
+        if (pairingCode.isBlank()) {
+            _uiState.update {
+                it.copy(
+                    connectionStatus = "Pairing code is required",
+                    snackbarMessage = "Enter the pairing code shown on the device",
+                )
+            }
+            return false
+        }
+        return true
+    }
+
     private suspend fun connectDeviceOverTcp(host: String, port: Int): String? {
         return try {
             val output = adbClient.execute(
@@ -255,11 +442,46 @@ internal class MainViewModel : ViewModel() {
             log.info { "ADB connect output: $output" }
 
             findConnectedDeviceSerial()
+        } catch (failure: CancellationException) {
+            throw failure
         } catch (failure: Exception) {
             log.error {
                 "ADB connect failed: ${failure.message}"
             }
             null
+        }
+    }
+
+    private suspend fun reconnectDevice(serial: String?): String {
+        return withAdbTimeout("reconnecting ADB device") {
+            withContext(Dispatchers.IO) {
+                if (serial == null) {
+                    adbClient.execute(ReconnectRequest())
+                } else {
+                    adbClient.execute(
+                        request = ReconnectRequest(
+                            reconnectTarget = Device,
+                            target = SerialTarget(serial),
+                        ),
+                    )
+                }
+            }
+        }
+    }
+
+    private suspend fun disconnectDevice(host: String, port: Int): String {
+        return withAdbTimeout("disconnecting ADB device") {
+            withContext(Dispatchers.IO) {
+                adbClient.execute(DisconnectDeviceRequest(host, port))
+            }
+        }
+    }
+
+    private suspend fun pairDevice(address: String, pairingCode: String): String {
+        return withAdbTimeout("pairing ADB device") {
+            withContext(Dispatchers.IO) {
+                adbClient.execute(PairDeviceRequest(address, pairingCode))
+            }
         }
     }
 
