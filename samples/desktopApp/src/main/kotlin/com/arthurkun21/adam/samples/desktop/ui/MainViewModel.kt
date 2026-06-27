@@ -124,7 +124,7 @@ internal class MainViewModel : ViewModel() {
                         isConnected = true,
                         inProgress = false,
                         deviceSerial = newConnection,
-                        snackbarMessage = "Connected to ${host}:${port}; " +
+                        snackbarMessage = "Connected to $host:$port; " +
                             "device ${newConnection ?: "not found"}",
                     )
                 }
@@ -537,7 +537,6 @@ internal class MainViewModel : ViewModel() {
             log.info { "ADB devices: $deviceSummary" }
         }
 
-
         return sortedDevices.firstOrNull { it.state == DeviceState.DEVICE }?.serial
     }
 
@@ -571,7 +570,8 @@ internal class MainViewModel : ViewModel() {
         val result = withAdbTimeout("executing shell command") {
             withContext(Dispatchers.IO) {
                 adbClient.execute(
-                    ShellCommandRequest(command), serial = serial,
+                    ShellCommandRequest(command),
+                    serial = serial,
                 )
             }
         }

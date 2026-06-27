@@ -374,7 +374,6 @@ private fun DeviceActionsCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-
                     OutlinedButton(
                         enabled = state.canRunDeviceAction,
                         onClick = onTakeScreenshot,
