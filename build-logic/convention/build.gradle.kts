@@ -4,6 +4,8 @@ plugins {
 
 dependencies {
     implementation(libs.kotlin.gradle)
+    implementation(libs.kotlin.compose.compiler.gradle)
+    implementation(libs.compose.gradle)
     implementation(libs.androidx.gradle)
     implementation(libs.spotless.gradle)
 }
@@ -25,6 +27,10 @@ gradlePlugin {
         register("adamJvm") {
             id = "adam.jvm"
             implementationClass = "JvmConventionPlugin"
+        }
+        register("adamComposeDesktop") {
+            id = "adam.compose.desktop"
+            implementationClass = "ComposeDesktopConventionPlugin"
         }
     }
 }

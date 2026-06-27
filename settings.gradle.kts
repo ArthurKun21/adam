@@ -58,3 +58,9 @@ include(":android-testrunner-contract")
 include(":server:server-stub")
 include(":server:server-stub-junit4")
 include(":server:server-stub-junit5")
+
+
+val isJitPack = System.getenv("JITPACK") == "true"
+if (!isJitPack) {
+    include(":samples:desktopApp")
+}
