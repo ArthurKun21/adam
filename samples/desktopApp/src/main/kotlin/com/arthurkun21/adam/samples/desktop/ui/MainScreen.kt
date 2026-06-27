@@ -61,23 +61,45 @@ import coil3.compose.AsyncImage
 
 @Composable
 internal fun MainScreen() {
-    val actualViewModel = remember { MainViewModel() }
+    val viewModel = remember { MainViewModel() }
     val snackbarHostState = remember { SnackbarHostState() }
-    val state by actualViewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsState()
 
-    DisposableEffect(actualViewModel) {
+    DisposableEffect(viewModel) {
         onDispose {
-            actualViewModel.close()
+            viewModel.close()
         }
     }
 
     LaunchedEffect(state.snackbarMessage) {
         state.snackbarMessage?.let { message ->
             snackbarHostState.showSnackbar(message)
-            actualViewModel.onSnackbarShown()
+            viewModel.onSnackbarShown()
         }
     }
 
+    MainScreenContent(
+        state = state,
+        actions = MainScreenActions(
+            onHostChanged = viewModel::onAdbHostChanged,
+            onPortChanged = viewModel::onAdbPortChanged,
+            onConnect = viewModel::connect,
+            onDeviceSelect = viewModel::updateSerial,
+            onTakeScreenshot = viewModel::takeScreenshot,
+            onFetchLogcat = viewModel::fetchLogcat,
+            onCommandChanged = viewModel::onCommandChanged,
+            onExecuteCommand = viewModel::executeCommand,
+        ),
+        snackbarHostState = snackbarHostState,
+    )
+}
+
+@Composable
+private fun MainScreenContent(
+    state: MainScreenState,
+    actions: MainScreenActions,
+    snackbarHostState: SnackbarHostState,
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -93,22 +115,33 @@ internal fun MainScreen() {
                 ConnectionHeader(state)
                 ConnectionCard(
                     state = state,
-                    onHostChanged = actualViewModel::onAdbHostChanged,
-                    onPortChanged = actualViewModel::onAdbPortChanged,
-                    onConnect = actualViewModel::connect,
+                    onHostChanged = actions.onHostChanged,
+                    onPortChanged = actions.onPortChanged,
+                    onConnect = actions.onConnect,
                 )
                 DeviceActionsCard(
                     state = state,
-                    onDeviceSelect = actualViewModel::updateSerial,
-                    onTakeScreenshot = actualViewModel::takeScreenshot,
-                    onFetchLogcat = actualViewModel::fetchLogcat,
-                    onCommandChanged = actualViewModel::onCommandChanged,
-                    onExecuteCommand = actualViewModel::executeCommand,
+                    onDeviceSelect = actions.onDeviceSelect,
+                    onTakeScreenshot = actions.onTakeScreenshot,
+                    onFetchLogcat = actions.onFetchLogcat,
+                    onCommandChanged = actions.onCommandChanged,
+                    onExecuteCommand = actions.onExecuteCommand,
                 )
             }
         }
     }
 }
+
+private data class MainScreenActions(
+    val onHostChanged: (String) -> Unit,
+    val onPortChanged: (String) -> Unit,
+    val onConnect: () -> Unit,
+    val onDeviceSelect: (String) -> Unit,
+    val onTakeScreenshot: () -> Unit,
+    val onFetchLogcat: () -> Unit,
+    val onCommandChanged: (String) -> Unit,
+    val onExecuteCommand: () -> Unit,
+)
 
 @Composable
 private fun ConnectionHeader(state: MainScreenState) {
@@ -162,7 +195,7 @@ private fun ConnectionCard(
             ),
         ) {
             Text(
-                text = "ADB server",
+                text = "ADB over Wi-Fi device",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -174,8 +207,8 @@ private fun ConnectionCard(
                 OutlinedTextField(
                     value = state.host,
                     onValueChange = onHostChanged,
-                    label = { Text("Host") },
-                    supportingText = { Text("Usually 127.0.0.1 for local adb") },
+                    label = { Text("Device host") },
+                    supportingText = { Text("Use 127.0.0.1 for a local emulator") },
                     enabled = !state.inProgress,
                     singleLine = true,
                     modifier = Modifier.weight(1f),
@@ -183,19 +216,19 @@ private fun ConnectionCard(
                 OutlinedTextField(
                     value = state.port,
                     onValueChange = onPortChanged,
-                    label = { Text("Port") },
+                    label = { Text("Device port") },
                     isError = state.portNumber == null,
-                    supportingText = { Text("ADB server port; $DEFAULT_ADB_PORT is the usual local default") },
+                    supportingText = { Text("$DEFAULT_ADB_PORT is the emulator TCP default") },
                     enabled = !state.inProgress,
                     singleLine = true,
                     modifier = Modifier.width(160.dp),
                 )
                 Button(
-                    enabled = !state.inProgress && state.host.isNotBlank() && state.portNumber != null,
+                    enabled = state.canConnect,
                     onClick = onConnect,
                     modifier = Modifier.height(56.dp),
                 ) {
-                    Text(if (state.isConnected) "Reconnect" else "Connect")
+                    Text(state.connectButtonLabel)
                 }
             }
             if (state.inProgress) {
@@ -231,7 +264,7 @@ private fun DeviceActionsCard(
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        text = if (state.isConnected) state.deviceLabel else "Connect to an ADB server first",
+                        text = state.deviceToolsSubtitle,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -242,13 +275,13 @@ private fun DeviceActionsCard(
                 ) {
 
                     OutlinedButton(
-                        enabled = state.deviceSerial != null && !state.inProgress,
+                        enabled = state.canRunDeviceAction,
                         onClick = onTakeScreenshot,
                     ) {
                         Text("Take screenshot")
                     }
                     OutlinedButton(
-                        enabled = state.deviceSerial != null && !state.inProgress,
+                        enabled = state.canRunDeviceAction,
                         onClick = onFetchLogcat,
                     ) {
                         Text("Fetch logcat")
@@ -268,13 +301,13 @@ private fun DeviceActionsCard(
                 value = state.command,
                 onValueChange = onCommandChanged,
                 label = { Text("Shell command") },
-                enabled = state.deviceSerial != null && !state.inProgress,
+                enabled = state.canRunDeviceAction,
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
 
             Button(
-                enabled = state.deviceSerial != null && state.command.isNotBlank() && !state.inProgress,
+                enabled = state.canExecuteCommand,
                 onClick = onExecuteCommand,
             ) {
                 Text("Execute command")

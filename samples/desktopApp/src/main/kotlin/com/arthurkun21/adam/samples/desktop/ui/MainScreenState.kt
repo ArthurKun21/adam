@@ -19,6 +19,12 @@ internal data class MainScreenState(
 ) {
     val portNumber: Int? = port.toIntOrNull()
     val deviceLabel: String = deviceSerial?.let { "device $it" } ?: "no connected device"
+    val canConnect: Boolean = !inProgress && host.isNotBlank() && portNumber != null
+    val hasSelectedDevice: Boolean = deviceSerial != null
+    val canRunDeviceAction: Boolean = hasSelectedDevice && !inProgress
+    val canExecuteCommand: Boolean = canRunDeviceAction && command.isNotBlank()
+    val connectButtonLabel: String = if (isConnected) "Reconnect" else "Connect"
+    val deviceToolsSubtitle: String = if (isConnected) deviceLabel else "Connect to a device first"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -34,6 +40,7 @@ internal data class MainScreenState(
             isConnected == other.isConnected &&
             inProgress == other.inProgress &&
             deviceSerial == other.deviceSerial &&
+            deviceSerialList == other.deviceSerialList &&
             snackbarMessage == other.snackbarMessage
     }
 
@@ -48,6 +55,7 @@ internal data class MainScreenState(
         result = 31 * result + isConnected.hashCode()
         result = 31 * result + inProgress.hashCode()
         result = 31 * result + (deviceSerial?.hashCode() ?: 0)
+        result = 31 * result + deviceSerialList.hashCode()
         result = 31 * result + (snackbarMessage?.hashCode() ?: 0)
         return result
     }

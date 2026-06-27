@@ -3,6 +3,7 @@ package com.arthurkun21.adam.samples.desktop.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.malinskiy.adam.AndroidDebugBridgeClientFactory
+import com.malinskiy.adam.Const
 import com.malinskiy.adam.interactor.StartAdbInteractor
 import com.malinskiy.adam.log.AdamLogging
 import com.malinskiy.adam.request.device.DeviceState
@@ -75,8 +76,8 @@ internal class MainViewModel : ViewModel() {
         if (host.isBlank()) {
             _uiState.update {
                 it.copy(
-                    connectionStatus = "ADB server host is required",
-                    snackbarMessage = "Enter an ADB server host",
+                    connectionStatus = "Device host is required",
+                    snackbarMessage = "Enter a device host",
                 )
             }
             return
@@ -84,33 +85,33 @@ internal class MainViewModel : ViewModel() {
         if (port == null) {
             _uiState.update {
                 it.copy(
-                    connectionStatus = "ADB server port is required",
-                    snackbarMessage = "Enter a valid ADB server port",
+                    connectionStatus = "Device port is required",
+                    snackbarMessage = "Enter a valid device port",
                 )
             }
             return
         }
 
         viewModelScope.launch {
-            log.info { "Connecting to ADB server at $host:$port" }
+            log.info { "Connecting to ADB device at $host:$port" }
             _uiState.update {
                 it.copy(
                     inProgress = true,
-                    connectionStatus = "Connecting to ADB server at $host:$port",
+                    connectionStatus = "Connecting to ADB device at $host:$port",
                 )
             }
 
             try {
-                startLocalAdbServerIfNeeded(host, port)
-                val newConnection = createAdbConnection(host, port)
+                ensureAdbServerStarted()
+                val newConnection = connectDeviceOverTcp(host, port)
                 startDevicePolling()
-                log.info { "Connected to ADB server at ${host}:${port}" }
+                log.info { "Connected to ADB device at $host:$port" }
                 _uiState.update {
                     it.copy(
                         connectionStatus = connectionStatusFor(newConnection),
                         isConnected = true,
                         inProgress = false,
-                        deviceSerial = newConnection ?: "No connected device",
+                        deviceSerial = newConnection,
                         snackbarMessage = "Connected to ${host}:${port}; " +
                             "device ${newConnection ?: "not found"}",
                     )
@@ -120,7 +121,7 @@ internal class MainViewModel : ViewModel() {
             } catch (failure: Exception) {
                 devicePollingJob?.cancel()
                 devicePollingJob = null
-                log.error(failure) { "Failed to connect to ADB server at $host:$port" }
+                log.error(failure) { "Failed to connect to ADB device at $host:$port" }
                 _uiState.update {
                     it.copy(
                         connectionStatus = "Not connected",
@@ -235,13 +236,8 @@ internal class MainViewModel : ViewModel() {
         devicePollingJob = null
     }
 
-    private suspend fun startLocalAdbServerIfNeeded(host: String, port: Int) {
-        if (!host.isLocalAdbHost()) {
-            log.info { "Skipping local adb start for remote ADB server $host:$port" }
-            return
-        }
-
-        val started = withAdbTimeout("starting local ADB server on port $port") {
+    private suspend fun ensureAdbServerStarted() {
+        val started = withAdbTimeout("starting local ADB server on port ${Const.DEFAULT_ADB_PORT}") {
             withContext(Dispatchers.IO) {
                 StartAdbInteractor().execute()
             }
@@ -251,8 +247,7 @@ internal class MainViewModel : ViewModel() {
         }
     }
 
-    private suspend fun createAdbConnection(host: String, port: Int): String? {
-
+    private suspend fun connectDeviceOverTcp(host: String, port: Int): String? {
         return try {
             val output = adbClient.execute(
                 ConnectDeviceRequest(host, port),
@@ -427,8 +422,6 @@ internal class MainViewModel : ViewModel() {
         }
     }
 }
-
-private fun String.isLocalAdbHost(): Boolean = this == DEFAULT_ADB_HOST || equals("localhost", ignoreCase = true)
 
 private val devicePollInterval = 5.seconds
 private val adbOperationTimeout = 15.seconds
