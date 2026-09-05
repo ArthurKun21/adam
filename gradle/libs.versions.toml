@@ -4,7 +4,6 @@ coroutines = "1.11.0"
 annotations = "26.1.0"
 ktor = "3.5.2"
 logcat = "0.4"
-vertx = "5.1.7"
 apacheCommonsPool2 = "2.13.1"
 assertk = "0.28.1"
 junit4 = "4.13.2"
@@ -49,9 +48,6 @@ coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", 
 
 ktor-network = { module = "io.ktor:ktor-network-jvm", version.ref = "ktor" }
 logcat = { module = "com.squareup.logcat:logcat", version.ref = "logcat" }
-vertx-core = { module = "io.vertx:vertx-core", version.ref = "vertx" }
-vertx-kotlin = { module = "io.vertx:vertx-lang-kotlin", version.ref = "vertx" }
-vertx-coroutines = { module = "io.vertx:vertx-lang-kotlin-coroutines", version.ref = "vertx" }
 protobuf-lite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
 grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
 grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpcKotlin" }

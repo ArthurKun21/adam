@@ -32,11 +32,13 @@ public class ListReversePortForwardsRequest : ComplexRequest<List<ReversePortFor
     override suspend fun readElement(socket: Socket): List<ReversePortForwardingRule> {
         return socket.readProtocolString().lines().mapNotNull { line ->
             if (line.isNotEmpty()) {
-                val split = line.split(" ")
+                // Serial may contain spaces (e.g. mDNS transport serials), so the specs are located from the end
+                val localSpecIndex = line.lastIndexOf(' ')
+                val remoteSpecIndex = line.lastIndexOf(' ', localSpecIndex - 1)
                 ReversePortForwardingRule(
-                    serial = split[0],
-                    localSpec = RemotePortSpec.parse(split[1]),
-                    remoteSpec = LocalPortSpec.parse(split[2]),
+                    serial = line.substring(0, remoteSpecIndex),
+                    localSpec = RemotePortSpec.parse(line.substring(remoteSpecIndex + 1, localSpecIndex)),
+                    remoteSpec = LocalPortSpec.parse(line.substring(localSpecIndex + 1)),
                 )
             } else {
                 null

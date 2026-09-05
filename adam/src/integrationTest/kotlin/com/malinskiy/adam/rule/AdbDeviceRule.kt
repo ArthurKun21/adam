@@ -26,6 +26,7 @@ import com.malinskiy.adam.request.misc.GetAdbServerVersionRequest
 import com.malinskiy.adam.request.prop.GetSinglePropRequest
 import com.malinskiy.adam.request.shell.v1.ShellCommandRequest
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
@@ -83,7 +84,7 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
 
                 loop@ for (device in devices) {
                     val booted = adb.execute(GetSinglePropRequest("sys.boot_completed"), device.serial).isNotBlank()
-                    if (!booted) continue
+                    if (!booted) continue@loop
 
                     when (deviceType) {
                         DeviceType.EMULATOR -> {
@@ -110,8 +111,9 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
                     return device
                 }
             } catch (e: ConnectException) {
-                continue
+                // adb server not reachable yet
             }
+            delay(1_000)
         }
         Assume.assumeTrue("Timeout waiting for device", false)
         throw IllegalStateException("Unreachable")
