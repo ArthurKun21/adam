@@ -101,3 +101,5 @@ local.properties
 
 # macOS specific files
 .DS_Store
+
+.zcode/**
