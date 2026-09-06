@@ -27,11 +27,13 @@ public class ListPortForwardsRequest(serial: String) : ComplexRequest<List<PortF
     override suspend fun readElement(socket: Socket): List<PortForwardingRule> {
         return socket.readProtocolString().lines().mapNotNull { line ->
             if (line.isNotEmpty()) {
-                val split = line.split(" ")
+                // Serial may contain spaces (e.g. mDNS transport serials), so the specs are located from the end
+                val remoteSpecIndex = line.lastIndexOf(' ')
+                val localSpecIndex = line.lastIndexOf(' ', remoteSpecIndex - 1)
                 PortForwardingRule(
-                    serial = split[0],
-                    localSpec = LocalPortSpec.parse(split[1]),
-                    remoteSpec = RemotePortSpec.parse(split[2]),
+                    serial = line.substring(0, localSpecIndex),
+                    localSpec = LocalPortSpec.parse(line.substring(localSpecIndex + 1, remoteSpecIndex)),
+                    remoteSpec = RemotePortSpec.parse(line.substring(remoteSpecIndex + 1)),
                 )
             } else {
                 null

@@ -7,8 +7,7 @@
 - Lint: `./gradlew spotlessApply`
 - Run all tests: `./gradlew test`
 - Run single test: `./gradlew :adam:test --tests "com.malinskiy.adam.ClassName.testMethod"`
-- Run single test in other modules: `./gradlew :transport-ktor:test --tests "com.malinskiy.adam.transport.ktor.KtorSocketRegressionTest"`
-- Ktor transport regression tests: `./gradlew :transport-ktor:test --tests "com.malinskiy.adam.transport.ktor.KtorSocketRegressionTest"`
+- Ktor transport regression tests: `./gradlew :adam:test --tests "com.arthurkun21.adam.transport.ktor.KtorSocketRegressionTest"`
   - Guards Ktor byte-array offset/limit API semantics
 - Integration tests: `./gradlew :adam:integrationTest`
 - Coverage reports: `./gradlew jacocoTestReport` (unit), `./gradlew :adam:jacocoIntegrationTestReport` (integration)
@@ -21,8 +20,7 @@ Kotlin coroutine-based ADB (Android Debug Bridge) client library.
 
 ### Modules
 
-- **adam** — Core ADB client (requests, transport, protobuf/gRPC). Main package: `com.malinskiy.adam`
-- **transport-ktor** — Ktor-based transport implementation
+- **adam** — Core ADB client (requests, transport, protobuf/gRPC). Main package: `com.malinskiy.adam`. Default transport is the Ktor-based implementation in `com.arthurkun21.adam.transport.ktor`
 - **android-junit4** — Android JUnit4 test rules for adam
 - **android-junit4-test-annotation-producer** — Android test annotation producer
 - **android-testrunner-contract** — Android test runner contract interfaces

@@ -72,4 +72,33 @@ class ListPortForwardsRequestTest {
             assertThat(output.first().remoteSpec).isEqualTo(RemoteTcpPortSpec(80))
         }
     }
+
+    @Test
+    fun testReturnsProperContentWithSpacesInSerial() {
+        runBlocking {
+            server.session {
+                expectCmd { "host-serial:adb-126354051R007897-k3TQnV (2)._adb-tls-connect._tcp:list-forward" }.accept()
+
+                respondListPortForwards(
+                    """
+                        adb-126354051R007897-k3TQnV (2)._adb-tls-connect._tcp tcp:57790 tcp:5555
+
+                    """.trimIndent(),
+                )
+
+                input.discard()
+            }
+
+            val output = client.execute(
+                ListPortForwardsRequest("adb-126354051R007897-k3TQnV (2)._adb-tls-connect._tcp"),
+            )
+            assertThat(output).containsExactly(
+                PortForwardingRule(
+                    "adb-126354051R007897-k3TQnV (2)._adb-tls-connect._tcp",
+                    LocalTcpPortSpec(57790),
+                    RemoteTcpPortSpec(5555),
+                ),
+            )
+        }
+    }
 }

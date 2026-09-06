@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.malinskiy.adam.transport.ktor
+package com.arthurkun21.adam.transport.ktor
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.ktor.network.selector.SelectorManager
+import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
@@ -84,8 +85,8 @@ public class KtorSocketRegressionTest {
 
     private suspend fun withSocketPair(
         block: suspend (
-            clientSocket: io.ktor.network.sockets.Socket,
-            serverSocket: io.ktor.network.sockets.Socket,
+            clientSocket: Socket,
+            serverSocket: Socket,
         ) -> Unit,
     ) {
         val selector = SelectorManager(Dispatchers.IO)

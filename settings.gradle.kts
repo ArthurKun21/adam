@@ -50,7 +50,6 @@ plugins {
 
 rootProject.name = "adam"
 include(":adam")
-include(":transport-ktor")
 include(":android-junit4")
 include(":android-junit4-test-annotation-producer")
 include(":androidx-screencapture")

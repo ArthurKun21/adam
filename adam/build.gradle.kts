@@ -138,9 +138,7 @@ dependencies {
     api(libs.grpc.okhttp)
     api(libs.grpc.stub)
     implementation(libs.javax.annotations)
-    implementation(libs.vertx.core)
-    implementation(libs.vertx.kotlin)
-    implementation(libs.vertx.coroutines)
+    implementation(libs.ktor.network)
     implementation(libs.apache.commons.pool2)
 
     testImplementation(libs.assertk)

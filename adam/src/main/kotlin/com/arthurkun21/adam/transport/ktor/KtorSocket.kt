@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.malinskiy.adam.transport.ktor
+package com.arthurkun21.adam.transport.ktor
 
 import com.malinskiy.adam.log.AdamLogging
 import com.malinskiy.adam.transport.Socket
@@ -36,6 +36,7 @@ import io.ktor.utils.io.writeByte as ktorWriteByte
 public class KtorSocket(private val ktorSocket: RealKtorSocket) : Socket {
     private val readChannel: ByteReadChannel = ktorSocket.openReadChannel()
     private val writeChannel: ByteWriteChannel = ktorSocket.openWriteChannel(autoFlush = true)
+
     override val isClosedForWrite: Boolean
         get() = writeChannel.isClosedForWrite
     override val isClosedForRead: Boolean
@@ -59,9 +60,7 @@ public class KtorSocket(private val ktorSocket: RealKtorSocket) : Socket {
         writeChannel.writeFully(byteArray, offset, offset + limit)
     }
 
-    @OptIn(io.ktor.utils.io.InternalAPI::class, kotlinx.io.InternalIoApi::class)
     override suspend fun readAvailable(buffer: ByteArray, offset: Int, limit: Int): Int {
-        if (!readChannel.isClosedForRead && readChannel.readBuffer.buffer.size == 0L) return 0
         return readChannel.readAvailable(buffer, offset, limit)
     }
 
