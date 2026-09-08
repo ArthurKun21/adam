@@ -13,6 +13,10 @@ Replace the gRPC/protobuf stack of the `adam` core library:
 - **Instrumentation proto** (`instrumentation-data.proto`, proto2, parsed from the raw ADB socket):
   `protobuf-javalite` → **kotlinx-serialization protobuf** (stable, Maven Central).
 
+Note on `protobuf-javalite`: it leaves adam's direct dependencies and the compile classpath, but it
+**remains on the runtime classpath** as kotlinx-rpc's own transitive dependency — the generated
+marshallers require it (see §6, "protobuf-javalite is load-bearing").
+
 Functionality must be preserved: plaintext unary + server-streaming calls against the emulator's
 gRPC bridge (`EmulatorGrpcRule`, `EmulatorGrpcE2ETest`) and the fragmented protobuf-stream parsing of
 `am instrument` output (`ProtoInstrumentationResponseTransformer`, public signature unchanged).
@@ -90,9 +94,10 @@ Approved decisions (user-confirmed):
 ### 2.4 Verdict
 
 Feasible. io.grpc does not fully disappear (it is the JVM transport underneath kotlinx-rpc gRPC),
-but the stub/codegen/protobuf-runtime layers are replaced by Kotlin-first code; protobuf-javalite
-and the protoc pipeline are removed entirely. Main trade-offs: pre-release pin + extra repo for
-consumers, generated-package rename, `EmulatorGrpcRule` API break.
+but the stub/codegen/protobuf-runtime layers are replaced by Kotlin-first code; the protoc pipeline
+and protobuf-javalite as a *direct* dependency are removed entirely (protobuf-java remains
+transitively at runtime — see §6, "protobuf-javalite is load-bearing"). Main trade-offs: pre-release
+pin + extra repo for consumers, generated-package rename, `EmulatorGrpcRule` API break.
 
 ## 3. Implementation steps
 
@@ -168,15 +173,44 @@ consumers, generated-package rename, `EmulatorGrpcRule` API break.
   so the next packet overwrote buffered bytes; the port appends instead.
 - `instrumentation-data.proto` moved to `docs/reference/` as the wire-format reference; buf now
   generates only the emulator controller code.
-- **`protobuf-javalite` is required at runtime** (correction of an earlier attempt to exclude it):
-  the kotlinx-rpc `checkForPlatformDecodeException` helper is *inlined* into every generated
-  `*Internal$MARSHALLER.decode` and catches `com.google.protobuf.InvalidProtocolBufferException`,
-  so each generated marshaller's bytecode references protobuf-java. The dependency comes in as a
-  runtime dependency of `kotlinx-rpc-protobuf-lite` (never on the compile classpath — the generated
-  code compiles fine without it), which is why it only surfaced as `NoClassDefFoundError` on a live
-  emulator call (CI), not in unit tests. Do not exclude `com.google.protobuf` artifacts;
-  `GeneratedMessageMarshallerTest` guards this (verified: re-adding the exclusion fails it with the
-  exact CI error).
+- **`protobuf-javalite` is load-bearing at runtime — CI regression found & fixed** (correction of
+  an interim attempt to exclude it, see the history below):
+  - **Symptom**: `EmulatorGrpcE2ETest > testProto` failed on all CI emulator matrix jobs
+    (API 24/34/35) with
+    `java.lang.NoClassDefFoundError: com/google/protobuf/InvalidProtocolBufferException` on the
+    first gRPC call; everything was green locally (compile + full unit suite).
+  - **Root cause**: the kotlinx-rpc helper `checkForPlatformDecodeException` is an *inline*
+    function whose body catches `com.google.protobuf.InvalidProtocolBufferException` (translating
+    it into `ProtobufDecodingException`). Kotlin materializes the inline body into every generated
+    `*Internal$MARSHALLER.decode` — all 27 marshallers in adam's jar carry the reference (54
+    constant-pool hits). Verifying/executing those `decode` methods therefore requires protobuf-java
+    on the runtime classpath.
+  - **Why it slipped through every local gate**: the dependency is declared `runtime`-scope by
+    `kotlinx-rpc-protobuf-lite`, so it never appears on the compile classpath — the generated code
+    compiles without it, and no source file imports it. And no unit test executes a gRPC call:
+    `GrpcClient` builds eagerly but connects/decodes lazily, so `EmulatorGrpcClientFactoryTest`
+    (construct client + obtain proxy + shutdown) passes even with the class missing. Only a real
+    RPC round-trip hits `decode`. Lesson: a "failed" code path behind a `catch` is still a
+    classpath requirement; validate a dependency's load-bearing-ness by executing the code path
+    that references it, not by absence of compile errors.
+  - **Why the interim exclusion looked safe**: an early constant-pool scan concluded no
+    kotlinx-rpc jar references protobuf-java. Two scan mistakes produced that false negative:
+    (a) a whole-cache scan was a silent no-op because Gradle cache paths use the literal group
+    name (`files-2.1/io.grpc/...`), not slash-separated groups; (b) kotlinx-rpc's own WKT runtime
+    lives in `com.google.protobuf.kotlin`, which naive `com/google/protobuf` string matching
+    reports as protobuf-java references — and dismissing those noisy hits led to over-trusting the
+    scan. An exact, per-entry scan (python `zipfile`) found the 54 references in
+    `*Internal$MARSHALLER.class` immediately.
+  - **Fix**: the `exclude(group = "com.google.protobuf", module = "protobuf-javalite")` block was
+    removed from `adam/build.gradle.kts`. Final dependency statement: protobuf-java is gone from
+    the compile classpath and from adam's direct `api`/`implementation` deps; it remains only as
+    kotlinx-rpc's transitive **runtime** dependency (`protobuf-javalite` 4.35.1 via
+    `kotlinx-rpc-protobuf-lite`).
+  - **Regression guard**: `GeneratedMessageMarshallerTest` round-trips a `VmRunState` through a
+    generated marshaller (encode → decode), forcing the decode path to verify. Proven effective by
+    temporarily re-applying the exclusion: the test fails with the exact CI error
+    (`NoClassDefFoundError`) — without needing a live emulator.
+  - Do **not** exclude `com.google.protobuf` artifacts from the kotlinx-rpc dependency tree.
 - **sources jar collision**: kotlinx-rpc generates the messages file and the service file with
   identical relative paths (`com/android/emulator/control/EmulatorController.kt`) in the
   `kotlin-multiplatform` and `grpc-kotlin-multiplatform` source roots, which fails
