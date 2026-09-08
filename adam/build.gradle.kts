@@ -110,11 +110,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(libs.coroutines.core)
     implementation(libs.logcat)
-    // kotlinx-rpc-protobuf-lite-jvm declares an unused runtime dependency on protobuf-javalite
-    // (no class in the module references com.google.protobuf); keep protobuf-java out of the tree
-    api(libs.kotlinx.rpc.protobuf) {
-        exclude(group = "com.google.protobuf", module = "protobuf-javalite")
-    }
+    api(libs.kotlinx.rpc.protobuf)
     api(libs.kotlinx.rpc.grpc.core)
     api(libs.kotlinx.rpc.grpc.client)
     implementation(libs.kotlinx.serialization.protobuf)
