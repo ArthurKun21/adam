@@ -92,12 +92,15 @@ class GrpcActivityTest {
     @Test
     fun testVmState() {
         runBlocking {
-            val vmState = emulator.grpc.getVmState(Empty.getDefaultInstance())
+            val vmState = emulator.grpc.getVmState(Empty { })
             assert(vmState.state == VmRunState.RunState.RUNNING)
         }
     }
 }
 ```
+
+The rule exposes the kotlinx-rpc generated `EmulatorController` service proxy (a plain Kotlin interface: unary methods are `suspend`,
+server-streaming methods return a `Flow`). Messages are constructed with the generated builder DSL.
 
 ## EmulatorConsoleRule
 
