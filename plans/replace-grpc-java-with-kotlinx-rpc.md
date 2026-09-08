@@ -168,11 +168,15 @@ consumers, generated-package rename, `EmulatorGrpcRule` API break.
   so the next packet overwrote buffered bytes; the port appends instead.
 - `instrumentation-data.proto` moved to `docs/reference/` as the wire-format reference; buf now
   generates only the emulator controller code.
-- **kotlinx-rpc-protobuf-lite-jvm declares an unused runtime dependency on `protobuf-javalite`**
-  (no class in the module references `com.google.protobuf`); excluded via
-  `exclude(group = "com.google.protobuf", module = "protobuf-javalite")` on the
-  `kotlinx-rpc-protobuf` api dep so protobuf-java is fully out of the dependency tree. Full test
-  suite green with the exclusion.
+- **`protobuf-javalite` is required at runtime** (correction of an earlier attempt to exclude it):
+  the kotlinx-rpc `checkForPlatformDecodeException` helper is *inlined* into every generated
+  `*Internal$MARSHALLER.decode` and catches `com.google.protobuf.InvalidProtocolBufferException`,
+  so each generated marshaller's bytecode references protobuf-java. The dependency comes in as a
+  runtime dependency of `kotlinx-rpc-protobuf-lite` (never on the compile classpath — the generated
+  code compiles fine without it), which is why it only surfaced as `NoClassDefFoundError` on a live
+  emulator call (CI), not in unit tests. Do not exclude `com.google.protobuf` artifacts;
+  `GeneratedMessageMarshallerTest` guards this (verified: re-adding the exclusion fails it with the
+  exact CI error).
 - **sources jar collision**: kotlinx-rpc generates the messages file and the service file with
   identical relative paths (`com/android/emulator/control/EmulatorController.kt`) in the
   `kotlin-multiplatform` and `grpc-kotlin-multiplatform` source roots, which fails
