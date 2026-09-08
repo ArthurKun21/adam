@@ -4,6 +4,14 @@ on:
     branches:
       - master
       - dev
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/workflows/docs.yaml'
+      - 'zensical.toml'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - '.python-version'
   pull_request:
     paths-ignore:
       - '**/*.md'
@@ -15,6 +23,10 @@ on:
       - '.vscode/**'
       - '**/.editorconfig'
       - 'docs/**'
+      - 'zensical.toml'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - '.python-version'
       - 'LICENSE'
       - 'NOTICE'
   workflow_dispatch:
