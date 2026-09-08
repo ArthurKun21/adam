@@ -1,7 +1,5 @@
 ---
-layout: default
 title:  "Logcat"
-nav_order: 8
 ---
 
 ## Retrieve logcat log

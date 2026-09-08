@@ -1,0 +1,21 @@
+/* Inline badges carried over from the previous Jekyll (just-the-docs) docs */
+.label {
+  display: inline-block;
+  padding: 0.12em 0.7em;
+  border-radius: 1rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: #fff;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.label-blue {
+  background-color: #2f68f6;
+}
+
+.label-yellow {
+  background-color: #f4c025;
+  color: #212121;
+}

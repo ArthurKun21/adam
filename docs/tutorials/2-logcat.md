@@ -1,7 +1,5 @@
 ---
-layout: default
 title:  "2. Stream logcat"
-nav_order: 2
 ---
 
 ## 2. Streaming logcat output
@@ -9,7 +7,7 @@ nav_order: 2
 Some operations in adam require you to stream the output. One such example is streaming the logcat since this source of data will not stop
  producing output unless you stop reading it or the device terminates.
 
-Here is the boilerplate from [part 1]({% link _tutorials/1-shell.md %}) to setup the communication with the device:
+Here is the boilerplate from [part 1](1-shell.md) to setup the communication with the device:
 ```kotlin
 StartAdbInteractor().execute()
 val adb = AndroidDebugBridgeClientFactory().build()
@@ -44,5 +42,5 @@ Second, we check some external signal to stop streaming logcat (user pressed a k
 Third, we want to continue this loop until we reach other the device failure to provide us the output or we receive some external signal to
 stop.
 
-There are many more options available for [`ChanneledLogcatRequest`]({% link _docs/logcat/logcat.md %}) that change the format of the output
+There are many more options available for [`ChanneledLogcatRequest`](../docs/logcat/logcat.md) that change the format of the output
 as well as filtering and more.

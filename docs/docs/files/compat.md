@@ -1,8 +1,5 @@
 ---
-layout: default
 title:  "Compatibility mode"
-parent: Files
-nav_order: 1
 ---
 
 ## Stat file

@@ -1,7 +1,5 @@
 ---
-layout: default
 title:  "1. Execute shell request"
-nav_order: 1
 ---
 
 ## 1. Executing shell request

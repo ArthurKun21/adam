@@ -1,14 +1,6 @@
 ---
-layout: default
 title: Shell
-nav_order: 1
-has_children: true
-has_toc: false
-permalink: /docs/shell
 ---
-
-1. TOC
-{:toc}
 
 This is a description of requests in `com.malinskiy.adam.request.shell.v1`
 

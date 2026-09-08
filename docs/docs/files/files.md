@@ -1,10 +1,5 @@
 ---
-layout: default
 title: Files
-nav_order: 3
-has_children: true
-has_toc: false
-permalink: /docs/files
 ---
 
 # File requests
@@ -20,8 +15,8 @@ If you want to directly interact with sync v1 see [sync v1 docs][3], for sync v2
 
 For compatibility reasons, you might want to use plain `ls`. This is wrapped in [ListFilesRequest][5]
 
-[1]: {% link _docs/files/recommended.md %}
-[2]: {% link _docs/files/compat.md %}
-[3]: {% link _docs/files/sync-v1.md %}
-[4]: {% link _docs/files/sync-v2.md %}
-[5]: {% link _docs/files/ls.md %}
+[1]: recommended.md
+[2]: compat.md
+[3]: sync-v1.md
+[4]: sync-v2.md
+[5]: ls.md

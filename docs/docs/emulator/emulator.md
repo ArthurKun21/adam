@@ -1,9 +1,5 @@
 ---
-layout: default
 title: "Emulator"
-nav_order: 4
-has_toc: false
-permalink: /docs/emu
 ---
 
 There are three ways to control an emulator:

@@ -1,11 +1,6 @@
 ---
-layout: default
 title: Miscellaneous
-nav_order: 12
 ---
-
-1. TOC
-{:toc}
 
 ## Get adb server version
 
