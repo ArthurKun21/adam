@@ -12,11 +12,8 @@ junit5commons = "6.1.3"
 imageComparison = "4.4.0"
 
 grpc = "1.84.0"
-grpcKotlin = "1.5.0"
-grpcOkhttp = "1.84.0"
-protobufGradle = "0.10.0"
-protobuf = "4.36.1"
-javax = "1.3.2"
+kotlinxRpc = "0.11.0-grpc-189"
+kotlinxSerialization = "1.9.0"
 androidGradle = "9.4.0"
 testMonitor = "1.8.0"
 testRunner = "1.7.0"
@@ -48,12 +45,12 @@ coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", 
 
 ktor-network = { module = "io.ktor:ktor-network-jvm", version.ref = "ktor" }
 logcat = { module = "com.squareup.logcat:logcat", version.ref = "logcat" }
-protobuf-lite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
-grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
-grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpcKotlin" }
-grpc-protobuf-lite = { module = "io.grpc:grpc-protobuf-lite", version.ref = "grpc" }
-grpc-okhttp = { module = "io.grpc:grpc-okhttp", version.ref = "grpcOkhttp" }
-javax-annotations = { module = "javax.annotation:javax.annotation-api", version.ref = "javax" }
+kotlinx-rpc-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-rpc-protobuf", version.ref = "kotlinxRpc" }
+kotlinx-rpc-grpc-core = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-core", version.ref = "kotlinxRpc" }
+kotlinx-rpc-grpc-client = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-client", version.ref = "kotlinxRpc" }
+kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinxSerialization" }
+grpc-okhttp = { module = "io.grpc:grpc-okhttp", version.ref = "grpc" }
+grpc-netty = { module = "io.grpc:grpc-netty", version.ref = "grpc" }
 androidx-test-monitor = { module = "androidx.test:monitor", version.ref = "testMonitor" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "testRunner" }
 assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
@@ -73,10 +70,11 @@ ktlint-core = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlin
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlinx-rpc = { id = "org.jetbrains.kotlinx.rpc.plugin", version.ref = "kotlinxRpc" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-protobuf = { id = "com.google.protobuf", version.ref = "protobufGradle" }
 android-library = { id = "com.android.library", version.ref = "androidGradle" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktechMavenPublish" }

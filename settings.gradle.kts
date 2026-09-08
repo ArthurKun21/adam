@@ -27,6 +27,12 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        // kotlinx-rpc gRPC dev releases (pre-release artifacts, not published to Maven Central)
+        maven("https://redirector.kotlinlang.org/maven/kxrpc-grpc") {
+            content {
+                includeGroupByRegex("org\\.jetbrains\\.kotlinx.*")
+            }
+        }
     }
 }
 dependencyResolutionManagement {
@@ -42,6 +48,12 @@ dependencyResolutionManagement {
         // fallback for the rest of the dependencies
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
+        // kotlinx-rpc gRPC dev releases (pre-release artifacts, not published to Maven Central)
+        maven("https://redirector.kotlinlang.org/maven/kxrpc-grpc") {
+            content {
+                includeGroupByRegex("org\\.jetbrains\\.kotlinx.*")
+            }
+        }
     }
 }
 plugins {

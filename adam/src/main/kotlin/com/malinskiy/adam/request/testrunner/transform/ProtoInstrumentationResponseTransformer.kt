@@ -16,8 +16,9 @@
 
 package com.malinskiy.adam.request.transform
 
-import com.android.commands.am.InstrumentationData
-import com.google.protobuf.InvalidProtocolBufferException
+import com.arthurkun21.adam.instrumentation.ResultsBundleEntry
+import com.arthurkun21.adam.instrumentation.Session
+import com.arthurkun21.adam.instrumentation.SessionStatusCode
 import com.malinskiy.adam.Const
 import com.malinskiy.adam.extension.compatLimit
 import com.malinskiy.adam.extension.compatPosition
@@ -39,6 +40,9 @@ import com.malinskiy.adam.request.testrunner.model.State
 import com.malinskiy.adam.request.testrunner.model.Status
 import com.malinskiy.adam.request.testrunner.model.StatusKey
 import com.malinskiy.adam.request.testrunner.model.TestStatusAggregator
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.protobuf.ProtoBuf
 import java.io.File
 import java.io.RandomAccessFile
 import java.nio.MappedByteBuffer
@@ -79,15 +83,17 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
 
         try {
             buffer.compatPosition(0)
-            val session = InstrumentationData.Session.parseFrom(buffer)
+            val payload = ByteArray(buffer.remaining()).also(buffer::get)
+            val session = ProtoBuf.decodeFromByteArray<Session>(payload)
             val events = mutableListOf<TestEvent>()
-            for (status in session.testStatusList ?: emptyList()) {
+            for (status in session.testStatus) {
                 if (state == NotStarted) {
                     val testCount =
-                        status.results?.entriesList?.filter { entry ->
-                            entry.key?.let { it == StatusKey.NUMTESTS.value }
-                                ?: false
-                        }
+                        status.results?.entries
+                            ?.filter { entry ->
+                                entry.key?.let { it == StatusKey.NUMTESTS.value }
+                                    ?: false
+                            }
                             ?.mapNotNull { it.valueInt }
                             ?.firstOrNull()
                             ?: 0
@@ -102,7 +108,7 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
                 var testMethodName = ""
                 var stackTrace = ""
                 val testMetrics = mutableMapOf<String, String>()
-                status.results?.entriesList?.forEach { entry ->
+                status.results?.entries?.forEach { entry ->
                     if (entry.key != null) {
                         when (StatusKey.of(entry.key)) {
                             StatusKey.TEST -> testMethodName = entry.valueString ?: testClassName
@@ -152,14 +158,14 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
                 }
             }
 
-            if (session.hasSessionStatus()) {
+            session.sessionStatus?.let { sessionStatus ->
                 state = Finished
 
                 val testRunMetrics = mutableMapOf<String, String>()
-                when (session.sessionStatus.statusCode) {
-                    InstrumentationData.SessionStatusCode.SESSION_FINISHED -> {
-                        if ((session.sessionStatus.resultCode) == SessionResultCode.ERROR.value) {
-                            val errorMessage = session.sessionStatus.results?.entriesList
+                when (sessionStatus.statusCode) {
+                    SessionStatusCode.SESSION_FINISHED -> {
+                        if ((sessionStatus.resultCode) == SessionResultCode.ERROR.value) {
+                            val errorMessage = sessionStatus.results?.entries
                                 ?.filter { entry ->
                                     entry.key?.let { it == StatusKey.SHORTMSG.value } ?: false
                                 }
@@ -167,15 +173,15 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
                             events.add(TestRunFailed(errorMessage))
                         }
 
-                        session.sessionStatus.results?.entriesList?.forEach { entry ->
+                        sessionStatus.results?.entries?.forEach { entry ->
                             if (entry.key != null && StatusKey.of(entry.key) == StatusKey.UNKNOWN) {
                                 testRunMetrics[entry.key] = entry.valueToString()
                             }
                         }
                     }
 
-                    InstrumentationData.SessionStatusCode.SESSION_ABORTED -> {
-                        val errorText = session.sessionStatus.errorText ?: ""
+                    SessionStatusCode.SESSION_ABORTED -> {
+                        val errorText = sessionStatus.errorText ?: ""
                         val lastTest = testStatuses.entries.lastOrNull()
 
                         if (lastTest != null && !lastTest.value.statusCode.isTerminal()) {
@@ -191,7 +197,7 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
                     else -> Unit
                 }
 
-                val sessionOutput = session.sessionStatus.results?.entriesList
+                val sessionOutput = sessionStatus.results?.entries
                     ?.filter { it.key == StatusKey.STREAM.value }
                     ?.mapNotNull { it.valueToString() }
                     ?.firstOrNull()
@@ -207,18 +213,16 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
 
             /**
              * Handling fragmentation
-             * This will fail if the protobuf message contains the field multiple times and serializedSize is not equal to actual read size
+             *
+             * A successfully decoded message consumes the whole buffered payload: each `am instrument`
+             * write arrives as its own packet, so a complete message and a follow-up message never share
+             * a buffer (a truncated message fails to decode and is retried after the next chunk arrives).
+             * Discard everything buffered and start over with the next packet.
              */
-            val readSize = session.serializedSize
-            val currentLimit = buffer.limit()
-            buffer.compatPosition(readSize)
-            buffer.compact()
-            buffer.compatLimit(currentLimit - readSize)
-
+            buffer.compatLimit(0)
             return events
-        } catch (e: InvalidProtocolBufferException) {
+        } catch (e: SerializationException) {
             // wait for more input
-            buffer.compatPosition(buffer.limit())
             return null
         }
     }
@@ -277,15 +281,15 @@ public class ProtoInstrumentationResponseTransformer(maxProtobufPacketLength: Lo
     }
 }
 
-private fun InstrumentationData.ResultsBundleEntry.valueToString(): String {
+private fun ResultsBundleEntry.valueToString(): String {
     return when {
-        hasValueString() -> valueString
-        hasValueInt() -> valueInt.toString()
-        hasValueLong() -> valueLong.toString()
-        hasValueFloat() -> valueFloat.toString()
-        hasValueDouble() -> valueDouble.toString()
-        hasValueBytes() -> valueBytes.toString()
-        hasValueBundle() -> valueBundle.toString()
+        valueString != null -> valueString
+        valueInt != null -> valueInt.toString()
+        valueLong != null -> valueLong.toString()
+        valueFloat != null -> valueFloat.toString()
+        valueDouble != null -> valueDouble.toString()
+        valueBytes != null -> valueBytes.decodeToString()
+        valueBundle != null -> valueBundle.toString()
         else -> ""
     }
 }
