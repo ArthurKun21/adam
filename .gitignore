@@ -103,3 +103,17 @@ local.properties
 .DS_Store
 
 .zcode/**
+
+### Python / uv (documentation toolchain) ###
+# Virtual environment created by uv
+.venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Zensical site build output
+site/
+
+# Generated Dokka API documentation (built in CI before the site build)
+docs/api/
