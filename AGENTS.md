@@ -18,6 +18,18 @@
 - Combined coverage: `./gradlew :adam:jacocoCombinedTestReport`
 - Generate docs: `./gradlew :adam:dokkaGeneratePublicationHtml` (output: `docs/api/`)
 
+## Docs Site (Zensical)
+
+- Docs live in `docs/` and are built with Zensical via uv; config: `zensical.toml` (repo root)
+- Local preview: `uv run zensical serve`; build: `uv run zensical build --clean` (output: `site/`, gitignored)
+- Dependencies are managed by uv (`pyproject.toml` + `uv.lock`); add with `uv add --dev <package>`
+- Dokka output (`docs/api/`) is gitignored and generated before the site build; it is copied
+  verbatim into the site and linked from the `API` guide page
+- Publishing: `.github/workflows/docs.yaml` deploys to GitHub Pages on push to `dev`
+- Markdown rules: no Jekyll front matter (`layout`/`nav_order`/`permalink`); page order comes from
+  the `nav` list in `zensical.toml`; badges use the `.label`/`.label-blue`/`.label-yellow` classes
+  from `docs/stylesheets/extra.css`
+
 ## Architecture
 
 Kotlin coroutine-based ADB (Android Debug Bridge) client library.
