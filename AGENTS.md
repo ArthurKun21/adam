@@ -9,8 +9,10 @@
 - Run single test: `./gradlew :adam:test --tests "com.malinskiy.adam.ClassName.testMethod"`
 - Ktor transport regression tests: `./gradlew :adam:test --tests "com.arthurkun21.adam.transport.ktor.KtorSocketRegressionTest"`
   - Guards Ktor byte-array offset/limit API semantics
-- gRPC client factory tests: `./gradlew :adam:test --tests "com.arthurkun21.adam.emulator.EmulatorGrpcClientFactoryTest"`
+- gRPC client factory tests: `./gradlew :adam:test --tests "com.arthurkun21.adam.emulator.*"`
   - Guards gRPC-Java transport provider discovery (grpc-okhttp) under kotlinx-rpc
+  - `GeneratedMessageMarshallerTest` guards the protobuf-java runtime requirement of the generated
+    marshallers (inlined decode error handling references `InvalidProtocolBufferException`)
 - Integration tests: `./gradlew :adam:integrationTest`
 - Coverage reports: `./gradlew jacocoTestReport` (unit), `./gradlew :adam:jacocoIntegrationTestReport` (integration)
 - Combined coverage: `./gradlew :adam:jacocoCombinedTestReport`
