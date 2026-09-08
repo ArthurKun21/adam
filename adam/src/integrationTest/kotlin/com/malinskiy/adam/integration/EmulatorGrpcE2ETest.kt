@@ -16,13 +16,13 @@
 
 package com.malinskiy.adam.integration
 
-import com.android.emulator.control.EmulatorControllerGrpcKt
-import com.google.protobuf.Empty
+import com.arthurkun21.adam.emulator.emulatorController
+import com.arthurkun21.adam.emulator.emulatorGrpcClient
+import com.arthurkun21.adam.emulator.shutdownAndAwaitTermination
+import com.google.protobuf.kotlin.Empty
+import com.google.protobuf.kotlin.invoke
 import com.malinskiy.adam.rule.AdbDeviceRule
 import com.malinskiy.adam.rule.DeviceType
-import io.grpc.ManagedChannelBuilder
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
 import org.junit.Assume
 import org.junit.Rule
@@ -42,14 +42,14 @@ class EmulatorGrpcE2ETest {
             val grpcAddress = emulator.emulatorGrpcAddress()
             Assume.assumeTrue("Emulator gRPC is not available at $grpcAddress", grpcAddress.canConnect())
 
-            val channel = ManagedChannelBuilder.forAddress(grpcAddress.hostString, grpcAddress.port).apply {
-                usePlaintext()
-                executor(Dispatchers.IO.asExecutor())
-            }.build()
-
-            val emulator = EmulatorControllerGrpcKt.EmulatorControllerCoroutineStub(channel)
-            val status = emulator.getStatus(Empty.getDefaultInstance())
-            println(status)
+            val client = emulatorGrpcClient(grpcAddress.hostString, grpcAddress.port)
+            try {
+                val emulatorController = client.emulatorController()
+                val status = emulatorController.getStatus(Empty { })
+                println(status)
+            } finally {
+                client.shutdownAndAwaitTermination()
+            }
         }
     }
 

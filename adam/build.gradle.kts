@@ -3,8 +3,6 @@ import adam.buildlogic.configureAdamPom
 import adam.buildlogic.configureIntegrationTestSourceSet
 import adam.buildlogic.configureIntegrationTestTasks
 import adam.buildlogic.integrationTestImplementation
-import com.google.protobuf.gradle.id
-import com.google.protobuf.gradle.remove
 
 /*
  * Copyright (C) 2021 Anton Malinskiy
@@ -26,7 +24,8 @@ plugins {
     id("adam.jvm")
     id("jacoco")
     id("org.jetbrains.dokka")
-    alias(libs.plugins.protobuf)
+    alias(libs.plugins.kotlinx.rpc)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.vanniktech.maven.publish)
     id("idea")
 }
@@ -41,39 +40,8 @@ mavenPublishing {
     }
 }
 
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:${libs.versions.protobuf.get()}"
-    }
-    plugins {
-        id("java") {
-            artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc.get()}"
-        }
-        id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc.get()}"
-        }
-        id("grpckt") {
-            artifact = "io.grpc:protoc-gen-grpc-kotlin:${libs.versions.grpcKotlin.get()}:jdk8@jar"
-        }
-    }
-    generateProtoTasks {
-        all().forEach {
-            it.builtins {
-                remove("java")
-            }
-            it.plugins {
-                id("java") {
-                    option("lite")
-                }
-                id("grpc") {
-                    option("lite")
-                }
-                id("grpckt") {
-                    option("lite")
-                }
-            }
-        }
-    }
+rpc {
+    protoc()
 }
 
 configureIntegrationTestSourceSet()
@@ -127,17 +95,26 @@ dokka {
     }
 }
 
+// kotlinx-rpc generates the messages file and the service file with identical relative paths
+// (com/android/emulator/control/EmulatorController.kt) in two source roots, which collides inside
+// the sources jar. Generated code is reproducible via `rpc { protoc() }`, so ship hand-written
+// sources only.
+tasks.withType<Jar>().configureEach {
+    if (name == "sourcesJar") {
+        exclude { element -> element.file.absolutePath.contains("protoBuild") }
+    }
+}
+
 dependencies {
     implementation(libs.annotations)
     implementation(kotlin("stdlib-jdk8"))
     implementation(libs.coroutines.core)
     implementation(libs.logcat)
-    api(libs.protobuf.lite)
-    api(libs.grpc.protobuf.lite)
-    api(libs.grpc.kotlin.stub)
-    api(libs.grpc.okhttp)
-    api(libs.grpc.stub)
-    implementation(libs.javax.annotations)
+    api(libs.kotlinx.rpc.protobuf)
+    api(libs.kotlinx.rpc.grpc.core)
+    api(libs.kotlinx.rpc.grpc.client)
+    implementation(libs.kotlinx.serialization.protobuf)
+    implementation(libs.grpc.okhttp)
     implementation(libs.ktor.network)
     implementation(libs.apache.commons.pool2)
 

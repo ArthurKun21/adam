@@ -46,18 +46,23 @@ used in the same way as adb server requests and shares the socket creation logic
 
 ## Run gRPC bridge commands
 
-Adam bundles a gRPC client for emulator gRPC bridge. The spec is generated from [emulator_controller.proto][1]
+Adam bundles a gRPC client for the emulator gRPC bridge, built with [kotlinx-rpc](https://kotlin.github.io/kotlinx-rpc/).
+The spec is generated from [emulator_controller.proto][1]
 
-Please refer to the gRPC docs on using the client. A very simple example looks something like this:
+Adam provides a small helper to create a plaintext client for the bridge and to obtain the service
+proxy (`com.arthurkun21.adam.emulator`):
 
 ```kotlin
-val channel = ManagedChannelBuilder.forAddress(grpcHost, grpcPort).apply {
-    usePlaintext()
-    executor(Dispatchers.IO.asExecutor())
-}.build()
-val client = EmulatorControllerGrpcKt.EmulatorControllerCoroutineStub(channel)
-val state = client.getVmState(Empty.getDefaultInstance())
+val client = emulatorGrpcClient(grpcHost, grpcPort)
+val emulatorController = client.emulatorController()
+val state = emulatorController.getVmState(Empty { })
+
+// when done
+client.shutdownAndAwaitTermination()
 ```
+
+Unary methods are `suspend` functions; server-streaming methods (e.g. `streamScreenshot`, `streamLogcat`)
+return a cold `Flow` that must be collected within the caller's coroutine scope.
 
 Please refer to the [emulator_controller.proto][1] for the supported functionality.
 

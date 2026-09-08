@@ -30,6 +30,7 @@ class JvmConventionPlugin : Plugin<Project> {
                     freeCompilerArgs.addAll(
                         "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi",
                         "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                        "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
                     )
                 }
             }
