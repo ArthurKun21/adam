@@ -17,26 +17,24 @@
 package com.malinskiy.adam.junit4.rule
 
 import androidx.test.platform.app.InstrumentationRegistry
-import com.android.emulator.control.EmulatorControllerGrpcKt
+import com.android.emulator.control.EmulatorController
+import com.arthurkun21.adam.emulator.emulatorController
+import com.arthurkun21.adam.emulator.emulatorGrpcClient
+import com.arthurkun21.adam.emulator.shutdownAndAwaitTermination
 import com.malinskiy.adam.android.contract.TestRunnerContract
 import com.malinskiy.adam.junit4.android.rule.Mode
-import io.grpc.ManagedChannel
-import io.grpc.ManagedChannelBuilder
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asExecutor
+import kotlinx.coroutines.runBlocking
+import kotlinx.rpc.grpc.client.GrpcClient
 import org.junit.AssumptionViolatedException
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
-import java.util.concurrent.TimeUnit
 
 public class EmulatorGrpcRule(
     public val mode: Mode = Mode.ASSERT,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : TestRule {
-    public lateinit var grpc: EmulatorControllerGrpcKt.EmulatorControllerCoroutineStub
-    private var channel: ManagedChannel? = null
+    public lateinit var grpc: EmulatorController
+    private var client: GrpcClient? = null
 
     override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {
@@ -46,12 +44,9 @@ public class EmulatorGrpcRule(
                 val grpcHost = arguments.getString(TestRunnerContract.grpcHostArgumentName)
 
                 if (grpcPort != null && grpcHost != null) {
-                    val localChannel = ManagedChannelBuilder.forAddress(grpcHost, grpcPort).apply {
-                        usePlaintext()
-                        executor(coroutineDispatcher.asExecutor())
-                    }.build()
-                    channel = localChannel
-                    grpc = EmulatorControllerGrpcKt.EmulatorControllerCoroutineStub(localChannel)
+                    val localClient = emulatorGrpcClient(grpcHost, grpcPort)
+                    client = localClient
+                    grpc = localClient.emulatorController()
                 } else {
                     when (mode) {
                         Mode.SKIP -> return
@@ -69,8 +64,9 @@ public class EmulatorGrpcRule(
                 try {
                     base.evaluate()
                 } finally {
-                    channel?.shutdownNow()
-                    channel?.awaitTermination(5, TimeUnit.SECONDS)
+                    runBlocking {
+                        client?.shutdownAndAwaitTermination()
+                    }
                 }
             }
         }
