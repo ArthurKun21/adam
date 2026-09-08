@@ -1,14 +1,11 @@
 ---
-layout: default
 title: Home
-nav_order: 1
-permalink: /
 ---
 
 # Adam
 Android Debug Bridge helper written in Kotlin
 
-[Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [View it on GitHub](https://github.com/Malinskiy/adam){: .btn .fs-5 .mb-4 .mb-md-0 }
+[Get started now](#getting-started){: .md-button .md-button--primary } [View it on GitHub](https://github.com/Malinskiy/adam){: .md-button }
 
 ## Motivation
 The only way to get access to the adb programmatically from java world currently is to use the ddmlib java project. Unfortunately it has several limitations, namely:
@@ -114,7 +111,7 @@ println(output) // hello
 
 ## About the project
 
-Adam is &copy; 2019-{{ "now" | date: "%Y" }} by [Anton Malinskiy](http://github.com/Malinskiy).
+Adam is &copy; 2019-2026 by [Anton Malinskiy](http://github.com/Malinskiy).
 
 ### License
 

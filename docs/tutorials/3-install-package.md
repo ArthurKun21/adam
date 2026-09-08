@@ -1,12 +1,10 @@
 ---
-layout: default
 title:  "3. Install package"
-nav_order: 3
 ---
 
 ## 3. Install package
 
-Here is the boilerplate from [part 1]({% link _tutorials/1-shell.md %}) to setup the communication with the device:
+Here is the boilerplate from [part 1](1-shell.md) to setup the communication with the device:
 ```kotlin
 StartAdbInteractor().execute()
 val adb = AndroidDebugBridgeClientFactory().build()

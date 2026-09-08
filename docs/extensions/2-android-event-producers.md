@@ -1,7 +1,5 @@
 ---
-layout: default
 title:  "Android test metric producers"
-nav_order: 2
 ---
 
 Adam provides several producers of test statuses that inform test runners about the test execution.

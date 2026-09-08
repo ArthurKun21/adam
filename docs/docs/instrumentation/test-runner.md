@@ -1,14 +1,8 @@
 ---
-layout: default
 title:  "Test runner (am instrument)"
-nav_order: 6
 ---
 
 ## Test runner request
-{: .no_toc }
-
-1. TOC
-{:toc}
 
 Optionally uses Feature.SHELL_V2
 {: .label .label-blue }
@@ -79,7 +73,6 @@ or
 `<class_name>#method name`.  A fully-qualified test case class name, and one of its methods.
 Only this method is executed.
 Note the hash mark (#) between the class name and the method name.
-
 
 ### functional 
 Runs all test classes that extend `InstrumentationTestCase`.

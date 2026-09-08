@@ -1,14 +1,8 @@
 ---
-layout: default
 title:  "Caveats"
-nav_order: 15
 ---
 # Caveats
-{: .no_toc }
 When working with adam it's a good idea to keep the following things in mind.
-
-1. TOC
-{:toc}
 
 ## Response types
 
@@ -48,7 +42,6 @@ There are additional exceptions, namely:
 * `PullFailedException`, `PushFailedException` and `UnsupportedSyncProtocolException` for file requests
 * `UnsupportedForwardingSpecException` for port forwarding requests
 * `UnsupportedImageProtocolException` for screenshot requests
-
 
 ## Request target
 When executing the request agains an ADB server client sends what is the target for that particular request.

@@ -1,8 +1,5 @@
 ---
-layout: default
 title:  "sync v2"
-parent: Files
-nav_order: 3
 ---
 
 ## Stat file

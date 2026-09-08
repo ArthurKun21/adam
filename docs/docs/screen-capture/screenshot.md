@@ -1,7 +1,5 @@
 ---
-layout: default
 title:  "Screenshot"
-nav_order: 7
 ---
 
 ## Capture a screenshot

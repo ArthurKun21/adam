@@ -1,7 +1,5 @@
 ---
-layout: default
 title:  "Android JUnit 4 rules"
-nav_order: 1
 ---
 
 Adam supports tests that need to interact with the device be it adb or emulator console/gRPC access. This means that you can execute a test,

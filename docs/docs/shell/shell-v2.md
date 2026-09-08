@@ -1,8 +1,5 @@
 ---
-layout: default
 title:  "Shell v2"
-parent: Shell
-nav_order: 2
 ---
 
 This is a description of requests in `com.malinskiy.adam.request.shell.v2`

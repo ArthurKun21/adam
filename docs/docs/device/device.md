@@ -1,13 +1,6 @@
 ---
-layout: default
 title: "Device management"
-nav_order: 3
-has_toc: false
-permalink: /docs/monitor-devices
 ---
-
-1. TOC
-{:toc}
 
 ## List devices
 

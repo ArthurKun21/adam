@@ -1,0 +1,77 @@
+[project]
+site_name = "Adam"
+site_description = "Android Debug Bridge client library for Kotlin and Java"
+site_author = "Anton Malinskiy"
+site_url = "https://arthurkun21.github.io/Adam/"
+repo_url = "https://github.com/ArthurKun21/adam"
+repo_name = "ArthurKun21/adam"
+edit_uri = "edit/dev/docs/"
+copyright = "Adam is &copy; 2019-2026 by Anton Malinskiy"
+docs_dir = "docs"
+site_dir = "site"
+extra_css = [ "stylesheets/extra.css" ]
+
+nav = [
+  "index.md",
+  { "Tutorials" = [
+    "tutorials/1-shell.md",
+    "tutorials/2-logcat.md",
+    "tutorials/3-install-package.md",
+  ]},
+  { "Guides" = [
+    { "Shell" = [
+      "docs/shell/shell.md",
+      "docs/shell/shell-v2.md",
+    ]},
+    { "Package management" = [
+      "docs/package-management/package-management.md",
+      "docs/package-management/sideload.md",
+    ]},
+    { "Files" = [
+      "docs/files/files.md",
+      "docs/files/recommended.md",
+      "docs/files/sync-v1.md",
+      "docs/files/sync-v2.md",
+      "docs/files/ls.md",
+    ]},
+    "docs/device/device.md",
+    "docs/emulator/emulator.md",
+    "docs/props/get-properties.md",
+    "docs/instrumentation/test-runner.md",
+    "docs/screen-capture/screenshot.md",
+    "docs/logcat/logcat.md",
+    "docs/port-forwarding/port-forwarding.md",
+    "docs/abb/abb.md",
+    "docs/adbd/adbd.md",
+    "docs/misc/misc.md",
+    "docs/caveats.md",
+    "docs/api.md",
+  ]},
+  { "Extensions" = [
+    "extensions/1-android-junit.md",
+    "extensions/2-android-event-producers.md",
+  ]},
+]
+
+[project.theme]
+variant = "modern"
+logo = "assets/images/adam.png"
+favicon = "assets/images/adam.png"
+features = [
+  "navigation.instant",
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "navigation.sections",
+  "navigation.top",
+  "navigation.tracking",
+  "toc.follow",
+  "content.action.edit",
+]
+
+[project.theme.palette]
+scheme = "default"
+primary = "indigo"
+accent = "indigo"
+
+[project.markdown_extensions]
+attr_list = {}

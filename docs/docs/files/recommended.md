@@ -1,8 +1,5 @@
 ---
-layout: default
 title:  "Recommended mode"
-parent: Files
-nav_order: 1
 ---
 
 ## Pull file(s)/folder(s)

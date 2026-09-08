@@ -1,12 +1,6 @@
 ---
-layout: default
 title:  "Package management"
-has_children: true
-nav_order: 2
 ---
-
-1. TOC
-{:toc}
 
 ## Install a package
 
@@ -28,10 +22,8 @@ val output: String = adb.execute(
 
 ### Streaming installation
 <div markdown="1">
-Requires Feature.CMD or Feature.ABB_EXEC 
-{: .label .label-yellow } 
-Optionally uses Feature.APEX 
-{: .label .label-blue }
+<span class="label label-yellow">Requires Feature.CMD or Feature.ABB_EXEC</span>
+<span class="label label-blue">Optionally uses Feature.APEX</span>
 </div>
 
 This mode streams the package file so that you don't need to push the file to the device beforehand. This saves you a couple of requests,
@@ -73,11 +65,8 @@ install the split packages at all.
 
 ### Atomic multi-package install
 <div markdown="1">
-Requires Feature.CMD or Feature.ABB_EXEC 
-{: .label .label-yellow } 
-
-Optionally uses Feature.APEX 
-{: .label .label-blue }
+<span class="label label-yellow">Requires Feature.CMD or Feature.ABB_EXEC</span>
+<span class="label label-blue">Optionally uses Feature.APEX</span>
 </div>
 
 This request installs multiple packages as a single atomic operation. If one of them fails - all will fail.
