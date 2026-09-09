@@ -114,6 +114,7 @@ dependencies {
     api(libs.kotlinx.rpc.grpc.core)
     api(libs.kotlinx.rpc.grpc.client)
     implementation(libs.kotlinx.serialization.protobuf)
+    implementation(libs.kotlinx.datetime)
     implementation(libs.grpc.okhttp)
     implementation(libs.ktor.network)
     implementation(libs.apache.commons.pool2)

@@ -28,26 +28,30 @@ import kotlinx.coroutines.debug.junit4.CoroutinesTimeout
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.toLocalDateTime
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Rule
 import org.junit.Test
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Calendar
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
-// These regex comes from https://cs.android.com/android/platform/superproject/+/master:development/tools/bugreport/src/com/android/bugreport/logcat/LogcatParser.java
+// These regex come from https://cs.android.com/android/platform/superproject/+/master:development/tools/bugreport/src/com/android/bugreport/logcat/LogcatParser.java
 private val BUFFER_BEGIN_RE = Pattern.compile("--------- beginning of (.*)")
 private val LOG_LINE_RE = Pattern.compile(
     "((?:(\\d\\d\\d\\d)-)?(\\d\\d)-(\\d\\d)\\s+(\\d\\d):(\\d\\d):(\\d\\d)\\.(\\d\\d\\d)\\s+(\\d+)\\s+(\\d+)\\s+(.)\\s+)(.*?):\\s(.*)",
     Pattern.MULTILINE,
 )
-private val sinceFormatter = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss.SSS")
-    .withZone(ZoneId.systemDefault())
+private val sinceFormatter = LocalDateTime.Format {
+    byUnicodePattern("MM-dd HH:mm:ss.SSS")
+}
 
 class LogcatE2ETest {
     @Rule
@@ -63,9 +67,9 @@ class LogcatE2ETest {
         runBlocking {
             val deviceTimezoneString = adb.adb.execute(GetSinglePropRequest("persist.sys.timezone"), adb.deviceSerial)
                 .replace("\n", "")
-            val deviceTimezone = TimeZone.getTimeZone(deviceTimezoneString)
+            val deviceTimezone = TimeZone.of(deviceTimezoneString)
 
-            val nowInstant = Instant.now()
+            val nowInstant = Clock.System.now()
             val request =
                 SyncLogcatRequest(LogcatSinceFormat.DateString(nowInstant, deviceTimezoneString), modes = listOf())
             async {
@@ -81,8 +85,8 @@ class LogcatE2ETest {
             println(content)
 
             // Check if only logs after a given time are included
-            val zonedInstant = nowInstant.atZone(deviceTimezone.toZoneId()).minusSeconds(5)
-            assertThat(content.all { it.instant.isAfter(zonedInstant) }, equalTo(true))
+            val lowerBound = nowInstant - 5.seconds
+            assertThat(content.all { it.instant > lowerBound }, equalTo(true))
         }
     }
 
@@ -93,9 +97,9 @@ class LogcatE2ETest {
                 GetSinglePropRequest("persist.sys.timezone"),
                 adb.deviceSerial,
             ).trim()
-            val deviceTimezone = TimeZone.getTimeZone(deviceTimezoneString)
+            val deviceTimezone = TimeZone.of(deviceTimezoneString)
 
-            val nowInstant = Instant.now()
+            val nowInstant = Clock.System.now()
             val request =
                 ChanneledLogcatRequest(LogcatSinceFormat.DateString(nowInstant, deviceTimezoneString), modes = listOf())
 
@@ -122,8 +126,8 @@ class LogcatE2ETest {
             channel.cancel()
             background.cancel()
 
-            val zonedInstant = nowInstant.atZone(deviceTimezone.toZoneId()).minusSeconds(5)
-            assertThat(content.all { it.instant.isAfter(zonedInstant) }, equalTo(true))
+            val lowerBound = nowInstant - 5.seconds
+            assertThat(content.all { it.instant > lowerBound }, equalTo(true))
         }
     }
 
@@ -135,8 +139,8 @@ class LogcatE2ETest {
             override fun toString() = "[BufferLine] $bufferBegin"
         }
 
-        class Log(rawText: String, val timeZone: TimeZone) : LogLine(LOG_LINE_RE.matcher(rawText).also { it.find() }) {
-            val date = Calendar.getInstance(timeZone).apply {
+        class Log(rawText: String, timeZone: TimeZone) : LogLine(LOG_LINE_RE.matcher(rawText).also { it.find() }) {
+            val date = Calendar.getInstance(java.util.TimeZone.getTimeZone(timeZone.id)).apply {
                 set(Calendar.MONTH, matcher.group(3).toInt() - 1)
                 set(Calendar.DAY_OF_MONTH, matcher.group(4).toInt())
                 set(Calendar.HOUR_OF_DAY, matcher.group(5).toInt())
@@ -151,10 +155,10 @@ class LogcatE2ETest {
             val tag = matcher.group(12)
             val text = matcher.group(13)
 
-            val instant get() = ZonedDateTime.ofInstant(date.toInstant(), timeZone.toZoneId())
+            val instant: Instant get() = Instant.fromEpochMilliseconds(date.timeInMillis)
 
             override fun toString() = "[LogLine] ${sinceFormatter.format(
-                date.toInstant(),
+                instant.toLocalDateTime(TimeZone.currentSystemDefault()),
             )} $pid $tid $level $tag: $text"
 
             override fun equals(other: Any?): Boolean {

@@ -24,7 +24,7 @@ import com.malinskiy.adam.request.ValidationResponse
 import com.malinskiy.adam.request.sync.model.FileEntryV1
 import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withDefaultBuffer
-import java.time.Instant
+import kotlin.time.Instant
 
 public class ListFileRequest(
     private val remotePath: String,
@@ -51,7 +51,7 @@ public class ListFileRequest(
                         socket.readFully(data, 0, 16)
                         val mode = data.copyOfRange(0, 4).toInt().toUInt()
                         val size = data.copyOfRange(4, 8).toInt().toUInt()
-                        val mtime = Instant.ofEpochSecond(data.copyOfRange(8, 12).toInt().toLong())
+                        val mtime = Instant.fromEpochSeconds(data.copyOfRange(8, 12).toInt().toLong())
                         val nameLength = data.copyOfRange(12, 16).toInt()
                         socket.readFully(data, 0, nameLength)
 

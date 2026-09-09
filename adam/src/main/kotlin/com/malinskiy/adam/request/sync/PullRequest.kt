@@ -32,7 +32,6 @@ import kotlinx.coroutines.Dispatchers
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.attribute.FileTime
-import java.time.Instant
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -168,7 +167,7 @@ public class PullRequest(
                             SyncFile(
                                 local = File(destinationRoot.absolutePath, localRelativePath),
                                 remote = remotePath,
-                                mtime = file.mtime.epochSecond,
+                                mtime = file.mtime.epochSeconds,
                                 mode = file.mode,
                                 size = file.size(),
                             ),
@@ -181,7 +180,7 @@ public class PullRequest(
         filesToPull.forEach { file ->
             val fileSuccess = doPullFile(file.remote, file.local, file.size.toLong(), serial)
             if (fileSuccess) {
-                Files.setLastModifiedTime(file.local.toPath(), FileTime.from(Instant.ofEpochSecond(file.mtime)))
+                Files.setLastModifiedTime(file.local.toPath(), FileTime.fromMillis(file.mtime * 1000))
             } else {
                 return false
             }

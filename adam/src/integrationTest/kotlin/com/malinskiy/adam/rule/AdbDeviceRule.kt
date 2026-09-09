@@ -35,7 +35,8 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import java.net.ConnectException
-import java.time.Duration
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * This rule supports only one device
@@ -49,13 +50,13 @@ class AdbDeviceRule(val deviceType: DeviceType = DeviceType.ANY, vararg val requ
     lateinit var lineSeparator: String
 
     val adb = AndroidDebugBridgeClientFactory().build()
-    val initTimeout: Duration = Duration.ofSeconds(30)
+    val initTimeout: Duration = 30.seconds
 
     override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {
             override fun evaluate() {
                 runBlocking {
-                    withTimeoutOrNull(initTimeout.toMillis()) {
+                    withTimeoutOrNull(initTimeout) {
                         // First we start the adb if it is not running
                         startAdb()
 

@@ -28,7 +28,7 @@ import com.malinskiy.adam.request.ValidationResponse
 import com.malinskiy.adam.request.sync.model.FileEntryV1
 import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withDefaultBuffer
-import java.time.Instant
+import kotlin.time.Instant
 
 public class StatFileRequest(
     private val remotePath: String,
@@ -47,7 +47,7 @@ public class StatFileRequest(
             return FileEntryV1(
                 mode = bytes.copyOfRange(4, 8).toUInt(),
                 size = bytes.copyOfRange(8, 12).toUInt(),
-                mtime = Instant.ofEpochSecond(bytes.copyOfRange(12, 16).toInt().toLong()),
+                mtime = Instant.fromEpochSeconds(bytes.copyOfRange(12, 16).toInt().toLong()),
             )
         }
     }

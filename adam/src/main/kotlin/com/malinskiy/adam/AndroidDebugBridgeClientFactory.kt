@@ -20,8 +20,8 @@ import com.arthurkun21.adam.transport.ktor.KtorSocketFactory
 import com.malinskiy.adam.interactor.DiscoverAdbSocketInteractor
 import com.malinskiy.adam.transport.SocketFactory
 import java.net.InetAddress
-import java.time.Duration
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Duration
 
 public class AndroidDebugBridgeClientFactory {
     public var port: Int? = null
@@ -36,8 +36,8 @@ public class AndroidDebugBridgeClientFactory {
             port = port ?: DiscoverAdbSocketInteractor().execute(),
             host = host ?: InetAddress.getByName(Const.DEFAULT_ADB_HOST),
             socketFactory = socketFactory ?: KtorSocketFactory(
-                idleTimeout = idleTimeout?.toMillis() ?: 30_000,
-                connectTimeout = connectTimeout?.toMillis() ?: 10_000,
+                idleTimeout = idleTimeout?.inWholeMilliseconds ?: 30_000,
+                connectTimeout = connectTimeout?.inWholeMilliseconds ?: 10_000,
             ),
         )
     }

@@ -26,7 +26,7 @@ import com.malinskiy.adam.server.junit4.AdbServerRule
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import java.time.Instant
+import kotlin.time.Instant
 
 class CompatStatFileRequestTest {
     @get:Rule
@@ -47,7 +47,7 @@ class CompatStatFileRequestTest {
 
             val result = client.execute(CompatStatFileRequest("/sdcard/testfile", emptyList()), serial = "serial")
             val output = result as FileEntryV1
-            assertThat(output.mtime).isEqualTo(Instant.ofEpochSecond(10000))
+            assertThat(output.mtime).isEqualTo(Instant.fromEpochSeconds(10000))
             assertThat(output.mode).isEqualTo(0x744.toUInt())
             assertThat(output.size).isEqualTo(128.toUInt())
         }
@@ -91,9 +91,9 @@ class CompatStatFileRequestTest {
                     nlink = 2.toUInt(),
                     uid = 0.toUInt(),
                     gid = 1000.toUInt(),
-                    atime = Instant.ofEpochSecond(1589042331),
-                    mtime = Instant.ofEpochSecond(1589042332),
-                    ctime = Instant.ofEpochSecond(1589042333),
+                    atime = Instant.fromEpochSeconds(1589042331),
+                    mtime = Instant.fromEpochSeconds(1589042332),
+                    ctime = Instant.fromEpochSeconds(1589042333),
                 ),
             )
         }

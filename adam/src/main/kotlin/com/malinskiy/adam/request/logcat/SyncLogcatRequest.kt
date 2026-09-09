@@ -18,7 +18,6 @@ package com.malinskiy.adam.request.logcat
 
 import com.malinskiy.adam.request.shell.v1.ShellCommandResult
 import com.malinskiy.adam.request.shell.v1.SyncShellCommandRequest
-import java.time.Instant
 
 public class SyncLogcatRequest(
     since: LogcatSinceFormat? = null,

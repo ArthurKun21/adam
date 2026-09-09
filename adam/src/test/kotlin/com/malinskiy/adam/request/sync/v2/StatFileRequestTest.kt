@@ -25,7 +25,7 @@ import com.malinskiy.adam.server.junit4.AdbServerRule
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import java.time.Instant
+import kotlin.time.Instant
 
 class StatFileRequestTest {
     @get:Rule
@@ -70,9 +70,9 @@ class StatFileRequestTest {
                     nlink = 2.toUInt(),
                     uid = 0.toUInt(),
                     gid = 1000.toUInt(),
-                    atime = Instant.ofEpochSecond(1589042331),
-                    mtime = Instant.ofEpochSecond(1589042332),
-                    ctime = Instant.ofEpochSecond(1589042333),
+                    atime = Instant.fromEpochSeconds(1589042331),
+                    mtime = Instant.fromEpochSeconds(1589042332),
+                    ctime = Instant.fromEpochSeconds(1589042333),
                 ),
             )
         }

@@ -26,7 +26,7 @@ import com.malinskiy.adam.server.junit4.AdbServerRule
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import java.time.Instant
+import kotlin.time.Instant
 
 class ListFileRequestTest {
     @get:Rule
@@ -75,9 +75,9 @@ class ListFileRequestTest {
                 nlink = 2.toUInt(),
                 uid = 0.toUInt(),
                 gid = 1000.toUInt(),
-                atime = Instant.ofEpochSecond(1589042331),
-                mtime = Instant.ofEpochSecond(1589042332),
-                ctime = Instant.ofEpochSecond(1589042333),
+                atime = Instant.fromEpochSeconds(1589042331),
+                mtime = Instant.fromEpochSeconds(1589042332),
+                ctime = Instant.fromEpochSeconds(1589042333),
             ),
         )
 
@@ -90,8 +90,8 @@ class ListFileRequestTest {
         assertThat(list.first().nlink).isEqualTo(2.toUInt())
         assertThat(list.first().uid).isEqualTo(0.toUInt())
         assertThat(list.first().gid).isEqualTo(1000.toUInt())
-        assertThat(list.first().atime).isEqualTo(Instant.ofEpochSecond(1589042331))
-        assertThat(list.first().mtime).isEqualTo(Instant.ofEpochSecond(1589042332))
-        assertThat(list.first().ctime).isEqualTo(Instant.ofEpochSecond(1589042333))
+        assertThat(list.first().atime).isEqualTo(Instant.fromEpochSeconds(1589042331))
+        assertThat(list.first().mtime).isEqualTo(Instant.fromEpochSeconds(1589042332))
+        assertThat(list.first().ctime).isEqualTo(Instant.fromEpochSeconds(1589042333))
     }
 }

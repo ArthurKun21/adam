@@ -17,7 +17,7 @@
 package com.malinskiy.adam.request.sync.model
 
 import com.malinskiy.adam.Const
-import java.time.Instant
+import kotlin.time.Instant
 
 public sealed class FileEntry {
     public abstract val mode: UInt
@@ -44,7 +44,7 @@ public data class FileEntryV1(
     public val size: UInt,
     override val mtime: Instant,
 ) : FileEntry() {
-    override fun exists(): Boolean = !(size == 0.toUInt() && mode == 0.toUInt() && mtime.epochSecond == 0L)
+    override fun exists(): Boolean = !(size == 0.toUInt() && mode == 0.toUInt() && mtime.epochSeconds == 0L)
 }
 
 public data class FileEntryV2(
@@ -61,5 +61,5 @@ public data class FileEntryV2(
     public val ctime: Instant,
     override val name: String? = null,
 ) : FileEntry() {
-    override fun exists(): Boolean = !(size == 0.toULong() && mode == 0.toUInt() && mtime.epochSecond == 0L)
+    override fun exists(): Boolean = !(size == 0.toULong() && mode == 0.toUInt() && mtime.epochSeconds == 0L)
 }
