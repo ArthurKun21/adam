@@ -9,7 +9,10 @@ To read logcat once you can execute:
 ```kotlin
 val log = adb.execute(
     request = SyncLogcatRequest(
-        since = Instant.now().minusSeconds(60),
+        since = LogcatSinceFormat.DateStringYear(
+            Clock.System.now() - 60.seconds,
+            TimeZone.currentSystemDefault().id,
+        ),
         filters = listOf(LogcatFilterSpec("TAG", LogcatVerbosityLevel.E))
     ),
     serial = "emulator-5554"
@@ -20,7 +23,7 @@ val log = adb.execute(
 
 ```kotlin
 class SyncLogcatRequest(
-    since: Instant? = null,
+    since: LogcatSinceFormat? = null,
     modes: List<LogcatReadMode> = listOf(LogcatReadMode.long),
     buffers: List<LogcatBuffer> = listOf(LogcatBuffer.default),
     pid: Long? = null,
@@ -57,7 +60,7 @@ the chunks in a buffer first.
 
 ```kotlin
 class ChanneledLogcatRequest(
-    since: Instant? = null,
+    since: LogcatSinceFormat? = null,
     modes: List<LogcatReadMode> = listOf(LogcatReadMode.long),
     buffers: List<LogcatBuffer> = emptyList(),
     pid: Long? = null,
