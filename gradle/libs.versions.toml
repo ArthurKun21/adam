@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.4.20"
 coroutines = "1.11.0"
-kotlinxDatetime = "0.8.0"
+kotlinxDatetime = "0.8.0-0.6.x-compat"
 annotations = "26.1.0"
 ktor = "3.5.2"
 logcat = "0.4"
