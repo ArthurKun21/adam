@@ -10,6 +10,7 @@ dependencies {
     implementation(libs.coil.compose)
 
     implementation(libs.coroutines.swing)
+    implementation(libs.kotlinx.datetime)
 
     implementation(libs.logcat)
 }

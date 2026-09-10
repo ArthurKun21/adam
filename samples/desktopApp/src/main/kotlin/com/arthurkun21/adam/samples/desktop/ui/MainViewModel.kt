@@ -35,13 +35,12 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import kotlinx.datetime.TimeZone
 import java.io.ByteArrayOutputStream
-import java.time.Instant
-import java.time.ZoneId
 import javax.imageio.ImageIO
+import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import java.time.Duration as JavaDuration
 
 /**
  * Small state holder for the desktop sample.
@@ -53,8 +52,8 @@ import java.time.Duration as JavaDuration
 internal class MainViewModel : ViewModel() {
     private val adbClient = AndroidDebugBridgeClientFactory()
         .apply {
-            connectTimeout = JavaDuration.ofMillis(socketConnectTimeout.inWholeMilliseconds)
-            idleTimeout = JavaDuration.ofMillis(socketIdleTimeout.inWholeMilliseconds)
+            connectTimeout = socketConnectTimeout
+            idleTimeout = socketIdleTimeout
         }
         .build()
 
@@ -590,8 +589,8 @@ internal class MainViewModel : ViewModel() {
         val serial = _uiState.value.deviceSerial ?: return ""
 
         val since = LogcatSinceFormat.DateStringYear(
-            Instant.now().minusSeconds(LOGCAT_LOOKBACK_SECONDS),
-            ZoneId.systemDefault().id,
+            Clock.System.now() - LOGCAT_LOOKBACK_SECONDS.seconds,
+            TimeZone.currentSystemDefault().id,
         )
         val output = withAdbTimeout("fetching recent logcat") {
             withContext(Dispatchers.IO) {

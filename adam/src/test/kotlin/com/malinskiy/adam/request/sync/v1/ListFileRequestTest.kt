@@ -25,7 +25,7 @@ import com.malinskiy.adam.server.junit4.AdbServerRule
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import java.time.Instant
+import kotlin.time.Instant
 
 class ListFileRequestTest {
     @get:Rule
@@ -57,14 +57,14 @@ class ListFileRequestTest {
             FileEntryV1(
                 name = "some-file",
                 mode = 123.toUInt(),
-                mtime = Instant.ofEpochSecond(1589042331),
+                mtime = Instant.fromEpochSeconds(1589042331),
                 size = 420.toUInt(),
             ),
         )
 
         assertThat(list.first().name).isEqualTo("some-file")
         assertThat(list.first().mode).isEqualTo(123.toUInt())
-        assertThat(list.first().mtime).isEqualTo(Instant.ofEpochSecond(1589042331))
+        assertThat(list.first().mtime).isEqualTo(Instant.fromEpochSeconds(1589042331))
         assertThat(list.first().size).isEqualTo(420.toUInt())
     }
 }

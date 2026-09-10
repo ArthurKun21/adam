@@ -20,7 +20,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.malinskiy.adam.Const
 import org.junit.Test
-import java.time.Instant
+import kotlin.time.Instant
 
 class AsyncLogcatRequestTest {
     @Test
@@ -71,7 +71,7 @@ class AsyncLogcatRequestTest {
 
     @Test
     fun testSinceTimestampContinuous() {
-        val instant = Instant.ofEpochMilli(10)
+        val instant = Instant.fromEpochMilliseconds(10)
         val actual = testLogcatSinceFormat(LogcatSinceFormat.TimeStamp(instant))
 
         assertThat(actual)

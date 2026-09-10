@@ -29,7 +29,7 @@ import com.malinskiy.adam.request.ValidationResponse
 import com.malinskiy.adam.request.sync.model.FileEntryV2
 import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withDefaultBuffer
-import java.time.Instant
+import kotlin.time.Instant
 
 @Features(Feature.STAT_V2)
 public class StatFileRequest(
@@ -54,9 +54,9 @@ public class StatFileRequest(
                 uid = bytes.copyOfRange(32, 36).toUInt(),
                 gid = bytes.copyOfRange(36, 40).toUInt(),
                 size = bytes.copyOfRange(40, 48).toULong(),
-                atime = Instant.ofEpochSecond(bytes.copyOfRange(48, 56).toLong()),
-                mtime = Instant.ofEpochSecond(bytes.copyOfRange(56, 64).toLong()),
-                ctime = Instant.ofEpochSecond(bytes.copyOfRange(64, 72).toLong()),
+                atime = Instant.fromEpochSeconds(bytes.copyOfRange(48, 56).toLong()),
+                mtime = Instant.fromEpochSeconds(bytes.copyOfRange(56, 64).toLong()),
+                ctime = Instant.fromEpochSeconds(bytes.copyOfRange(64, 72).toLong()),
             )
         }
     }

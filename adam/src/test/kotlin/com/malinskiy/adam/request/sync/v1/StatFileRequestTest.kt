@@ -23,7 +23,7 @@ import com.malinskiy.adam.server.junit4.AdbServerRule
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import java.time.Instant
+import kotlin.time.Instant
 
 class StatFileRequestTest {
     @get:Rule
@@ -43,7 +43,7 @@ class StatFileRequestTest {
             }
 
             val output = client.execute(StatFileRequest("/sdcard/testfile"), serial = "serial")
-            assertThat(output.mtime).isEqualTo(Instant.ofEpochSecond(10000))
+            assertThat(output.mtime).isEqualTo(Instant.fromEpochSeconds(10000))
             assertThat(output.mode).isEqualTo(0x744.toUInt())
             assertThat(output.size).isEqualTo(128.toUInt())
         }

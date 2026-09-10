@@ -29,7 +29,7 @@ import com.malinskiy.adam.request.ValidationResponse
 import com.malinskiy.adam.request.sync.model.FileEntryV2
 import com.malinskiy.adam.transport.Socket
 import com.malinskiy.adam.transport.withDefaultBuffer
-import java.time.Instant
+import kotlin.time.Instant
 
 @Features(Feature.LS_V2)
 public class ListFileRequest(
@@ -71,9 +71,9 @@ public class ListFileRequest(
                         val uid = data.copyOfRange(28, 32).toUInt()
                         val gid = data.copyOfRange(32, 36).toUInt()
                         val size = data.copyOfRange(36, 44).toULong()
-                        val atime = Instant.ofEpochSecond(data.copyOfRange(44, 52).toLong())
-                        val mtime = Instant.ofEpochSecond(data.copyOfRange(52, 60).toLong())
-                        val ctime = Instant.ofEpochSecond(data.copyOfRange(60, 68).toLong())
+                        val atime = Instant.fromEpochSeconds(data.copyOfRange(44, 52).toLong())
+                        val mtime = Instant.fromEpochSeconds(data.copyOfRange(52, 60).toLong())
+                        val ctime = Instant.fromEpochSeconds(data.copyOfRange(60, 68).toLong())
 
                         socket.readFully(data, 0, nameLength)
                         result.add(
