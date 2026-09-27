@@ -16,6 +16,10 @@ gradlePlugin {
             id = "adam.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
+        register("adamAndroidApplication") {
+            id = "adam.android.application"
+            implementationClass = "AndroidApplicationConventionPlugin"
+        }
         register("adamCodeLint") {
             id = "adam.code.lint"
             implementationClass = "SpotlessConventionPlugin"

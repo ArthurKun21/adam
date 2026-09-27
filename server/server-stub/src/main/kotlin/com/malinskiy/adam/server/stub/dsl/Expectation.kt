@@ -40,7 +40,11 @@ public class Expectation {
                 true
             } ?: false
         } else {
-            otherHandlers[transportCmd]?.invoke(session) ?: return false
+            val handler = otherHandlers[transportCmd]
+            if (handler == null) {
+                throw RuntimeException("No handler registered for request: $transportCmd")
+            }
+            handler.invoke(session)
             return true
         }
     }
