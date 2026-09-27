@@ -41,8 +41,9 @@ Kotlin coroutine-based ADB (Android Debug Bridge) client library.
 - **android-junit4-test-annotation-producer** — Android test annotation producer
 - **android-testrunner-contract** — Android test runner contract interfaces
 - **androidx-screencapture** — AndroidX screen capture helpers
+- **companion** — On-device companion accessibility service APK (Kotlin port of google/artemis' helper, Apache 2.0) providing gestures, hierarchy dumps and screenshots on real devices; host-side client in `com.arthurkun21.adam.companion` (adam core)
 - **server/** — Server stubs for testing (`server-stub`, `server-stub-junit4`, `server-stub-junit5`)
-- **build-logic** — Convention plugins and build logic
+- **build-logic** — Convention plugins and build logic (`adam.android.application` builds the companion APK)
 
 ### Key Types
 
@@ -51,6 +52,7 @@ Kotlin coroutine-based ADB (Android Debug Bridge) client library.
 - `Socket` — Interface for transport layer (implemented by `KtorSocket`)
 - `Target` — Request targeting (HostTarget, DeviceTarget, etc.)
 - `GrpcClient` / `EmulatorController` — Emulator gRPC bridge client (kotlinx-rpc); created via `com.arthurkun21.adam.emulator.emulatorGrpcClient`
+- `CompanionManager` / `CompanionClient` — Companion service deployment + HTTP client (`com.arthurkun21.adam.companion`); contract constants in `CompanionConstants`
 
 ### gRPC & Protobuf
 
