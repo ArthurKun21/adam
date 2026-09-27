@@ -39,6 +39,8 @@ nav = [
     "docs/props/get-properties.md",
     "docs/instrumentation/test-runner.md",
     "docs/screen-capture/screenshot.md",
+    "docs/device-control/device-control.md",
+    "docs/companion/companion.md",
     "docs/logcat/logcat.md",
     "docs/port-forwarding/port-forwarding.md",
     "docs/abb/abb.md",
