@@ -8,4 +8,8 @@
         ".\\gradlew": true,
         "./gradlew": true
     },
+    "githubPullRequests.remotes": [
+        "origin"
+    ],
+    "githubPullRequests.createDefaultBaseBranch": "repositoryDefault"
 }
