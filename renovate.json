@@ -4,5 +4,15 @@
     "extends": [
         "config:recommended",
         ":dependencyDashboard"
+    ],
+    "packageRules": [
+        {
+            "description": "Kotlin version-catalog plugin ids share the kotlin version ref; same hold as the org.jetbrains.kotlin:* rule.",
+            "matchPackageNames": [
+                "org.jetbrains.kotlin.jvm",
+                "org.jetbrains.kotlin.plugin.serialization",
+                "org.jetbrains.kotlin.plugin.compose"
+            ]
+        }
     ]
 }
