@@ -43,10 +43,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v6.1.0
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRO }}
@@ -55,7 +55,7 @@ jobs:
       - name: build & test
         run: ./gradlew assemble test jacocoTestReport
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v6
+        uses: mikepenz/action-junit-report@v6.6.1
         if: always()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
@@ -68,7 +68,7 @@ jobs:
           zip -r -X ../../../../../test-result.zip .
 
       - name: Save test output
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         if: failure()
         with:
           name: test-result
@@ -80,7 +80,7 @@ jobs:
           zip -r -X ../../../../../../test-coverage.zip .
 
       - name: Save coverage output
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: test-coverage
           path: test-coverage.zip
@@ -93,9 +93,9 @@ jobs:
       matrix:
         api: [ 24, 34, 35 ]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
       - name: Set up JDK 17
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v6.1.0
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRO }}
@@ -109,10 +109,10 @@ jobs:
           sudo udevadm trigger --name-match=kvm
       
       - name: Gradle cache
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v6.4.0
 
       - name: AVD cache
-        uses: actions/cache@v6
+        uses: actions/cache@v6.1.0
         id: avd-cache
         with:
           path: |
@@ -122,7 +122,7 @@ jobs:
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v2.38.0
         timeout-minutes: 30
         with:
           api-level: ${{ matrix.api }}
@@ -134,7 +134,7 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Run integration tests
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v2.38.0
         timeout-minutes: 25
         with:
           api-level: ${{ matrix.api }}
@@ -146,7 +146,7 @@ jobs:
           script: ./gradlew :adam:integrationTest
 
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v6
+        uses: mikepenz/action-junit-report@v6.6.1
         if: always()
         with:
           report_paths: '**/build/test-results/integrationTest/TEST-*.xml'
@@ -163,7 +163,7 @@ jobs:
           zip -r -X ../../../../../integration-test-${{ matrix.api }}-result.zip .
 
       - name: Save integration test output
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         if: failure()
         with:
           name: integration-test-${{ matrix.api }}-result
@@ -176,14 +176,14 @@ jobs:
           zip -r -X ../../../../../../integration-test-${{ matrix.api }}-coverage.zip .
 
       - name: Save coverage output
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         if: ${{ !cancelled() }}
         with:
           name: integration-test-${{ matrix.api }}-coverage
           path: integration-test-${{ matrix.api }}-coverage.zip
 
       - name: Save logcat output
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.2
         if: failure()
         with:
           name: logcat-${{ matrix.api }}
