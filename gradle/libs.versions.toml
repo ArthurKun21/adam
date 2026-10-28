@@ -15,7 +15,7 @@ imageComparison = "4.4.0"
 grpc = "1.85.1"
 kotlinxRpc = "0.11.0-grpc-190"
 kotlinxSerialization = "1.12.0"
-androidGradle = "9.4.1"
+androidGradle = "9.5.0"
 testMonitor = "1.8.0"
 testRunner = "1.7.0"
 
