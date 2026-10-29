@@ -57,6 +57,14 @@ jobs:
         with:
           path: site
 
+      - name: Upload build reports
+        if: failure()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: docs-build-reports
+          path: '**/build/reports/'
+          retention-days: 7
+
   deploy-docs:
     name: Publish documentation to GitHub Pages
     # PRs are build-validated only; deploys happen on pushes to dev and manual runs
