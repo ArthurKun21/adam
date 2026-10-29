@@ -1,15 +1,21 @@
 name: docs
 on:
   push:
+    paths:
+      - 'docs/**'
+      - 'zensical.toml'
+      - '.github/workflows/docs.yaml'
+      - 'pyproject.toml'
+      - '.python-version'
     branches:
       - dev
   pull_request:
     paths:
       - 'docs/**'
-      - zensical.toml
+      - 'zensical.toml'
       - '.github/workflows/docs.yaml'
-      - pyproject.toml
-      - .python-version
+      - 'pyproject.toml'
+      - '.python-version'
   workflow_dispatch:
 
 permissions:
@@ -53,7 +59,7 @@ jobs:
 
   deploy-docs:
     name: Publish documentation to GitHub Pages
-    # PRs are build-validated only; deploys happen on pushes to master and manual runs
+    # PRs are build-validated only; deploys happen on pushes to dev and manual runs
     if: github.event_name != 'pull_request'
     needs: build-docs
     runs-on: ubuntu-slim
