@@ -13,9 +13,9 @@ workflows:
         - 'reactivecircus/android-emulator-runner@v2.38.0'
     '.github/workflows/docs.yaml':
         - 'actions/checkout@v7.0.1'
+        - 'actions/configure-pages@v6.0.0'
         - 'actions/deploy-pages@v5.0.1'
         - 'actions/setup-java@v6.1.0'
-        - 'actions/upload-artifact@v7.0.2'
         - 'actions/upload-pages-artifact@v5.0.0'
         - 'astral-sh/setup-uv@v10.3.3'
         - 'gradle/actions@v6.4.1'
@@ -41,6 +41,11 @@ dependencies:
         commit: 'sha1-3d3c42e5aac5ba805825da76410c181273ba90b1'
         owner_id: 44036562
         repo_id: 197814629
+    'actions/configure-pages@v6.0.0':
+        ref: 'v6.0.0'
+        commit: 'sha1-45bfe0192ca1faeb007ade9deae92b16b8254a0d'
+        owner_id: 44036562
+        repo_id: 513659658
     'actions/deploy-pages@v5.0.1':
         ref: 'v5.0.1'
         commit: 'sha1-368f82528645a54fb793d4d04e342629a3f51346'

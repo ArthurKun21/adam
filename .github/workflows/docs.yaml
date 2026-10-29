@@ -18,12 +18,8 @@ env:
   GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g -XX:+UseParallelGC"'
 
 jobs:
-  deploy:
-    name: Publish documentation to GitHub Pages
+  build-docs:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Setup Project
         uses: $/.github/actions/setup-project
@@ -33,23 +29,34 @@ jobs:
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v10.3.3
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen
 
       - name: Build documentation site
         run: uv run zensical build --clean
 
       - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: site
 
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v5.0.1
-        id: deployment
+  deploy-docs:
+    name: Publish documentation to GitHub Pages
+    # PRs are build-validated only; deploys happen on pushes to master and manual runs
+    if: github.event_name != 'pull_request'
+    needs: build-docs
+    runs-on: ubuntu-slim
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v6.0.0
 
-      - name: Upload build reports
-        if: failure()
-        uses: actions/upload-artifact@v7.0.2
-        with:
-          name: docs-build-reports
-          path: '**/build/reports/'
-          retention-days: 7
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1
