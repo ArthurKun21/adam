@@ -1,7 +1,7 @@
 [project]
 site_name = "Adam"
 site_description = "Android Debug Bridge client library for Kotlin and Java"
-site_author = "Anton Malinskiy"
+site_author = "ArthurKun"
 site_url = "https://arthurkun21.github.io/Adam/"
 repo_url = "https://github.com/ArthurKun21/adam"
 repo_name = "ArthurKun21/adam"
