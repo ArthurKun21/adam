@@ -32,8 +32,7 @@ on:
   workflow_dispatch:
 
 env:
-  JAVA_VERSION: 17
-  JAVA_DISTRO: 'temurin'
+  GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g -XX:+UseParallelGC"'
 
 concurrency:
   group: ${{ github.ref }}-build
