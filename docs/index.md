@@ -1,5 +1,7 @@
 ---
 title: Home
+search:
+  exclude: true
 hide:
   - navigation
 ---
