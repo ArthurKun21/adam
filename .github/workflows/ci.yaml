@@ -87,12 +87,8 @@ jobs:
       matrix:
         api: [ 24, 34, 35 ]
     steps:
-      - uses: actions/checkout@v7.0.1
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v6.1.0
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DISTRO }}
+      - name: Setup Project
+        uses: $/.github/actions/setup-project
 
       - uses: malinskiy/action-android/install-sdk@release/0.1.7
 
