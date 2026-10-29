@@ -9,7 +9,6 @@ workflows:
         - 'actions/setup-java@v6.1.0'
         - 'actions/upload-artifact@v7.0.2'
         - 'gradle/actions@v6.4.1'
-        - 'malinskiy/action-android@release/0.1.7'
         - 'mikepenz/action-junit-report@v6.6.1'
         - 'reactivecircus/android-emulator-runner@v2.38.0'
     '.github/workflows/docs.yaml':
@@ -79,11 +78,6 @@ dependencies:
         commit: 'sha1-8da46b539cd8fe6ab27ca75128919a18d757604c'
         owner_id: 124156
         repo_id: 743626948
-    'malinskiy/action-android@release/0.1.7':
-        ref: 'release/0.1.7'
-        commit: 'sha1-fa103ef30331e95f266418a6a97e98f61f626887'
-        owner_id: 2089114
-        repo_id: 211642948
     'mikepenz/action-junit-report@v6.6.1':
         ref: 'v6.6.1'
         commit: 'sha1-6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d'

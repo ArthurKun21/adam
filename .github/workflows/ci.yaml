@@ -45,7 +45,6 @@ jobs:
       - name: Setup Project
         uses: $/.github/actions/setup-project
 
-      - uses: malinskiy/action-android/install-sdk@release/0.1.7
       - name: build & test
         run: ./gradlew assemble test jacocoTestReport
       - name: Publish Test Report
@@ -89,8 +88,6 @@ jobs:
     steps:
       - name: Setup Project
         uses: $/.github/actions/setup-project
-
-      - uses: malinskiy/action-android/install-sdk@release/0.1.7
 
       - name: Enable KVM
         run: |
