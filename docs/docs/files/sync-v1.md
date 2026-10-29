@@ -1,16 +1,16 @@
 ---
-title:  "sync v1"
+title: "sync v1"
 ---
 
 ## Stat file
 
-The following request will return file stats:
+The following request returns the file stats:
 
 ```kotlin
 val stats = adb.execute(StatFileRequest("/data/local/tmp/app-debug.apk"), "emulator-5554")
 ```
 
-The model of stats is represented as `FileEntryV1`:
+The stats model is `FileEntryV1`:
 
 ```kotlin
 data class FileEntryV1(
@@ -28,11 +28,11 @@ data class FileEntryV1(
 }
 ```
 
-Name is optional and is only filled by list requests but not stat requests.
+`name` is optional. List requests fill it. Stat requests do not.
 
 ## List files
 
-The following request will return list of files for a particular path:
+The following request returns the list of files for a particular path:
 
 ```kotlin
 val list: List<FileEntryV1> = adb.execute(ListFileRequest("/sdcard/"), "emulator-5554")
@@ -40,26 +40,25 @@ val list: List<FileEntryV1> = adb.execute(ListFileRequest("/sdcard/"), "emulator
 
 ## Pull file
 
-Use the following to pull a file(not a folder) with a known path on the device
+The following request pulls a file with a known path on the device (not a folder):
 
 ```kotlin
 launch {
     val channel = adb.execute(
-        PullFileRequest("/data/local/tmp/testfile", createTempFile(), coroutineContext = coroutineContext),
+        PullFileRequest("/data/local/tmp/testfile", File.createTempFile("testfile", ".tmp")),
         scope = this,
         "emulator-5554"
     )
 
-    var percentage = 0
     for (percentageDouble in channel) {
-        percentage = (percentageDouble * 100).roundToInt()
-        println(percentage)
+        println((percentageDouble * 100).roundToInt())
     }
 }
 ```
 
 ## Push file
-To push a local file to Android device's folder (`remotePath` should be the full path with the name of the target file):
+
+The following request pushes a local file to the device (`remotePath` is the full path with the name of the target file):
 
 ```kotlin
 launch {
@@ -73,13 +72,11 @@ launch {
         scope = this,
         serial = "emulator-5554"
     )
-    
-    var percentage = 0
-    for(percentageDouble in channel) {
-        percentage = (percentageDouble * 100).roundToInt()
-        println(percentage)
+
+    for (percentageDouble in channel) {
+        println((percentageDouble * 100).roundToInt())
     }
 }
 ```
 
-**mode** is the access rights in octal represented as an instance of `String`.
+`mode` contains the access rights in octal as a `String`.

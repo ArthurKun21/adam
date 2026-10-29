@@ -2,11 +2,11 @@
 title: Shell
 ---
 
-This is a description of requests in `com.malinskiy.adam.request.shell.v1`
+This section describes the requests in `com.malinskiy.adam.request.shell.v1`.
 
 ## Execute shell command
 
-You can execute arbitrary commands (`ls`, `date`, etc) on the device using the `ShellCommandRequest`:
+You can execute arbitrary commands (`ls`, `date`, etc) on the device with `ShellCommandRequest`:
 
 ```kotlin
 val response: ShellCommandResult = adb.execute(
@@ -15,9 +15,7 @@ val response: ShellCommandResult = adb.execute(
 )
 ```
 
-The response contains stdout mixed with stderr (since this protocol doesn't support separate streams).
-On top of this, shell v1 doesn't support returning an exit code natively. To mitigate this whenever you execute any shell v1 command adam
-appends `;echo $?` to the end of the command and parses it automatically.
+The response contains stdout mixed with stderr. This protocol does not support separate streams. Shell v1 also does not return an exit code natively. To get the exit code, adam appends `;echo $?` to every shell v1 command and parses the result.
 
 ```kotlin
 data class ShellCommandResult(
@@ -26,13 +24,13 @@ data class ShellCommandResult(
 )
 ```
 
-If the output is UTF-8 encoded then you can use lazy property `output` for conversion of bytes into a String, e.g. `result.output`.
+If the output is UTF-8 encoded, use the lazy property `output` to convert the bytes into a `String`, e.g. `result.output`.
 
-This request expects that the command returns immediately, or you don't want to stream the output.
+Use this request when the command finishes on its own and you want the complete result. If you need the output while the command runs, use the `ChanneledShellCommandRequest`.
 
 ## Streaming shell request
 
-You can execute arbitrary commands (`cat`, `tail -f`, etc) on the device using the `ChanneledShellCommandRequest`:
+You can execute arbitrary commands (`cat`, `tail -f`, etc) on the device with `ChanneledShellCommandRequest`:
 
 ```kotlin
 launch {
@@ -50,17 +48,18 @@ launch {
 
 ## Execute shell command with pipe input
 
-Executes the command and provides the channel as the input to the command. Does not return anything
+This request executes the command and provides the channel as input to the command. It does not return a result.
 
 ```kotlin
 val blockSizeChannel = Channel<Int>(capacity = 1)
-//You have to implement the function below for applicable source of data that you have. 
-//Testing code in adam has an example for a file
-val channel: ReceiveChannel<ByteArray> = someFunctionThatProducesByteArrayInResponseToRequestsOverBlockSizeChannel(blockSizeChannel)
-val success = client.execute(
+//Provide a channel that emits the input data in blocks.
+//The test code in adam has an example that reads from a file.
+val inputChannel: ReceiveChannel<ByteArray> = readBlocksAsByteArray(blockSizeChannel)
+
+adb.execute(
     request = ExecInRequest(
-        cmd = "cmd package install -S ${testFile.length()}",
-        channel = testFile.readChannel(),
+        cmd = "cmd package install -S ${apkFile.length()}",
+        channel = inputChannel,
         sizeChannel = blockSizeChannel
     ),
     serial = "emulator-5554"

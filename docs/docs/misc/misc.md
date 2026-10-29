@@ -2,17 +2,15 @@
 title: Miscellaneous
 ---
 
-## Get adb server version
+## Get ADB server version
 
-This request returns the adb server version specified in `adb/adb.h`
-(e.g. [here](https://android.googlesource.com/platform/system/core/+/dd7bc3319deb2b77c5d07a51b7d6cd7e11b5beb0/adb/adb.h#36)). It is useful
-for debugging incompatible versions of adb and also making sure your requests are supported by the adb server.
+This request returns the version of the ADB server as defined in `adb/adb.h` ([source](https://android.googlesource.com/platform/system/core/+/dd7bc3319deb2b77c5d07a51b7d6cd7e11b5beb0/adb/adb.h#36)). Use it to debug incompatible adb versions and to check that the ADB server supports your requests.
 
 ```kotlin
 val version: Int = adb.execute(request = GetAdbServerVersionRequest())
 ```
 
-## Kill adb server
+## Kill ADB server
 
 This request is equivalent to executing `adb kill-server`:
 
@@ -20,9 +18,9 @@ This request is equivalent to executing `adb kill-server`:
 adb.execute(request = KillAdbRequest())
 ```
 
-## Remount partition
+## Remount partitions
 
-Remount partitions read-write. If a reboot is required, `autoReboot = true` will automatically reboot the device.
+This request remounts the partitions read-write. If the device requires a reboot, pass `autoReboot = true` and adam reboots it automatically.
 
 ```kotlin
 val output: String = adb.execute(request = RemountPartitionsRequest(autoReboot = false), "emulator-5554")
@@ -40,8 +38,9 @@ val output: String = adb.execute(request = SetDmVerityCheckingRequest(false), "e
 val features: List<Feature> = adb.execute(request = FetchHostFeaturesRequest())
 ```
 
-## Check if mDNS discovery is available
-mDNS is used for automatic discovery and connection of remote devices (for example with Android 11 ADB over WiFi)
+## Check mDNS discovery availability
+
+mDNS supports automatic discovery and connection of remote devices (for example, ADB over WiFi on Android 11):
 
 ```kotlin
 val status: MdnsStatus = adb.execute(MdnsCheckRequest())

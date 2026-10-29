@@ -1,73 +1,66 @@
 ---
-title:  "Caveats"
+title: "Caveats"
 ---
-# Caveats
-When working with adam it's a good idea to keep the following things in mind.
 
 ## Response types
 
-Every request in adam requires you to create an instance of `AndroidDebugBridgeClient` in order to execute a requests. All the requests
- produce either a **single response** (e.g. `ListDevicesRequest`):
- 
-```kotlin
-val devices: List<Device> = adbClient.execute(request = ListDevicesRequest())
-``` 
-
-or request produces a **stream of responses**, e.g. a progress of pulling a file:
+You execute every adam request through an instance of `AndroidDebugBridgeClient`. The requests produce either a **single response** (e.g. `ListDevicesRequest`):
 
 ```kotlin
-val testFile = createTempFile()
-val channel = adbClient.execute(
+val devices: List<Device> = adb.execute(request = ListDevicesRequest())
+```
+
+or a **stream of responses** (e.g. the progress of a file pull):
+
+```kotlin
+val testFile = File.createTempFile("testfile", ".tmp")
+val channel = adb.execute(
     request = PullFileRequest("/data/local/tmp/testfile", testFile),
     scope = GlobalScope,
     serial = "emulator-5554"
 )
 
-var percentage = 0
-while (!channel.isClosedForReceive) {
-    val progressDouble = channel.receiveOrNull() ?: break
+for (progressDouble in channel) {
     println(progressDouble)
 }
 println("done!")
 ```
 
 ## Exception handling
-In general, you can expect the following for any request:
 
-1. `ClosedWriteChannelException` if the device connection is not be available anymore
-2. `RequestRejectedException` if ADB server doesn't respond properly
-3. `RequestValidationException` if request's `#validate()` returns false before execution
+You can expect the following for any request:
 
-There are additional exceptions, namely:
+1. `ClosedWriteChannelException` when the device connection is not available anymore
+2. `RequestRejectedException` when the ADB server does not respond properly
+3. `RequestValidationException` when the request's `#validate()` returns false before execution
+
+There are additional exceptions:
+
 * `PullFailedException`, `PushFailedException` and `UnsupportedSyncProtocolException` for file requests
 * `UnsupportedForwardingSpecException` for port forwarding requests
 * `UnsupportedImageProtocolException` for screenshot requests
 
 ## Request target
-When executing the request agains an ADB server client sends what is the target for that particular request.
 
-Possible targets are:
-1. `HostTarget`.  When asking for information related to a device, 'host:' can also be interpreted as 'any single device or emulator
- connected to/running on the host'.
-2. `SerialTarget`. This is a special form of query, where the 'host-serial:<serial-number>:' prefix can be used to indicate that the client
- is asking the ADB server for information related to a specific device.
-3. `UsbTarget`. A variant of host-serial used to target the single USB device connected to the host. This will fail if there is none or more
- than one.
-4. `LocalTarget`. A variant of host-serial used to target the single emulator instance running on the host. This will fail if there is none
- or more than one.
+When the client executes a request, it sends the target for that particular request to the ADB server.
+
+Possible targets:
+
+1. `HostTarget`. The host target can also mean 'any single device or emulator connected to or running on the host'. This applies when you ask for information related to a device.
+2. `SerialTarget`. A query with the `host-serial:<serial-number>:` prefix. The client asks the ADB server for information related to a specific device.
+3. `UsbTarget`. A variant of host-serial that targets the single USB device connected to the host. It fails when there is none or more than one.
+4. `LocalTarget`. A variant of host-serial that targets the single emulator instance running on the host. It fails when there is none or more than one.
 5. `NonSpecifiedTarget`
 
-In most of the cases you _can_ specify any of them and there are sensible defaults. For example, `KillAdbRequest`'s default target is
- `HostTarget` since this request doesn't make sense for Android device itself.
+In most cases you can specify any of the targets. There are sensible defaults. For example, the default target of `KillAdbRequest` is `HostTarget`, because this request does not make sense for an Android device itself.
 
-For all the requests targeting a particular device, e.g. `ScreenCaptureRequest` you have to specify the `serial` parameter when executing,
- e.g.:
- 
+For the requests that target a particular device, e.g. `ScreenCaptureRequest`, specify the `serial` parameter during execution:
+
 ```kotlin
 adb.execute(
-            request = ScreenCaptureRequest(),
-            serial = "emulator-5554"
-            )
+    request = ScreenCaptureRequest(),
+    serial = "emulator-5554"
+)
 ```
 
-The serial for each particular device can be retrieved by executing either `ListDevicesRequest` or `AsyncDeviceMonitorRequest` 
+Retrieve the serial of a device with `ListDevicesRequest` or `AsyncDeviceMonitorRequest`.

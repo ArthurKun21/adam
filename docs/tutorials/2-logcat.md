@@ -1,13 +1,13 @@
 ---
-title:  "2. Stream logcat"
+title: "2. Stream logcat"
 ---
 
-## 2. Streaming logcat output
+## 2. Stream logcat
 
-Some operations in adam require you to stream the output. One such example is streaming the logcat since this source of data will not stop
- producing output unless you stop reading it or the device terminates.
+Some requests in adam stream their output. Logcat is one of them. The device produces logcat output continuously. The stream ends only when you stop reading or the device stops producing output.
 
-Here is the boilerplate from [part 1](1-shell.md) to setup the communication with the device:
+Start with the boilerplate from [part 1](1-shell.md) to set up the communication with the device:
+
 ```kotlin
 StartAdbInteractor().execute()
 val adb = AndroidDebugBridgeClientFactory().build()
@@ -15,32 +15,37 @@ val devices: List<Device> = adb.execute(ListDevicesRequest())
 val device = devices.firstOrNull { it.state == DeviceState.DEVICE } ?: throw RuntimeException("no devices available")
 ```
 
-Now we need to execute the request:
-```kotlin
-val response: ReceiveChannel<String> = adb.execute(ChanneledLogcatRequest(), device.serial)
-```
-
-Pay attention to the return type `ReceiveChannel<String>`. This means that we might get more instances of `String` as the time goes by. In
- order to read the output we do the following:
+Now execute the request:
 
 ```kotlin
-do {
-    val line = channel.receiveOrNull()?.let { println(it) }
-    
-    if(externalSignal) {
-        channel.cancel()
-        break
-    }
-} while (line != null)
+launch {
+    val channel: ReceiveChannel<String> = adb.execute(
+        request = ChanneledLogcatRequest(),
+        scope = this,
+        serial = device.serial
+    )
+
+    do {
+        val line: String? = channel.receiveCatching().getOrNull()
+
+        if (line != null) {
+            println(line)
+        }
+
+        if (stopStreaming) { //your stop condition, e.g. a user action
+            channel.cancel()
+            break
+        }
+    } while (line != null)
+}
 ```
 
-First, we try to receive the output. This might succeed, then we print the string. This might fail, then we don't print anything.
+Note the return type `ReceiveChannel<String>`. The channel can deliver more `String` instances over time. One iteration of the loop handles one value:
 
-Second, we check some external signal to stop streaming logcat (user pressed a key or something else). To close the whole request we need
- to cancel the channel. Then we break out of the loop.
- 
-Third, we want to continue this loop until we reach other the device failure to provide us the output or we receive some external signal to
-stop.
+1. `receiveCatching()` waits for the next chunk. When a chunk arrives, the code prints it.
+2. When the channel closes without a chunk, `getOrNull()` returns `null`. The channel closes when the device stops producing output.
+3. `stopStreaming` is your external stop condition, for example a user action. Cancel the channel to release the transport resources. Then exit the loop.
 
-There are many more options available for [`ChanneledLogcatRequest`](../docs/logcat/logcat.md) that change the format of the output
-as well as filtering and more.
+The loop repeats until the device stops producing output or you stop it.
+
+There are more options for [`ChanneledLogcatRequest`](../docs/logcat/logcat.md). They change the format of the output, the filtering, and more.
