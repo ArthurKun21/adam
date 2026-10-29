@@ -1,5 +1,7 @@
 ---
 title: Home
+hide:
+  - navigation
 ---
 
 Android Debug Bridge client library written in Kotlin.
