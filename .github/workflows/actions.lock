@@ -9,24 +9,27 @@ workflows:
         - 'actions/setup-java@v6.1.0'
         - 'actions/upload-artifact@v7.0.2'
         - 'gradle/actions@v6.4.0'
+        - 'gradle/actions@v6.4.1'
         - 'malinskiy/action-android@release/0.1.7'
         - 'mikepenz/action-junit-report@v6.6.1'
         - 'reactivecircus/android-emulator-runner@v2.38.0'
     '.github/workflows/docs.yaml':
         - 'actions/checkout@v7.0.1'
         - 'actions/deploy-pages@v5.0.1'
-        - 'actions/setup-java@v6.0.0'
+        - 'actions/setup-java@v6.1.0'
         - 'actions/upload-artifact@v7.0.1'
         - 'actions/upload-pages-artifact@v5.0.0'
         - 'astral-sh/setup-uv@v10.0.1'
+        - 'gradle/actions@v6.4.1'
     '.github/workflows/lint.yaml':
         - 'actions/checkout@v7.0.1'
         - 'actions/setup-java@v6.1.0'
-        - 'gradle/actions@v6.4.0'
+        - 'gradle/actions@v6.4.1'
     '.github/workflows/publish.yaml':
         - 'actions/checkout@v7.0.1'
         - 'actions/setup-java@v6.1.0'
         - 'actions/upload-artifact@v7.0.2'
+        - 'gradle/actions@v6.4.1'
     '.github/workflows/verify-lockfile.yml':
         - 'actions/checkout@v7.0.1'
 dependencies:
@@ -45,11 +48,6 @@ dependencies:
         commit: 'sha1-368f82528645a54fb793d4d04e342629a3f51346'
         owner_id: 44036562
         repo_id: 438112499
-    'actions/setup-java@v6.0.0':
-        ref: 'v6.0.0'
-        commit: 'sha1-dd06d9cba3e5552c54d9f8ea23572deb30010f7c'
-        owner_id: 44036562
-        repo_id: 196057608
     'actions/setup-java@v6.1.0':
         ref: 'v6.1.0'
         commit: 'sha1-b843ebf9b913146b38da2eaa7aeddf76074ae1ad'
@@ -85,6 +83,11 @@ dependencies:
     'gradle/actions@v6.4.0':
         ref: 'v6.4.0'
         commit: 'sha1-3f5f9adaf7d9fecd50b5935e54106014257a94e6'
+        owner_id: 124156
+        repo_id: 743626948
+    'gradle/actions@v6.4.1':
+        ref: 'v6.4.1'
+        commit: 'sha1-8da46b539cd8fe6ab27ca75128919a18d757604c'
         owner_id: 124156
         repo_id: 743626948
     'malinskiy/action-android@release/0.1.7':
