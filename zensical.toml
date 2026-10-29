@@ -68,10 +68,19 @@ features = [
   "content.action.edit",
 ]
 
-[project.theme.palette]
+# Palette toggle for light mode
+[[project.theme.palette]]
 scheme = "default"
-primary = "indigo"
-accent = "indigo"
+primary = "red"
+toggle.icon = "material/brightness-7"
+toggle.name = "Switch to dark mode"
+
+# Palette toggle for dark mode
+[[project.theme.palette]]
+scheme = "slate"
+primary = "red"
+toggle.icon = "material/brightness-4"
+toggle.name = "Switch to light mode"
 
 [project.markdown_extensions]
 attr_list = {}
