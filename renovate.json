@@ -3,6 +3,31 @@
     "semanticCommits": "disabled",
     "extends": [
         "config:recommended",
-        ":dependencyDashboard"
+        ":dependencyDashboard",
+        ":enablePreCommit"
+    ],
+    "pre-commit": {
+        "enabled": true
+    },
+    "packageRules": [
+        {
+            "description": "Kotlin version-catalog plugin ids share the kotlin version ref; same hold as the org.jetbrains.kotlin:* rule.",
+            "matchPackageNames": [
+                "org.jetbrains.kotlin.jvm",
+                "org.jetbrains.kotlin.plugin.serialization",
+                "org.jetbrains.kotlin.plugin.compose"
+            ]
+        },
+        {
+            "matchManagers": [
+                "pre-commit"
+            ],
+            "groupName": "pre-commit hooks",
+            "automerge": true,
+            "matchUpdateTypes": [
+                "minor",
+                "patch"
+            ]
+        }
     ]
 }

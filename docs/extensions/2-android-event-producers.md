@@ -1,14 +1,14 @@
 ---
-title:  "Android test metric producers"
+title: "Android test metric producers"
 ---
 
-Adam provides several producers of test statuses that inform test runners about the test execution.
+adam provides producers of test statuses. They inform the test runner about the test execution. See [Android JUnit 4 rules](1-android-junit.md) for the test runner integration.
 
 ## TestAnnotationProducer
 
-Artifact: `com.malinskiy.adam:android-junit4-test-annotation-producer:${LATEST_VERSION}`
+Artifact: `com.github.ArthurKun21:android-junit4-test-annotation-producer:X.X.X`
 
-This producer emits current test annotations as a metric, e.g.:
+This producer emits the annotations of the current test as a metric, e.g.:
 
 ```
 INSTRUMENTATION_STATUS_CODE: 0
@@ -30,14 +30,13 @@ INSTRUMENTATION_STATUS: stream=.
 INSTRUMENTATION_STATUS: test=ignoreTest
 ```
 
-This is useful, for example, when bytecode analysis is undesirable in complexity and it's easier to use the Android OS itself to report back
-the annotations of each test.
+This is useful when bytecode analysis is too complex and it is easier to let the Android OS report the annotations of each test.
 
 ## AdamScreenCaptureProcessor
 
-Artifact: `com.malinskiy.adam:androidx-screencapture:${LATEST_VERSION}`
+Artifact: `com.github.ArthurKun21:androidx-screencapture:X.X.X`
 
-This producer emits test screen captures that utilise `androidx.test.runner.screenshot`, e.g.:
+This producer emits test screen captures. It uses `androidx.test.runner.screenshot`, e.g.:
 
 ```
 INSTRUMENTATION_STATUS_CODE: 0
@@ -59,4 +58,4 @@ INSTRUMENTATION_STATUS: stream=.
 INSTRUMENTATION_STATUS: test=ignoreTest
 ```
 
-This is useful to inform the test runner of the test screenshots and perhaps attach them to the test report.
+This is useful to inform the test runner about the test screenshots and to optionally attach them to the test report.

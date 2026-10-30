@@ -1,10 +1,10 @@
 ---
-title:  "Logcat"
+title: "Logcat"
 ---
 
 ## Retrieve logcat log
 
-To read logcat once you can execute:
+The following request reads the logcat once:
 
 ```kotlin
 val log = adb.execute(
@@ -19,7 +19,7 @@ val log = adb.execute(
 )
 ```
 
-`SyncLogcatRequest` maps most of the options exposed by the underlying `logcat` command:
+`SyncLogcatRequest` maps most of the options of the underlying `logcat` command:
 
 ```kotlin
 class SyncLogcatRequest(
@@ -34,7 +34,7 @@ class SyncLogcatRequest(
 
 ## Stream logcat output
 
-Recording the output from logcat (for example when writing to a file):
+The following request streams the logcat output, for example when you write it to a file:
 
 ```kotlin
 launch {
@@ -48,15 +48,14 @@ launch {
     //logcatChunk == "I/ActivityManager(  585): Starting activity: Intent { action=android.intent.action...}\nI/MyActivity( 1557): MyClass"
     //write to a file or append to a buffer
 
-    //Dispose of channel to close the resources
+    //Cancel the channel to release the resources
     channel.cancel()
 }
 ```
 
-Logcat chunks that you receive might not be `\n` terminated so if you need to parse logcat output line-by-line then you need to accumulate
-the chunks in a buffer first.
+Logcat chunks might not end with `\n`. If you need to parse the logcat output line-by-line, accumulate the chunks in a buffer first.
 
-`ChanneledLogcatRequest` maps most of the options exposed by the underlying `logcat` command:
+`ChanneledLogcatRequest` maps most of the options of the underlying `logcat` command:
 
 ```kotlin
 class ChanneledLogcatRequest(
@@ -69,4 +68,4 @@ class ChanneledLogcatRequest(
 )
 ```
 
-See the [official docs](https://developer.android.com/studio/command-line/logcat) for more info on what these options change.
+See the [official docs](https://developer.android.com/studio/command-line/logcat) for the meaning of these options.

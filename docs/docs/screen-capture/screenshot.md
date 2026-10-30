@@ -1,33 +1,29 @@
 ---
-title:  "Screenshot"
+title: "Screenshot"
 ---
 
 ## Capture a screenshot
 
-Capturing screenshots is done using the `ScreenCaptureRequest`. This request will check the remote protocol version and will fail if the
- format is unsupported.
+Capture screenshots with the `ScreenCaptureRequest`. The request checks the remote protocol version. It fails when the format is unsupported.
 
 ```kotlin
 val adapter = RawImageScreenCaptureAdapter()
 val image = adb.execute(
     request = ScreenCaptureRequest(adapter),
-    serial = "emulator-5554" 
+    serial = "emulator-5554"
 ).toBufferedImage()
 
 if (!ImageIO.write(image, "png", File("/tmp/screen.png"))) {
     throw IOException("Failed to find png writer")
 }
 ```
- 
+
 ### Image adapter
-In order to receive the image you'll have to transform the framebuffer bytes into something meaningful. There are two options here:
-`RawImageScreenCaptureAdapter` and `BufferedImageScreenCaptureAdapter`. The `RawImageScreenCaptureAdapter` is a bare minimum to receive the
- necessary metadata as well as the `byte[]` that holds the screenshot. The return type of this adapter is `RawImage` that supports
-  retrieving the pixel value by index using `RawImage#getARGB(index: Int)`. You can also transform the image into Java's `BufferedImage`.
-  
-However, if you intend to capture a lot of screenshots for a particular device, consider using the `BufferedImageScreenCaptureAdapter` that
- will reduce additional allocations of memory when transforming the image.
- 
-Please note, that all adapter by default will try to reduce the memory consumption and reuse the internal buffers. If you're using the same
- adapter on multiple threads in parallel either set the buffer to `null` all the time or provide an external buffer that is allocated per
-  thread.
+
+You must transform the framebuffer bytes into a usable image. Two adapters are available: `RawImageScreenCaptureAdapter` and `BufferedImageScreenCaptureAdapter`.
+
+`RawImageScreenCaptureAdapter` provides the metadata and the `byte[]` that holds the screenshot. Its return type is `RawImage`. `RawImage` supports reading the pixel value by index with `RawImage#getARGB(index: Int)`. You can also transform the image into a Java `BufferedImage`.
+
+If you capture many screenshots from a particular device, use the `BufferedImageScreenCaptureAdapter`. It reduces the additional memory allocations during the image transformation.
+
+All adapters reduce memory consumption by reusing their internal buffers. If you use the same adapter on multiple threads in parallel, set the buffer to `null` every time or provide an external buffer allocated per thread.

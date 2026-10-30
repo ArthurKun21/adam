@@ -2,18 +2,15 @@
 title: Files
 ---
 
-# File requests
+The requests in this section transfer files or information about files.
 
-This request type transfers files or information about files
+Use the [recommended requests][1] to push or pull without handling device features and protocols.
 
-If you want to push/pull without worrying about the device features and protocols - see [recommended requests][1].
+The sync v1 and sync v2 protocols require a fallback when the device does not support all features. The [compatibility requests][2] implement this fallback.
 
-When working with sync v1/v2 protocols, a proper fallback has to be implemented if device doesn't support some of the features. To simplify
- working with this - see [compatibility requests][2].
+To work with the sync v1 protocol directly, see [sync v1][3]. For sync v2, see [sync v2][4].
 
-If you want to directly interact with sync v1 see [sync v1 docs][3], for sync v2 - [sync v2 docs][4]
-
-For compatibility reasons, you might want to use plain `ls`. This is wrapped in [ListFilesRequest][5]
+For compatibility with older devices, you can use plain `ls`. The [ls wrapper][5] `ListFilesRequest` provides this option.
 
 [1]: recommended.md
 [2]: compat.md
