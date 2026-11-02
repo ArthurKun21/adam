@@ -15,7 +15,11 @@ fun VersionCatalog.version(alias: String) = findVersion(alias).get().requiredVer
 
 internal fun configureAndroid(commonExtension: CommonExtension) {
     commonExtension.apply {
-        compileSdk = ProjectConfig.COMPILE_SDK
+        compileSdk {
+            version = release(ProjectConfig.COMPILE_SDK) {
+                minorApiLevel = ProjectConfig.COMPILE_SDK_MINOR
+            }
+        }
 
         defaultConfig.apply {
             minSdk = ProjectConfig.MIN_SDK
