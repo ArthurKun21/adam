@@ -1,5 +1,3 @@
-# Journeys
-
 A journey is an XML-specified test of an Android app's behavior. It consists of a list of `<action>` elements. For example:
 
 ```xml
@@ -34,22 +32,15 @@ Some `<action>` elements specify UI interactions to perform on the running Andro
 If the interaction cannot be performed as specified, the journey fails.
 Example:
 
-```xml
-<action>Click the red button</action>
-```
-
+```<action>Click the red button</action>```
 If you determine a red button is not present in the UI, the journey fails.
 
 If the text of an `<action>` specifies a list of actions, break it into sub-actions and evaluate them individually:
 Example:
-
-```xml
-<action>Search for soda and add the first result to the cart</action>
-```
-
+```<action>Search for soda and add the first result to the cart</action>```
 This should be evaluated as:
 
-```xml
+```
 <action>Search for soda</action>
 <action>Add the first result to the cart</action>
 ```
@@ -64,21 +55,13 @@ state of the app and check if the expectations are met.
 
 Determine the current state of the app by inspecting the current screen of the device without interacting with it.
 Example:
-
-```xml
-<action>Check if "Switch 2" is visible on the screen</action>
-```
-
+```<action>Check if "Switch 2" is visible on the screen</action>```
 This requires only inspecting the current screen, not scrolling or interacting. If "Switch 2" is not currently visible, the action fails.
 
 If the expectations are not met, mark the `<action>` as a failure and the journey evaluation ends. A single `<action>` may contain
 multiple expectations.
 Example:
-
-```xml
-<action>Verify that the app is on the Home screen, the Home icon is blue, and the temperature is displayed</action>
-```
-
+```<action>Verify that the app is on the Home screen, the Home icon is blue, and the temperature is displayed</action>```
 This `<action>` fails if ANY of the following are false:
 
 - The app is on the Home screen
@@ -89,7 +72,9 @@ This `<action>` fails if ANY of the following are false:
 
 When running a journey, evaluate it as a test. Failure is acceptable, and often expected. Proper reporting of failures is the priority.
 
-Keep debugging and troubleshooting to a minimum; assume that tools are showing you the correct output every time. The goal is to determine if the *current* Android app can correctly handle the *current* steps outlined in the journey. Suggestions for bug fixes, clarification, or other improvements should be kept to journey evaluation summary at the end.
+Keep debugging and troubleshooting to a minimum; assume that tools are showing you the correct output every time. The goal is to determine
+if the *current* Android app can correctly handle the *current* steps outlined in the journey. Suggestions for bug fixes, clarification, or
+other improvements should be kept to journey evaluation summary at the end.
 
 ## Summarizing
 
@@ -100,19 +85,19 @@ For each `<action>` you evaluated, output JSON describing the results.
   "journey:", The name of the journey
   "results:" [
     {
-      // A string containing the full text of the <action> 
+      // A string containing the full text of the <action>
       "action": "Click the blue button,
-      // "PASSED" if the instruction was evaluated, "FAILED" if the instruction could not be evaluated, or "SKIPPED" if journey evaluation ended early because an instruction failed 
-      "status": "PASSED", 
+      // "PASSED" if the instruction was evaluated, "FAILED" if the instruction could not be evaluated, or "SKIPPED" if journey evaluation ended early because an instruction failed
+      "status": "PASSED",
       // A list of the ADB commands executed while evaluating the instruction,
-      "commands": [ "adb input swipe 490 200 500 500 500", "adb input tap 45 920" ],  
-      // Failure reasons, feedback, or other useful information 
-      "comment": "The journey step doesn't specify that the button requires scrolling to see", 
+      "commands": [ "adb input swipe 490 200 500 500 500", "adb input tap 45 920" ],
+      // Failure reasons, feedback, or other useful information
+      "comment": "The journey step doesn't specify that the button requires scrolling to see",
     },
     {
-      "action": "The home screen is shown", 
-      "status": "FAILED", 
-      "comment": "The settings page was shown",   
+      "action": "The home screen is shown",
+      "status": "FAILED",
+      "comment": "The settings page was shown",
     },
   ]
 }
