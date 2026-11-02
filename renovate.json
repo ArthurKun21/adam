@@ -19,6 +19,15 @@
             ]
         },
         {
+            "description": "Maintain uv.lock (docs site dependencies managed by uv); pyproject.toml direct deps are covered by the pep621 manager.",
+            "matchManagers": [
+                "uv"
+            ],
+            "lockFileMaintenance": {
+                "enabled": true
+            }
+        },
+        {
             "matchManagers": [
                 "pre-commit"
             ],
