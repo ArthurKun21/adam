@@ -4,31 +4,31 @@ on:
     branches:
       - master
       - dev
-    paths-ignore:
-      - '**/*.md'
-      - 'docs/**'
-      - '.github/workflows/docs.yaml'
-      - 'zensical.toml'
-      - 'pyproject.toml'
-      - 'uv.lock'
-      - '.python-version'
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.java'
+      - '**/*.xml'
+      - '**/*.pro'
+      - 'gradle/**'
+      - 'build-logic/**'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - '.github/workflows/ci.yml'
   pull_request:
-    paths-ignore:
-      - '**/*.md'
-      - '.github/**.md'
-      - '.github/workflows/**'
-      - '.idea/**'
-      - 'jitpack.yml'
-      - '**/.gitignore'
-      - '.vscode/**'
-      - '**/.editorconfig'
-      - 'docs/**'
-      - 'zensical.toml'
-      - 'pyproject.toml'
-      - 'uv.lock'
-      - '.python-version'
-      - 'LICENSE'
-      - 'NOTICE'
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.java'
+      - '**/*.xml'
+      - '**/*.pro'
+      - 'gradle/**'
+      - 'build-logic/**'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - '.github/workflows/ci.yml'
   workflow_dispatch:
 
 env:
