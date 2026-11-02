@@ -1,20 +1,21 @@
 ---
-title:  "Compatibility mode"
+title: "Compatibility mode"
 ---
+
+The compatibility requests select the sync v1 or sync v2 protocol automatically. They check the features that the device supports for each operation.
 
 ## Stat file
 
-Optionally uses Feature.STAT_V2 
-{: .label .label-blue } 
+Optionally uses Feature.STAT_V2
+{: .label .label-blue }
 
-The following request will return file stats:
+The following request returns the file stats:
 
 ```kotlin
 val stats = adb.execute(CompatStatFileRequest("/data/local/tmp/app-debug.apk", supportedFeaturesList), "emulator-5554")
 ```
 
-The model of stats is represented as `FileEntry` that will be an instance of `FileEntryV1` or `FileEntryV2` depending on the features
-available:
+The stats model is `FileEntry`. adam returns an instance of `FileEntryV1` or `FileEntryV2`, depending on the available features:
 
 ```kotlin
 sealed class FileEntry {
@@ -34,14 +35,14 @@ sealed class FileEntry {
 }
 ```
 
-Name is optional and is only filled by list requests but not stat requests.
+`name` is optional. List requests fill it. Stat requests do not.
 
 ## List files
 
-Optionally uses Feature.LS_V2 
+Optionally uses Feature.LS_V2
 {: .label .label-blue }
 
-The following request will return list of files for a particular path:
+The following request returns the list of files for a particular path:
 
 ```kotlin
 val list: List<FileEntry> = adb.execute(CompatListFileRequest("/sdcard/", supportedFeaturesList), "emulator-5554")
@@ -49,54 +50,56 @@ val list: List<FileEntry> = adb.execute(CompatListFileRequest("/sdcard/", suppor
 
 ## Pull file
 
-Optionally uses Feature.SENDRECV_V2 
-{: .label .label-blue } 
+Optionally uses Feature.SENDRECV_V2
+{: .label .label-blue }
 
-Use the following to pull a file(not a folder) with a known path on the device
+The following request pulls a file with a known path on the device (not a folder):
 
 ```kotlin
 launch {
     val channel = adb.execute(
-        PullFileRequest("/data/local/tmp/testfile", createTempFile(), supportedFeaturesList, coroutineContext = coroutineContext),
-        scope = this,
-        "emulator-5554"
+        CompatPullFileRequest(
+            "/data/local/tmp/testfile",
+            File.createTempFile("testfile", ".tmp"),
+            supportedFeaturesList,
+            coroutineScope = this
+        ),
+        serial = "emulator-5554"
     )
 
-    var percentage = 0
     for (percentageDouble in channel) {
-        percentage = (percentageDouble * 100).roundToInt()
-        println(percentage)
+        println((percentageDouble * 100).roundToInt())
     }
 }
 ```
 
+The channel reports the progress of the transfer.
+
 ## Push file
 
-Optionally uses Feature.SENDRECV_V2 
-{: .label .label-blue } 
+Optionally uses Feature.SENDRECV_V2
+{: .label .label-blue }
 
-To push a local file to Android device's folder (`remotePath` should be the full path with the name of the target file):
+The following request pushes a local file to the device (`destination` is the full path with the name of the target file):
 
 ```kotlin
 launch {
     val file = File("some-file")
     val channel = adb.execute(
-        PushFileRequest(
-            local = file,
-            remotePath = "/data/local/tmp/some-file",
-            supportedFeaturesList,
+        CompatPushFileRequest(
+            source = file,
+            destination = "/data/local/tmp/some-file",
+            supportedFeatures = supportedFeaturesList,
+            coroutineScope = this,
             mode = "0644"
         ),
-        scope = this,
         serial = "emulator-5554"
     )
 
-    var percentage = 0
     for (percentageDouble in channel) {
-        percentage = (percentageDouble * 100).roundToInt()
-        println(percentage)
+        println((percentageDouble * 100).roundToInt())
     }
 }
 ```
 
-**mode** is the access rights in octal represented as an instance of `String`.
+`mode` contains the access rights in octal as a `String`.

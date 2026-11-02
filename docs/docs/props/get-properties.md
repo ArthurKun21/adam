@@ -1,26 +1,29 @@
 ---
-title:  "Device properties (getprop)"
+title: "Device properties (getprop)"
 ---
 
-Retrieving device properties (equivalent to executing `getprop` on the device) can be done using the requests below.
+These requests read the device properties. They are equivalent to executing `getprop` on the device.
 
 ## Get all device properties
-This requests retrieves all properties and create a Map of String -> String to allow working with properties like this
- `properties["sys.boot_completed"]`.
+
+The following request returns all properties as a `Map<String, String>`:
 
 ```kotlin
 val properties: Map<String, String> = adb.execute(
     request = GetPropRequest(),
-    serial = "emulator-5554" 
+    serial = "emulator-5554"
 )
 ```
 
+You can access a property by name: `properties["sys.boot_completed"]`.
+
 ## Get single device property
-If only a single property is needed then you can use the shorter version:
+
+If you need only a single property, use the shorter request:
 
 ```kotlin
 val value: String = adb.execute(
     request = GetSinglePropRequest(name = "sys.boot_completed"),
-    serial = "emulator-5554" 
+    serial = "emulator-5554"
 )
 ```

@@ -1,14 +1,15 @@
 ---
-title:  "Shell v2"
+title: "Shell v2"
 ---
 
-This is a description of requests in `com.malinskiy.adam.request.shell.v2`
+This section describes the requests in `com.malinskiy.adam.request.shell.v2`.
 
 ## Execute shell command
-Requires Feature.SHELL_V2 
+
+Requires Feature.SHELL_V2
 {: .label .label-yellow }
 
-You can execute arbitrary commands (`ls`, `date`, etc) on the device using the `ShellCommandRequest`:
+You can execute arbitrary commands (`ls`, `date`, etc) on the device with `ShellCommandRequest`:
 
 ```kotlin
 val response: ShellCommandResult = adb.execute(
@@ -27,24 +28,22 @@ data class ShellCommandResult(
 )
 ```
 
-If the output is UTF-8 encoded then you can use lazy properties `output` and `errorOutput` for conversion of bytes into a String,
-e.g. `result.output`.
+If the output is UTF-8 encoded, use the lazy properties `output` and `errorOutput` to convert the bytes into a `String`, e.g. `result.output`.
 
-This request expects that the command returns immediately, or you don't want to stream the output.
+Use this request when the command finishes on its own and you want the complete result. If you need the output while the command runs, use the `ChanneledShellCommandRequest`.
 
 ## Streaming shell request
 
 Requires Feature.SHELL_V2
 {: .label .label-yellow }
 
-You can execute arbitrary commands (`cat`, `tail -f`, etc) on the device using the `ChanneledShellCommandRequest`. Shell v2 brings in
-support for stdin implemented as a separate channel.
+You can execute arbitrary commands (`cat`, `tail -f`, etc) on the device with `ChanneledShellCommandRequest`. Shell v2 supports stdin through a separate channel.
 
 ```kotlin
 launch {
     val stdio = Channel<ShellCommandInputChunk>()
     val receiveChannel = adb.execute(ChanneledShellCommandRequest("cat", stdio), this, "emulator-5554")
-    //Sending commands requires additional pool, otherwise we might deadlock
+    //Sending input requires an additional coroutine, otherwise the execution might deadlock
     val stdioJob = launch(Dispatchers.IO) {
         stdio.send(
             ShellCommandInputChunk(
