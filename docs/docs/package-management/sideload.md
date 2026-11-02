@@ -4,10 +4,10 @@ title: Sideload
 
 ## Sideload
 
-If you need to use sideload to install packages use the following:
+The following request installs packages in sideload mode:
 
 ```kotlin
-val success = client.execute(
+val success = adb.execute(
     request = SideloadRequest(
         pkg = file
     ),
@@ -15,10 +15,12 @@ val success = client.execute(
 )
 ```
 
-### Sideload for legacy devices (pre KitKat)
+### Sideload for legacy devices (pre-KitKat)
+
+For devices older than Android 4.4, use `LegacySideloadRequest`:
 
 ```kotlin
-val success = client.execute(
+val success = adb.execute(
     request = LegacySideloadRequest(
         pkg = file
     ),

@@ -1,10 +1,10 @@
 ---
-title:  "ls wrapper"
+title: "ls wrapper"
 ---
 
 ## List files using ls
 
-Traversing directories can be done using the following wrapper around `ls`:
+The following request wraps the `ls` command and lists the entries of a directory:
 
 ```kotlin
 val files: List<AndroidFile> = adb.execute(
@@ -25,7 +25,7 @@ val files: List<AndroidFile> = adb.execute(
  * @property date e.g. 2020-12-01
  * @property time e.g. 22:22
  * @property name the file name without path, e.g. testfile.txt
- * @property directionality file's directory, e.g. /sdcard/
+ * @property directory the file's directory, e.g. /sdcard/
  * @property size file's size, e.g. 1024
  * @property type file's type
  * @property link if the file is a symbolic link, this field is what the link points to

@@ -1,6 +1,6 @@
 # adam
 
-Android Debug Bridge helper written in Kotlin
+Android Debug Bridge client library written in Kotlin
 
 ## Links
 
@@ -15,76 +15,75 @@ Android Debug Bridge helper written in Kotlin
 
 ## Motivation
 
-The only way to get access to the adb programmatically from java world currently is to use the ddmlib java project. Unfortunately it has several limitations, namely:
+The Java world has one way to access adb programmatically: the ddmlib library. ddmlib has several limitations:
 
-1. Sub-optimal resources usage
-2. Code is not tested properly
-3. Limitations of adb server are propagated to the user of ddmlib
+1. Sub-optimal resource usage
+2. Insufficient test coverage
+3. The limitations of the ADB server propagate to the ddmlib user
 
-To optimize the resources usage adam uses coroutines instead of blocking threads. This reduced the load dramatically for scenarios where dozens of devices are connected and are communicated with.
-Full E2E testing with at least Android emulator is also used to guarantee stability.
+adam uses coroutines instead of blocking threads to reduce the resource usage. This reduces the load dramatically in scenarios where the host communicates with dozens of connected devices. To guarantee stability, the project also runs full end-to-end tests with at least one Android emulator.
 
 ## Supported functionality
+
 * Shell
-    * Basic `shell:` support (with stdout and patched exit code)
-    * shell_v2 support (with separated stdout, stderr and exit code as well as stdin)
-    * Exec shell with stdin on legacy devices without shell_v2 support
+  * Basic `shell:` support (with stdout and a patched exit code)
+  * `shell_v2` support (with separate stdout, stderr and exit code, plus stdin)
+  * Exec shell with stdin on legacy devices without `shell_v2` support
 * Package install, uninstall, list
-    * Streaming installation
-    * Atomic multi-package installation
-    * Apk split installation
-    * Supports APEX
-    * Sideload (with pre-KitKat support)
-    * Install sessions support
+  * Streaming installation
+  * Atomic multi-package installation
+  * Apk split installation
+  * APEX support
+  * Sideload (with pre-KitKat support)
+  * Install sessions support
 * Device management
-    * List connected devices
-    * Monitor connected devices continuously
-    * Fetch device features
-    * Connect/disconnect/reconnect device
-    * adb over WiFi pairing setup
-    * Reboot device
+  * List connected devices
+  * Monitor connected devices continuously
+  * Fetch device features
+  * Connect/disconnect/reconnect device
+  * adb over WiFi pairing
+  * Reboot device
 * Files
-    * List file using `ls`
-    * Push/pull files and folders(recursive)
-    * Stat, list, pull and push using `sync:`
-    * Support for stat_v2, sendrecv_v2, ls_v2
+  * List files using `ls`
+  * Push/pull files and folders (recursive)
+  * Stat, list, pull and push using `sync:`
+  * Support for stat_v2, sendrecv_v2, ls_v2
 * Emulator commands (`gsm call`, `rotate`, etc)
 * Props
-    * Get single prop
-    * Get all props
+  * Get single prop
+  * Get all props
 * Instrumented tests
-    * Raw output parsing
-    * Proto output parsing
+  * Raw output parsing
+  * Proto output parsing
 * Screen capture
-    * Dynamic adapters with raw buffer and fast BufferedImage conversion
-    * Supports legacy devices as well as new sRGB and DCI-P3 ones
+  * Dynamic adapters with raw buffer and fast BufferedImage conversion
+  * Support for legacy devices as well as new sRGB and DCI-P3 devices
 * Logcat
-    * Fetch logcat log
-    * Monitor logcat continuously
+  * Read the logcat log
+  * Monitor logcat continuously
 * Port-forwarding (including reverse port-forwarding)
-    * List ports
-    * Add rule
-    * Remove rule
-    * Remove all rules
-* Android Binder Bridge: "abb" and "abb_exec"
-* Restart adbd on device: "root:", "unroot:", as well as switching transport "usb:", "tcpip:"
+  * List ports
+  * Add rule
+  * Remove rule
+  * Remove all rules
+* Android Binder Bridge: `abb` and `abb_exec`
+* Restart adbd on device: `root:`, `unroot:`, plus transport switch `usb:`, `tcpip:`
 * Miscellaneous
-  * Fetch adb server version
-  * Kill adb server
-  * Remount partition
+  * Get the ADB server version
+  * Kill the ADB server
+  * Remount partitions
   * Enable/disable dm-verity checking on userdebug builds
   * Fetch host features
-  * Check if mDNS discovery is available
+  * Check mDNS discovery availability
   * List all mDNS discovered services
 
-Not to mention any device shell commands.
+Plus any shell command on the device.
 
 ## API compatibility
 
-Until v1.0.0 release, there is no guarantee that the interfaces and requests will not change.
+Until the v1.0.0 release, the interfaces and requests may change.
 
-License
--------
+## License
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

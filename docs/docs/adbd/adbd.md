@@ -4,7 +4,7 @@ title: "adbd (on-device)"
 
 ## Root permissions
 
-You can restart adbd with root permissions:
+Restart adbd with root permissions:
 
 ```kotlin
 val stdout = adb.execute(
@@ -15,7 +15,7 @@ val stdout = adb.execute(
 println(stdout)
 ```
 
-Or without root permissions:
+Restart adbd without root permissions:
 
 ```kotlin
 val stdout = adb.execute(
@@ -26,9 +26,9 @@ val stdout = adb.execute(
 println(stdout)
 ```
 
-## Switching transport
+## Switch transport
 
-You can switch your device to start listening on a TCP port instead of USB:
+Switch the device to listen on a TCP port instead of USB:
 
 ```kotlin
 val stdout = adb.execute(
@@ -39,7 +39,7 @@ val stdout = adb.execute(
 println(stdout)
 ```
 
-To switch back to USB:
+Switch back to USB:
 
 ```kotlin
 val stdout = adb.execute(
