@@ -9,7 +9,7 @@ workflows:
         - 'actions/setup-java@v6.1.0'
         - 'actions/upload-artifact@v7.0.2'
         - 'gradle/actions@v6.4.1'
-        - 'mikepenz/action-junit-report@v6.6.2'
+        - 'mikepenz/action-junit-report@v6.7.0'
         - 'reactivecircus/android-emulator-runner@v2.38.0'
     '.github/workflows/docs.yaml':
         - 'actions/checkout@v7.0.1'
@@ -84,9 +84,9 @@ dependencies:
         commit: 'sha1-8da46b539cd8fe6ab27ca75128919a18d757604c'
         owner_id: 124156
         repo_id: 743626948
-    'mikepenz/action-junit-report@v6.6.2':
-        ref: 'v6.6.2'
-        commit: 'sha1-8a133bfa3ecb0ea9024c1e2ae788b4c25f6cdb9d'
+    'mikepenz/action-junit-report@v6.7.0':
+        ref: 'v6.7.0'
+        commit: 'sha1-4a26df3e2ae132254ba12a53f65a388d0961e786'
         owner_id: 1476232
         repo_id: 330384746
     'reactivecircus/android-emulator-runner@v2.38.0':
