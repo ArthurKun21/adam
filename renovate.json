@@ -9,6 +9,9 @@
     "pre-commit": {
         "enabled": true
     },
+    "lockFileMaintenance": {
+        "enabled": true
+    },
     "packageRules": [
         {
             "description": "Kotlin version-catalog plugin ids share the kotlin version ref; same hold as the org.jetbrains.kotlin:* rule.",
@@ -17,15 +20,6 @@
                 "org.jetbrains.kotlin.plugin.serialization",
                 "org.jetbrains.kotlin.plugin.compose"
             ]
-        },
-        {
-            "description": "Maintain uv.lock (docs site dependencies managed by uv); pyproject.toml direct deps are covered by the pep621 manager.",
-            "matchManagers": [
-                "uv"
-            ],
-            "lockFileMaintenance": {
-                "enabled": true
-            }
         },
         {
             "matchManagers": [
