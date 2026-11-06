@@ -20,7 +20,7 @@ testMonitor = "1.8.0"
 testRunner = "1.7.0"
 
 vanniktechMavenPublish = "0.37.0"
-dokka = "2.2.0"
+dokka = "2.3.0"
 
 spotless = "8.11.0"
 ktlint-core = "1.8.0"
