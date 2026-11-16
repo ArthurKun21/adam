@@ -9,10 +9,13 @@
     "pre-commit": {
         "enabled": true
     },
-    "lockFileMaintenance": {
-        "enabled": true
-    },
     "packageRules": [
+        {
+            "matchManagers": [
+                "pep621"
+            ],
+            "enabled": false
+        },
         {
             "description": "Kotlin version-catalog plugin ids share the kotlin version ref; same hold as the org.jetbrains.kotlin:* rule.",
             "matchPackageNames": [
